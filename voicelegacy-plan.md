@@ -13,12 +13,14 @@
 | **Database** | MongoDB Atlas | Required challenge. Natural fit for phrase bank (document model) |
 | **Voice cloning + TTS** | ElevenLabs API | Instant Voice Clone endpoint + TTS generation |
 | **AI reasoning** | Gemini API (Flash 2.0) | Phrase suggestions + tone rewriting |
-| **Speech transcription** | Azure AI Speech Services | Verify user is reading prompts correctly during recording |
 | **Audio recording** | Browser MediaRecorder API | No extra library needed |
 | **Deployment** | Vercel | Free tier, instant deploy from GitHub |
 
 ### Honest note on Snowflake
-Snowflake does not fit VoiceLegacy naturally. Forcing it will hurt the product and judges will notice. You have Gemini + ElevenLabs + MongoDB + Azure — that's four strong API challenge entries. Drop Snowflake for this one.
+Snowflake does not fit VoiceLegacy naturally. Forcing it will hurt the product and judges will notice. You have Gemini + ElevenLabs + MongoDB — that's three strong API challenge entries. Drop Snowflake for this one.
+
+### Note on Azure (dropped)
+Azure AI Speech was originally planned to verify users were reading recording prompts correctly. It has been cut from the MVP to keep the demo focused; the recording flow trusts the user to read the prompt and uploads the audio directly to ElevenLabs.
 
 ---
 
@@ -62,7 +64,6 @@ Snowflake does not fit VoiceLegacy naturally. Forcing it will hurt the product a
 ### 2. `/record` — Voice Recording
 - Guided prompts: 8–10 short phrases covering a range of sounds
 - Progress bar: "3 of 8 phrases recorded"
-- Azure AI Speech transcribes in real-time to verify they're reading the right text
 - Upload all clips to ElevenLabs Instant Voice Clone → store returned `voice_id` in MongoDB
 - Status: "Voice prototype ready" vs "Recording in progress"
 
@@ -120,7 +121,7 @@ POST /api/speak                → send text + voice_id to ElevenLabs TTS → re
 | Person | Owns |
 |---|---|
 | **A — Integration** | ElevenLabs voice clone + TTS. This is the highest-risk integration — start here first. |
-| **B — Backend** | MongoDB setup, all API routes, Azure AI speech verification |
+| **B — Backend** | MongoDB setup, all API routes |
 | **C — Gemini** | Phrase suggestion endpoint, tone rewriting, "sound like me" prompt engineering |
 | **D — UI/UX** | All pages, design system, consent flow, demo polish |
 
@@ -160,7 +161,6 @@ If 3 people: B takes both backend + Gemini. C and D should overlap on the `/spea
 **Hours 10–14: Consent + UI Polish**
 - [ ] `/` consent + onboarding flow
 - [ ] `/dashboard` profile + data management
-- [ ] Azure AI speech verification in recording flow
 - [ ] Consistent design across all pages
 
 **Hours 14–18: Integration + Bug Fixes**
@@ -220,4 +220,3 @@ That's it. Simple, defensible, demonstrably useful.
 - `ELEVENLABS_API_KEY` — elevenlabs.io
 - `GEMINI_API_KEY` — aistudio.google.com
 - `MONGODB_URI` — MongoDB Atlas (create free cluster)
-- `AZURE_SPEECH_KEY` + `AZURE_SPEECH_REGION` — Azure portal (free tier works)

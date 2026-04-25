@@ -14,7 +14,7 @@ Legend: `[x]` done · `[~]` partially done · `[ ]` not started
 - [x] TypeScript + ESLint configured
 - [x] `mongodb` driver added to dependencies (`frontend/package.json`)
 - [x] `.env.local.example` documents every key + every mock flag (`frontend/.env.local.example`)
-- [ ] Real `.env.local` populated with live keys (Mongo, ElevenLabs, Gemini, Azure)
+- [ ] Real `.env.local` populated with live keys (Mongo, ElevenLabs, Gemini)
 - [ ] MongoDB Atlas cluster provisioned + connection verified end-to-end (currently only smoke-tested with `MOCK_DB=true`)
 - [ ] Vercel project connected to GitHub for auto-deploy
 
@@ -31,7 +31,6 @@ All shared infrastructure is in place.
 - [x] `types.ts` — `UserDoc`, `PhraseDoc`, `PhraseCategory`, `CommunicationStyle`, `RewriteMode`
 - [x] `elevenlabs.ts` — `cloneVoiceFromFiles` + `synthesizeSpeech`, mockable
 - [x] `gemini.ts` — `suggestPhrases` + `rewriteMessage`, mockable
-- [x] `azure.ts` — `transcribeAudio`, mockable
 
 ---
 
@@ -51,11 +50,10 @@ documented `{ success, ... }` shape. All were smoke-tested with the four
 - [x] `POST /api/gemini/suggest`
 - [x] `POST /api/gemini/rewrite`
 - [x] `POST /api/speak` (returns `audio/mpeg`)
-- [x] `POST /api/azure/transcribe`
 
 ### Backend gaps still to close
 
-- [ ] Verify each route against **real** ElevenLabs / Gemini / Azure / Mongo (only the mock paths are exercised so far)
+- [ ] Verify each route against **real** ElevenLabs / Gemini / Mongo (only the mock paths are exercised so far)
 - [ ] `DELETE /api/voice/:id` or equivalent for "Delete voice data" on the dashboard
 - [ ] `DELETE /api/user/:id` (cascade-delete phrases) for "Delete all data"
 - [ ] Phrase favorite-toggle endpoint (`PATCH /api/phrases/[id]`) — plan says "Mark favorites" on `/phrases`
@@ -72,7 +70,7 @@ them (except `/record`) are wired to the backend yet.
 | Page | UI exists? | Wired to backend? | Notes |
 |---|---|---|---|
 | `/` (consent + onboarding) | [x] | [ ] | Calls `router.push("/record")` instead of `POST /api/user/create`. Selected tone/audience are not persisted. |
-| `/record` | [x] | [~] | Calls `POST /api/voice/upload` (good), but does not pass a `userId` and does not poll `GET /api/voice/status/[id]`. No Azure transcription verification yet. |
+| `/record` | [x] | [~] | Calls `POST /api/voice/upload` (good), but does not pass a `userId` and does not poll `GET /api/voice/status/[id]`. |
 | `/phrases` | [x] | [ ] | Add / list / favorite / delete are all local state — none of `GET /api/phrases/[id]`, `POST /api/phrases`, `DELETE /api/phrases/[id]`, `POST /api/gemini/suggest` are called. |
 | `/speak` | [x] | [ ] | "Make warmer / shorter / sound like me / translate" buttons need `POST /api/gemini/rewrite`; play button needs `POST /api/speak`; "save" needs `POST /api/phrases`. |
 | `/dashboard` | [x] | [ ] | Voice status, phrase counts, export, and delete actions all need backend wiring. |
@@ -82,7 +80,6 @@ them (except `/record`) are wired to the backend yet.
 - [ ] Persist `userId` after onboarding (cookie or `localStorage`) and read it from every page
 - [ ] Wire `/` to `POST /api/user/create` (block submit until 201, then store `userId`)
 - [ ] Wire `/record` to send `userId` with the upload, and to poll `GET /api/voice/status/[id]` until `"ready"`
-- [ ] Add Azure transcription check inside the recording flow (per-phrase `POST /api/azure/transcribe` against the prompt text)
 - [ ] Wire `/phrases` to all phrase routes + Gemini suggest
 - [ ] Wire `/speak` to Gemini rewrite + ElevenLabs TTS + phrase save
 - [ ] Wire `/dashboard` to user fetch, phrase counts, export, and delete-voice / delete-all
