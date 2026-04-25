@@ -1,14 +1,24 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
 
+:root {
+  --font-voicelegacy-sans: "Avenir Next", Avenir, "Segoe UI", system-ui,
+    -apple-system, sans-serif;
+}
+
 html,
 body {
-  background-color: #fbf9f8;
   color: #1b1c1c;
-  font-family: var(--font-plus-jakarta-sans), system-ui, -apple-system,
-    "Segoe UI", sans-serif;
+  font-family: var(--font-voicelegacy-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(202, 235, 208, 0.7), transparent 32rem),
+    radial-gradient(circle at bottom right, rgba(255, 219, 207, 0.55), transparent 30rem),
+    #fbf9f8;
 }
 
 @layer utilities {

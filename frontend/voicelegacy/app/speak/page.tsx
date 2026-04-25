@@ -128,7 +128,7 @@ export default function SpeakPage() {
       <header className="flex flex-col gap-sm text-center">
         <h1 className="text-headline-lg text-on-surface">Speak For Me</h1>
         <p className="mx-auto max-w-2xl text-body-lg text-on-surface-variant">
-          Type what you'd like to say. Reshape it in your own voice, then play
+          Type what you&apos;d like to say. Reshape it in your own voice, then play
           it back in your preserved sound.
         </p>
       </header>

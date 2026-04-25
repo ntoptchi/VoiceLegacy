@@ -1,0 +1,13 @@
+{
+  "name": "voicelegacy-frontend",
+  "private": true,
+  "workspaces": [
+    "voicelegacy"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w voicelegacy",
+    "build": "npm run build -w voicelegacy",
+    "start": "npm run start -w voicelegacy",
+    "lint": "npm run lint -w voicelegacy"
+  }
+}
