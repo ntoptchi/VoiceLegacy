@@ -1,26 +1,26 @@
 @import "tailwindcss";
+@config "../tailwind.config.ts";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #fbf9f8;
+  color: #1b1c1c;
+  font-family: var(--font-plus-jakarta-sans), system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer utilities {
+  .ambient-shadow {
+    box-shadow:
+      0 4px 24px -4px rgba(71, 100, 79, 0.08),
+      0 2px 8px -2px rgba(71, 100, 79, 0.04);
+  }
+
+  .ambient-shadow-hover:hover {
+    box-shadow:
+      0 12px 32px -8px rgba(71, 100, 79, 0.12),
+      0 4px 12px -4px rgba(71, 100, 79, 0.06);
+  }
 }
