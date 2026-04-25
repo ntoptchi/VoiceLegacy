@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VoiceLegacy - Phrase Bank</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#ffb59b",
+                        "surface-container": "#f0eded",
+                        "surface-dim": "#dcd9d9",
+                        "secondary-fixed": "#cde5fe",
+                        "on-tertiary-fixed": "#380d00",
+                        "on-tertiary-container": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1b1c1c",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#424843",
+                        "tertiary-fixed": "#ffdbcf",
+                        "tertiary": "#8c4c34",
+                        "outline-variant": "#c2c8c1",
+                        "secondary": "#496175",
+                        "tertiary-container": "#a9644b",
+                        "inverse-primary": "#aeceb5",
+                        "on-secondary-container": "#4f677c",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f2f0f0",
+                        "on-secondary-fixed": "#021e2f",
+                        "surface": "#fbf9f8",
+                        "primary-container": "#5f7d67",
+                        "surface-tint": "#486550",
+                        "on-secondary-fixed-variant": "#32495d",
+                        "secondary-fixed-dim": "#b1c9e1",
+                        "surface-variant": "#e4e2e1",
+                        "surface-container-highest": "#e4e2e1",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#304d3a",
+                        "surface-container-high": "#eae8e7",
+                        "primary-fixed": "#caebd0",
+                        "on-secondary": "#ffffff",
+                        "primary-fixed-dim": "#aeceb5",
+                        "error": "#ba1a1a",
+                        "outline": "#727972",
+                        "on-error": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-container": "#ffffff",
+                        "background": "#fbf9f8",
+                        "on-tertiary-fixed-variant": "#703620",
+                        "surface-container-low": "#f5f3f3",
+                        "on-primary-fixed": "#042110",
+                        "on-background": "#1b1c1c",
+                        "inverse-surface": "#303030",
+                        "secondary-container": "#cde5fe",
+                        "surface-bright": "#fbf9f8",
+                        "primary": "#47644f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "xl": "80px",
+                        "sm": "12px",
+                        "md": "24px",
+                        "xs": "4px",
+                        "margin": "32px",
+                        "lg": "48px",
+                        "gutter": "24px",
+                        "base": "8px"
+                    },
+                    "fontFamily": {
+                        "label-lg": ["Plus Jakarta Sans"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "body-sm": ["Plus Jakarta Sans"],
+                        "body-md": ["Plus Jakarta Sans"],
+                        "body-lg": ["Plus Jakarta Sans"],
+                        "label-md": ["Plus Jakarta Sans"],
+                        "headline-sm": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "label-lg": ["16px", { "lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "600" }],
+                        "headline-lg": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-sm": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-md": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "body-lg": ["20px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-sm": ["24px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "headline-md": ["32px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .ambient-shadow {
+            box-shadow: 0 4px 24px -4px rgba(71, 100, 79, 0.08), 0 2px 8px -2px rgba(71, 100, 79, 0.04);
+        }
+        .ambient-shadow-hover:hover {
+            box-shadow: 0 12px 32px -8px rgba(71, 100, 79, 0.12), 0 4px 12px -4px rgba(71, 100, 79, 0.06);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+<!-- SideNavBar from JSON -->
+<nav class="hidden md:flex flex-col h-screen sticky top-0 p-6 gap-4 bg-stone-50 dark:bg-zinc-950 font-plus-jakarta-sans text-sm h-screen w-64 border-r border-stone-200 dark:border-zinc-800 flat no shadows z-20 shrink-0">
+<div class="mb-lg px-2">
+<div class="flex items-center gap-sm mb-md">
+<img alt="User profile" class="w-12 h-12 rounded-full object-cover shadow-sm" data-alt="Portrait of an older woman with kind eyes and soft silver hair, warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRLbXOwYzFq5RF5dHrpafEcRSRPislcXttbwQpEB-HL5CefY8S9vcYd_AFSlY4Og_lmSXGeFXnpuhUoYDbxvGEmTFZz7_iulWiIoLWbFE9mOvEcF8pz2Qbd7eO4VV-CT5Rj1-mUJtsA0YO9EzTUtgukrFsBuThLSC216LwiFROnKpGq1dp8oiGOO2VKMs00yFkzNkvJx2utfJOUuzBBDA_7lpFMA3CPyY2G4XaISpMBHuiNbxU2-Wne4rsWfyajrZxM9XfvpoBqbo"/>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-emerald-900 dark:text-emerald-50 tracking-tight">Library</h2>
+<p class="font-body-sm text-body-sm text-stone-500 dark:text-zinc-400">Preserving your legacy</p>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-xs bg-primary text-on-primary font-label-lg text-label-lg py-md px-md rounded-lg shadow-sm hover:bg-surface-tint transition-colors h-[56px]">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                Add New Phrase
+            </button>
+</div>
+<div class="flex-1 overflow-y-auto">
+<div class="flex flex-col gap-xs">
+<a class="flex items-center gap-3 text-emerald-900 dark:text-emerald-50 font-bold bg-emerald-50/50 dark:bg-emerald-900/20 rounded-lg px-4 py-3 hover:bg-stone-200/50 dark:hover:bg-zinc-800/50 rounded-lg Active: scale-[0.98] transition-transform" href="#">
+<span class="material-symbols-outlined">folder_open</span>
+                    All Phrases
+                </a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-zinc-400 px-4 py-3 hover:bg-stone-200/50 dark:hover:bg-zinc-800/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">star</span>
+                    Favorites
+                </a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-zinc-400 px-4 py-3 hover:bg-stone-200/50 dark:hover:bg-zinc-800/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">history_edu</span>
+                    Family History
+                </a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-zinc-400 px-4 py-3 hover:bg-stone-200/50 dark:hover:bg-zinc-800/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+                    Daily Wisdom
+                </a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-zinc-400 px-4 py-3 hover:bg-stone-200/50 dark:hover:bg-zinc-800/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">auto_awesome</span>
+                    AI Suggestions
+                </a>
+</div>
+</div>
+<div class="mt-auto pt-md border-t border-stone-200 dark:border-zinc-800 flex flex-col gap-xs">
+<a class="flex items-center gap-3 text-stone-600 dark:text-zinc-400 px-4 py-3 hover:bg-stone-200/50 dark:hover:bg-zinc-800/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">archive</span>
+                Archive
+            </a>
+<a class="flex items-center gap-3 text-stone-600 dark:text-zinc-400 px-4 py-3 hover:bg-stone-200/50 dark:hover:bg-zinc-800/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">help_outline</span>
+                Help
+            </a>
+</div>
+</nav>
+<div class="flex-1 flex flex-col min-w-0">
+<!-- TopNavBar from JSON -->
+<header class="bg-stone-50/80 dark:bg-zinc-950/80 backdrop-blur-md text-emerald-800 dark:text-emerald-400 font-plus-jakarta-sans tracking-tight docked full-width top-0 border-b border-stone-200 dark:border-zinc-800 flat no shadows z-10 sticky top-0">
+<div class="flex justify-between items-center w-full px-8 py-4 max-w-[1024px] mx-auto">
+<h1 class="text-xl font-bold text-emerald-900 dark:text-emerald-50 font-headline-md text-headline-md">Phrase Bank</h1>
+<div class="flex items-center gap-md">
+<button class="flex items-center justify-center p-sm rounded-full text-stone-500 dark:text-zinc-400 hover:bg-surface-variant transition-colors hover:text-emerald-600 dark:hover:text-emerald-300">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<button class="bg-surface-container text-primary font-label-md text-label-md py-sm px-md rounded-lg hover:bg-surface-dim transition-colors flex items-center gap-xs">
+                        Export
+                        <span class="material-symbols-outlined text-[18px]">download</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-1 overflow-y-auto p-margin md:p-lg lg:p-xl max-w-[1024px] mx-auto w-full">
+<!-- Header Section -->
+<div class="mb-xl text-center md:text-left">
+<h2 class="font-headline-lg text-headline-lg text-on-surface mb-sm">Your Phrase Bank</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl">Capture and organize the expressions, wisdom, and daily requests that make up your unique voice.</p>
+</div>
+<!-- Action Area -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md mb-xl">
+<button class="ambient-shadow hover:-translate-y-1 transition-all duration-300 bg-surface text-on-surface rounded-xl p-md flex flex-col items-center justify-center gap-sm min-h-[160px] border border-outline-variant/30 relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-primary-fixed/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center mb-xs relative z-10">
+<span class="material-symbols-outlined text-[32px] text-on-primary-fixed">add</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface relative z-10">Add Phrase Manually</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-center relative z-10">Type or record a specific phrase you use often.</span>
+</button>
+<button class="ambient-shadow hover:-translate-y-1 transition-all duration-300 bg-surface text-on-surface rounded-xl p-md flex flex-col items-center justify-center gap-sm min-h-[160px] border border-outline-variant/30 relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-secondary-fixed/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+<div class="w-16 h-16 rounded-full bg-secondary-fixed flex items-center justify-center mb-xs relative z-10">
+<span class="material-symbols-outlined text-[32px] text-on-secondary-fixed">auto_awesome</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface relative z-10">Ask AI for Suggestions</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-center relative z-10">Get ideas based on your routines and relationships.</span>
+</button>
+</div>
+<!-- Content Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
+<!-- Card 1 -->
+<div class="bg-surface rounded-xl p-md ambient-shadow ambient-shadow-hover transition-all duration-300 border border-outline-variant/20 flex flex-col min-h-[180px]">
+<div class="flex justify-between items-start mb-sm">
+<div class="bg-primary-fixed-dim/30 text-primary-fixed-variant px-sm py-xs rounded-md font-label-md text-label-md inline-block">
+                            Family
+                        </div>
+<button class="text-tertiary hover:text-tertiary-container transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</button>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface flex-grow py-sm">"I love you all so much."</p>
+<div class="flex justify-between items-center mt-auto pt-sm border-t border-surface-variant">
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">mic</span>
+                            Recorded
+                        </span>
+<div class="flex gap-xs">
+<button class="p-xs text-on-surface-variant hover:text-on-surface transition-colors rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+</button>
+<button class="p-xs text-on-surface-variant hover:text-error transition-colors rounded-full hover:bg-error-container">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface rounded-xl p-md ambient-shadow ambient-shadow-hover transition-all duration-300 border border-outline-variant/20 flex flex-col min-h-[180px]">
+<div class="flex justify-between items-start mb-sm">
+<div class="bg-secondary-fixed-dim/30 text-secondary px-sm py-xs rounded-md font-label-md text-label-md inline-block">
+                            Daily Needs
+                        </div>
+<button class="text-outline hover:text-tertiary transition-colors">
+<span class="material-symbols-outlined">star</span>
+</button>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface flex-grow py-sm">"Could I have some water, please?"</p>
+<div class="flex justify-between items-center mt-auto pt-sm border-t border-surface-variant">
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-xs text-outline">
+<span class="material-symbols-outlined text-[16px]">mic_none</span>
+                            Needs Recording
+                        </span>
+<div class="flex gap-xs">
+<button class="p-xs text-primary hover:text-primary-container transition-colors rounded-full hover:bg-primary-fixed/30">
+<span class="material-symbols-outlined text-[20px]">mic</span>
+</button>
+<button class="p-xs text-on-surface-variant hover:text-error transition-colors rounded-full hover:bg-error-container">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface rounded-xl p-md ambient-shadow ambient-shadow-hover transition-all duration-300 border border-outline-variant/20 flex flex-col min-h-[180px]">
+<div class="flex justify-between items-start mb-sm">
+<div class="bg-tertiary-fixed-dim/30 text-tertiary px-sm py-xs rounded-md font-label-md text-label-md inline-block">
+                            Comfort
+                        </div>
+<button class="text-tertiary hover:text-tertiary-container transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</button>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface flex-grow py-sm">"Everything is going to be alright."</p>
+<div class="flex justify-between items-center mt-auto pt-sm border-t border-surface-variant">
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">mic</span>
+                            Recorded
+                        </span>
+<div class="flex gap-xs">
+<button class="p-xs text-on-surface-variant hover:text-on-surface transition-colors rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+</button>
+<button class="p-xs text-on-surface-variant hover:text-error transition-colors rounded-full hover:bg-error-container">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface rounded-xl p-md ambient-shadow ambient-shadow-hover transition-all duration-300 border border-outline-variant/20 flex flex-col min-h-[180px]">
+<div class="flex justify-between items-start mb-sm">
+<div class="bg-secondary-fixed-dim/30 text-secondary px-sm py-xs rounded-md font-label-md text-label-md inline-block">
+                            Daily Needs
+                        </div>
+<button class="text-outline hover:text-tertiary transition-colors">
+<span class="material-symbols-outlined">star</span>
+</button>
+</div>
+<p class="font-headline-sm text-headline-sm text-on-surface flex-grow py-sm">"I'm feeling a bit tired today."</p>
+<div class="flex justify-between items-center mt-auto pt-sm border-t border-surface-variant">
+<span class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">mic</span>
+                            Recorded
+                        </span>
+<div class="flex gap-xs">
+<button class="p-xs text-on-surface-variant hover:text-on-surface transition-colors rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined text-[20px]">play_arrow</span>
+</button>
+<button class="p-xs text-on-surface-variant hover:text-error transition-colors rounded-full hover:bg-error-container">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

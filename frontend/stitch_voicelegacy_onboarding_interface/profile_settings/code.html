@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Profile &amp; Settings - VoiceLegacy</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error": "#ffffff",
+                      "surface-bright": "#fbf9f8",
+                      "surface-dim": "#dcd9d9",
+                      "on-primary-fixed-variant": "#304d3a",
+                      "surface-tint": "#486550",
+                      "surface-container": "#f0eded",
+                      "tertiary": "#8c4c34",
+                      "outline-variant": "#c2c8c1",
+                      "on-surface-variant": "#424843",
+                      "surface-container-low": "#f5f3f3",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-high": "#eae8e7",
+                      "on-secondary-fixed-variant": "#32495d",
+                      "on-error-container": "#93000a",
+                      "outline": "#727972",
+                      "error": "#ba1a1a",
+                      "on-background": "#1b1c1c",
+                      "surface": "#fbf9f8",
+                      "inverse-primary": "#aeceb5",
+                      "secondary-fixed-dim": "#b1c9e1",
+                      "background": "#fbf9f8",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed": "#cde5fe",
+                      "tertiary-fixed-dim": "#ffb59b",
+                      "tertiary-container": "#a9644b",
+                      "primary-fixed": "#caebd0",
+                      "on-tertiary-fixed-variant": "#703620",
+                      "on-secondary": "#ffffff",
+                      "on-surface": "#1b1c1c",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed": "#ffdbcf",
+                      "secondary": "#496175",
+                      "inverse-surface": "#303030",
+                      "secondary-container": "#cde5fe",
+                      "primary": "#47644f",
+                      "on-secondary-container": "#4f677c",
+                      "primary-container": "#5f7d67",
+                      "on-tertiary-fixed": "#380d00",
+                      "on-primary-fixed": "#042110",
+                      "primary-fixed-dim": "#aeceb5",
+                      "on-primary-container": "#ffffff",
+                      "inverse-on-surface": "#f2f0f0",
+                      "on-tertiary-container": "#ffffff",
+                      "on-secondary-fixed": "#021e2f",
+                      "surface-variant": "#e4e2e1",
+                      "error-container": "#ffdad6",
+                      "surface-container-highest": "#e4e2e1"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "base": "8px",
+                      "xl": "80px",
+                      "sm": "12px",
+                      "md": "24px",
+                      "margin": "32px",
+                      "gutter": "24px",
+                      "xs": "4px",
+                      "lg": "48px"
+              },
+              "fontFamily": {
+                      "label-lg": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "headline-lg": ["Plus Jakarta Sans"],
+                      "body-lg": ["Plus Jakarta Sans"],
+                      "headline-sm": ["Plus Jakarta Sans"],
+                      "body-sm": ["Plus Jakarta Sans"],
+                      "label-md": ["Plus Jakarta Sans"],
+                      "body-md": ["Plus Jakarta Sans"]
+              },
+              "fontSize": {
+                      "label-lg": ["16px", {"lineHeight": "1.2", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                      "headline-md": ["32px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "headline-lg": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["20px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "headline-sm": ["24px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                      "body-sm": ["16px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                      "label-md": ["14px", {"lineHeight": "1.2", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "body-md": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center">
+<!-- TopNavBar -->
+<header class="bg-stone-50/80 dark:bg-stone-950/80 backdrop-blur-md docked full-width top-0 sticky border-b border-stone-200/50 dark:border-stone-800/50 flat no shadows flex justify-between items-center px-8 py-4 w-full z-50">
+<div class="font-['Plus_Jakarta_Sans'] font-medium text-xl font-bold tracking-tight text-[#5F7D67] dark:text-[#7A9A83]">VoiceLegacy</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-[#5F7D67] dark:text-[#7A9A83]" data-icon="settings">settings</span>
+</div>
+</header>
+<main class="w-full max-w-[1024px] px-margin md:px-lg py-xl flex flex-col gap-lg pb-32">
+<header class="mb-md">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Profile &amp; Settings</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant mt-sm">Manage your voice identity and privacy preferences.</p>
+</header>
+<!-- Voice Status Card -->
+<section class="bg-surface-container rounded-[1.5rem] p-md md:p-lg shadow-sm border border-outline-variant/30 flex flex-col gap-md">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-[32px]" data-icon="check_circle" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Voice Status: Ready</h2>
+</div>
+<div class="flex flex-col md:flex-row gap-lg mt-sm">
+<div class="flex-1 bg-surface rounded-xl p-md">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Communication Tone</p>
+<p class="font-body-lg text-body-lg text-on-surface">Warm &amp; Empathetic</p>
+</div>
+<div class="flex-1 bg-surface rounded-xl p-md">
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider mb-xs">Last Updated</p>
+<p class="font-body-lg text-body-lg text-on-surface">October 24, 2023</p>
+</div>
+</div>
+<button class="mt-sm bg-primary hover:bg-primary-container text-on-primary font-label-lg text-label-lg min-h-[56px] rounded-full px-lg transition-colors flex items-center justify-center gap-sm self-start">
+<span class="material-symbols-outlined" data-icon="mic">mic</span>
+                Re-record Voice
+            </button>
+</section>
+<!-- Phrase Bank Summary -->
+<section class="bg-surface-container-low rounded-[1.5rem] p-md md:p-lg shadow-sm border border-outline-variant/20 flex flex-col gap-md">
+<div class="flex justify-between items-center flex-wrap gap-sm">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Phrase Bank Summary</h2>
+<button class="bg-secondary hover:bg-on-secondary-container text-on-secondary font-label-md text-label-md min-h-[48px] rounded-full px-md transition-colors flex items-center gap-sm">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+                    Export Phrase Bank
+                </button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-sm mt-sm">
+<div class="bg-surface rounded-xl p-sm flex items-center justify-between border border-outline-variant/30">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-tertiary-container" data-icon="family_home">family_home</span>
+<span class="font-body-md text-body-md text-on-surface">Family</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant bg-surface-variant px-sm py-xs rounded-full">12</span>
+</div>
+<div class="bg-surface rounded-xl p-sm flex items-center justify-between border border-outline-variant/30">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-secondary" data-icon="routine">routine</span>
+<span class="font-body-md text-body-md text-on-surface">Daily Needs</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant bg-surface-variant px-sm py-xs rounded-full">8</span>
+</div>
+<div class="bg-surface rounded-xl p-sm flex items-center justify-between border border-outline-variant/30">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-inverse-primary" data-icon="favorite">favorite</span>
+<span class="font-body-md text-body-md text-on-surface">Comfort</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant bg-surface-variant px-sm py-xs rounded-full">5</span>
+</div>
+<div class="bg-surface rounded-xl p-sm flex items-center justify-between border border-outline-variant/30">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-tertiary" data-icon="mood">mood</span>
+<span class="font-body-md text-body-md text-on-surface">Humor</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant bg-surface-variant px-sm py-xs rounded-full">4</span>
+</div>
+<div class="bg-surface rounded-xl p-sm flex items-center justify-between border border-outline-variant/30">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-error" data-icon="emergency">emergency</span>
+<span class="font-body-md text-body-md text-on-surface">Emergency</span>
+</div>
+<span class="font-label-lg text-label-lg text-on-surface-variant bg-surface-variant px-sm py-xs rounded-full">2</span>
+</div>
+</div>
+</section>
+<!-- Data & Privacy -->
+<section class="bg-error-container/20 rounded-[1.5rem] p-md md:p-lg border border-error-container/50 flex flex-col gap-md">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Data &amp; Privacy</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">Your data is private and you have full control over it.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-sm mt-sm">
+<button class="bg-surface hover:bg-error-container text-error font-label-md text-label-md min-h-[48px] rounded-full px-md transition-colors border border-error/30 flex items-center justify-center gap-sm flex-1 sm:flex-none">
+<span class="material-symbols-outlined text-[20px]" data-icon="delete">delete</span>
+                    Delete Voice Data
+                </button>
+<button class="bg-surface hover:bg-error-container text-error font-label-md text-label-md min-h-[48px] rounded-full px-md transition-colors border border-error/30 flex items-center justify-center gap-sm flex-1 sm:flex-none">
+<span class="material-symbols-outlined text-[20px]" data-icon="delete_forever">delete_forever</span>
+                    Delete All Data
+                </button>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden bg-stone-50 dark:bg-stone-950 docked full-width bottom-0 rounded-t-2xl border-t border-stone-200/60 dark:border-stone-800/60 shadow-[0_-4px_24px_rgba(0,0,0,0.04)] fixed bottom-0 w-full z-50 flex justify-around items-center px-6 pb-6 pt-3">
+<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-4 py-1 hover:text-[#5F7D67] dark:hover:text-[#7A9A83] scale-95 duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="auto_stories">auto_stories</span>
+<span class="text-[11px] font-['Plus_Jakarta_Sans'] font-semibold uppercase tracking-wider">Journal</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-4 py-1 hover:text-[#5F7D67] dark:hover:text-[#7A9A83] scale-95 duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="mic_external_on">mic_external_on</span>
+<span class="text-[11px] font-['Plus_Jakarta_Sans'] font-semibold uppercase tracking-wider">Library</span>
+</a>
+<a class="flex flex-col items-center justify-center text-stone-400 dark:text-stone-500 px-4 py-1 hover:text-[#5F7D67] dark:hover:text-[#7A9A83] scale-95 duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="settings_voice">settings_voice</span>
+<span class="text-[11px] font-['Plus_Jakarta_Sans'] font-semibold uppercase tracking-wider">Voice</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#5F7D67] dark:text-[#7A9A83] bg-[#5F7D67]/10 rounded-xl px-4 py-1 hover:text-[#5F7D67] dark:hover:text-[#7A9A83] scale-95 duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person_pin" style="font-variation-settings: 'FILL' 1;">person_pin</span>
+<span class="text-[11px] font-['Plus_Jakarta_Sans'] font-semibold uppercase tracking-wider">Profile</span>
+</a>
+</nav>
+</body></html>
