@@ -10,6 +10,7 @@ import {
   MessageSquareQuote,
   Play,
   Scissors,
+  Sparkles,
   Volume2,
   type LucideIcon,
 } from "lucide-react";
@@ -24,49 +25,56 @@ type RewriteAction =
 
 type RewriteChip = {
   id: RewriteAction;
+  mode: "warmer" | "shorter" | "sound_like_me" | "translate";
   label: string;
   description: string;
   icon: LucideIcon;
 };
 
+type RewriteResult = RewriteChip & {
+  text: string;
+};
+
 const chips: RewriteChip[] = [
   {
     id: "warmer",
+    mode: "warmer",
     label: "Make warmer",
     description: "Add warmth and emotional softness.",
     icon: HeartHandshake,
   },
   {
     id: "shorter",
+    mode: "shorter",
     label: "Make shorter",
     description: "Strip to the essential meaning.",
     icon: Scissors,
   },
   {
     id: "sound-like-me",
+    mode: "sound_like_me",
     label: "Sound like me",
     description: "Rewrite in your saved communication style.",
     icon: MessageSquareQuote,
   },
   {
     id: "translate-to-saved",
+    mode: "translate",
     label: "Translate to saved phrase",
     description: "Find the closest match in your phrase bank.",
     icon: Library,
   },
 ];
 
-const SAMPLE_PROMPT =
-  "Tell my daughter I'm really glad she came today.";
+const SAMPLE_PROMPT = "Tell my daughter I'm really glad she came today.";
 
 const rewriteResponses: Record<RewriteAction, string> = {
   warmer:
-    "My darling daughter — having you here today means more to me than I know how to say. Truly. It made my whole week.",
+    "My darling daughter, having you here today means more to me than I know how to say. Truly. It made my whole week.",
   shorter: "So glad you came today.",
   "sound-like-me":
-    "Sweetheart, I'm really glad you came by today — really glad. It meant a lot.",
-  "translate-to-saved":
-    "I love you all so much. (matched from your phrase bank)",
+    "Sweetheart, I'm really glad you came by today, really glad. It meant a lot.",
+  "translate-to-saved": "I love you all so much. (matched from your phrase bank)",
 };
 
 const REWRITE_DELAY_MS = 1000;
@@ -74,8 +82,9 @@ const PLAY_DURATION_MS = 3000;
 
 export default function SpeakPage() {
   const [text, setText] = useState(SAMPLE_PROMPT);
-  const [rewriting, setRewriting] = useState<RewriteAction | null>(null);
+  const [rewriting, setRewriting] = useState(false);
   const [activeAction, setActiveAction] = useState<RewriteAction | null>(null);
+  const [rewriteResults, setRewriteResults] = useState<RewriteResult[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [savedToBank, setSavedToBank] = useState(false);
 
@@ -89,15 +98,49 @@ export default function SpeakPage() {
     };
   }, []);
 
-  const runRewrite = async (action: RewriteAction) => {
+  const generateRewrites = async () => {
     if (rewriting) return;
-    setRewriting(action);
+    const message = text.trim();
+    if (message.length === 0) return;
+
+    setRewriting(true);
+    setRewriteResults([]);
     try {
       await new Promise((resolve) => setTimeout(resolve, REWRITE_DELAY_MS));
-      setText(rewriteResponses[action]);
-      setActiveAction(action);
+      const results = await Promise.all(
+        chips.map(async (chip) => {
+          const response = await fetch("/api/gemini/rewrite", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              message,
+              mode: chip.mode,
+              communicationStyle: "warm",
+            }),
+          });
+          if (!response.ok) {
+            throw new Error(`Failed to generate ${chip.label}.`);
+          }
+
+          const data = (await response.json()) as {
+            success: boolean;
+            rewritten?: string;
+          };
+          return {
+            ...chip,
+            text:
+              data.success && data.rewritten
+                ? data.rewritten
+                : rewriteResponses[chip.id],
+          };
+        }),
+      );
+      setRewriteResults(results);
+      setActiveAction(null);
+    } catch (error) {
+      console.error("[SpeakPage] Failed to generate rewrites:", error);
     } finally {
-      setRewriting(null);
+      setRewriting(false);
     }
   };
 
@@ -125,15 +168,21 @@ export default function SpeakPage() {
 
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-lg">
-      <header className="flex flex-col gap-sm text-center">
+      <header
+        className="animate-slidein flex flex-col gap-sm text-center"
+        style={{ animationDelay: "300ms" }}
+      >
         <h1 className="text-headline-lg text-on-surface">Speak For Me</h1>
         <p className="mx-auto max-w-2xl text-body-lg text-on-surface-variant">
-          Type what you'd like to say. Reshape it in your own voice, then play
-          it back in your preserved sound.
+          Type what you&apos;d like to say. Reshape it in your own voice, then
+          play it back in your preserved sound.
         </p>
       </header>
 
-      <article className="flex flex-col gap-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-md shadow-ambient md:p-lg">
+      <article
+        className="animate-slidein flex flex-col gap-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-md shadow-ambient md:p-lg"
+        style={{ animationDelay: "500ms" }}
+      >
         <label htmlFor="speak-input" className="sr-only">
           What do you want to say?
         </label>
@@ -143,6 +192,7 @@ export default function SpeakPage() {
           onChange={(event) => {
             setText(event.target.value);
             setActiveAction(null);
+            setRewriteResults([]);
           }}
           placeholder="What do you want to say?"
           rows={4}
@@ -154,59 +204,74 @@ export default function SpeakPage() {
           )}
         />
 
-        <div
-          role="group"
-          aria-label="Rewrite suggestions"
-          className="grid grid-cols-1 gap-sm sm:grid-cols-2"
-        >
-          {chips.map((chip) => {
-            const Icon = chip.icon;
-            const isLoading = rewriting === chip.id;
-            const isActive = activeAction === chip.id;
-            return (
-              <button
-                key={chip.id}
-                type="button"
-                onClick={() => void runRewrite(chip.id)}
-                disabled={rewriting !== null}
-                aria-busy={isLoading}
-                aria-pressed={isActive}
-                className={cn(
-                  "group flex items-start gap-sm rounded-xl border p-sm text-left transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-lowest",
-                  isActive
-                    ? "border-primary bg-primary-fixed/40 text-on-primary-fixed"
-                    : "border-outline-variant/50 bg-surface-container-low text-on-surface hover:border-primary/50 hover:bg-primary-fixed/15",
-                  rewriting !== null && !isLoading && "opacity-60",
-                )}
-              >
-                <span
-                  className={cn(
-                    "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors",
-                    isActive
-                      ? "bg-primary text-on-primary"
-                      : "bg-primary-fixed text-on-primary-fixed",
-                  )}
-                  aria-hidden="true"
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <Icon className="h-5 w-5" />
-                  )}
-                </span>
-                <span className="flex flex-col gap-xs">
-                  <span className="text-label-lg">
-                    {isLoading ? "Rewriting…" : chip.label}
-                  </span>
-                  <span className="text-body-sm text-on-surface-variant">
-                    {chip.description}
-                  </span>
-                </span>
-              </button>
-            );
-          })}
+        <div className="flex justify-end">
+          <Button
+            variant="outline"
+            size="md"
+            leftIcon={
+              rewriting ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Sparkles className="h-5 w-5" />
+              )
+            }
+            onClick={() => void generateRewrites()}
+            disabled={rewriting || text.trim().length === 0}
+            aria-busy={rewriting}
+          >
+            {rewriting ? "Rewriting..." : "Generate rewrites"}
+          </Button>
         </div>
+
+        {rewriteResults.length > 0 ? (
+          <div
+            role="group"
+            aria-label="Gemini rewrite results"
+            className="grid grid-cols-1 gap-sm sm:grid-cols-2"
+          >
+            {rewriteResults.map((result, index) => {
+              const Icon = result.icon;
+              const isActive = activeAction === result.id;
+              return (
+                <button
+                  key={result.id}
+                  type="button"
+                  onClick={() => {
+                    setText(result.text);
+                    setActiveAction(result.id);
+                  }}
+                  aria-pressed={isActive}
+                  className={cn(
+                    "animate-slidein group flex items-start gap-sm rounded-xl border p-sm text-left transition-colors",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-lowest",
+                    isActive
+                      ? "border-primary bg-primary-fixed/40 text-on-primary-fixed"
+                      : "border-outline-variant/50 bg-surface-container-low text-on-surface hover:border-primary/50 hover:bg-primary-fixed/15",
+                  )}
+                  style={{ animationDelay: `${300 + index * 200}ms` }}
+                >
+                  <span
+                    className={cn(
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors",
+                      isActive
+                        ? "bg-primary text-on-primary"
+                        : "bg-primary-fixed text-on-primary-fixed",
+                    )}
+                    aria-hidden="true"
+                  >
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span className="flex flex-col gap-xs">
+                    <span className="text-label-lg">{result.label}</span>
+                    <span className="text-body-sm text-on-surface-variant">
+                      {result.text}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
       </article>
 
       <div className="relative flex flex-col items-center gap-md">
@@ -250,7 +315,7 @@ export default function SpeakPage() {
           )}
         >
           {isPlaying
-            ? "Playing audio in your preserved voice…"
+            ? "Playing audio in your preserved voice..."
             : canPlay
               ? "Tap play to hear it in your voice."
               : "Type something above, then play it back."}
