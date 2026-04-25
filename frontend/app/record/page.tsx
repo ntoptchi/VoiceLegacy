@@ -259,7 +259,7 @@ export default function RecordPage() {
           Your voice is preserved.
         </h1>
         <p className="max-w-prose text-body-lg text-on-surface-variant">
-          We&apos;ve safely uploaded your recordings and created your private voice
+          We've safely uploaded your recordings and created your private voice
           prototype. You can now build your phrase bank and speak in your own
           voice.
         </p>

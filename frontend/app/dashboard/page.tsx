@@ -90,7 +90,7 @@ export default function DashboardPage() {
           Profile &amp; Settings
         </h1>
         <p className="max-w-2xl text-body-lg text-on-surface-variant">
-          Manage your voice identity, review what you&apos;ve saved, and control
+          Manage your voice identity, review what you've saved, and control
           your privacy preferences.
         </p>
       </header>
@@ -186,7 +186,7 @@ export default function DashboardPage() {
             </h2>
             <p className="text-body-sm text-on-surface-variant">
               Your data is private. You have full control to remove your voice
-              clone, your phrase bank, or everything we&apos;ve stored for you.
+              clone, your phrase bank, or everything we've stored for you.
             </p>
           </div>
         </div>

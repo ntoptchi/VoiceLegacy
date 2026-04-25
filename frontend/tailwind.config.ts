@@ -65,25 +65,22 @@ const config: Config = {
         "on-error-container": "#93000a",
       },
       fontFamily: {
-        sans: ["var(--font-voicelegacy-sans)", "system-ui", "sans-serif"],
+        sans: ["var(--font-plus-jakarta-sans)", "system-ui", "sans-serif"],
       },
       fontSize: {
         "headline-lg": [
-          "clamp(2rem, 6vw, 2.5rem)",
+          "40px",
           { lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "700" },
         ],
         "headline-md": [
-          "clamp(1.625rem, 5vw, 2rem)",
+          "32px",
           { lineHeight: "1.3", letterSpacing: "-0.01em", fontWeight: "600" },
         ],
         "headline-sm": [
-          "clamp(1.25rem, 4vw, 1.5rem)",
+          "24px",
           { lineHeight: "1.4", fontWeight: "600" },
         ],
-        "body-lg": [
-          "clamp(1.0625rem, 3vw, 1.25rem)",
-          { lineHeight: "1.6", fontWeight: "400" },
-        ],
+        "body-lg": ["20px", { lineHeight: "1.6", fontWeight: "400" }],
         "body-md": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
         "body-sm": ["16px", { lineHeight: "1.5", fontWeight: "400" }],
         "label-lg": [

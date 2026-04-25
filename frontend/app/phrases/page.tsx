@@ -461,7 +461,7 @@ function EmptyState({ favoritesOnly }: { favoritesOnly: boolean }) {
           ? "No favorites in this view yet."
           : "Nothing here yet."}
       </p>
-      <p className="max-w-prose text-body-sm text-on-surface-variant">
+      <p className="max-w-md text-body-sm text-on-surface-variant">
         {favoritesOnly
           ? "Tap the star on any phrase to keep it close at hand."
           : "Switch categories or ask the assistant to suggest a few starter phrases."}
