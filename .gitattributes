@@ -1,0 +1,32 @@
+ # Author: C-Kuzy
+ # Description: Defining use of my '.gitattributes' file languages
+ #
+ #        This defines all attributes for Git/Github behavior, including:
+ #
+ #        #1. - Scanning imported documents in this repository for HTML files and written code
+ #        #2. - Ignoring the 'existence' of files using 'programming language(s)' undefined from the current project
+ #        #3. - Ensuring no overlap of existing code files for seamless repository organization
+ #        #4. - Template for other customzied repositories
+
+ # Applying Necessary Programming Language Ignores for the current Repository
+ # Current Repository: HackABull/[Project Name]/gitattributes
+ # CURRENT ACTIVE FILE REFERENCE
+
+ "Files This Repository Wants to Detect:"
+  *.ts linguist-detectable=true
+  *.py linguist-detectable=true
+  *.js linguist-detectable=true
+  
+  # --> For any file types we want to Track (Template)
+  *.-- lingust-detectable=true
+
+ "Files This Repository is Restricting:"
+  *.txt linguist-detectable=false
+  *.md linguist-detectable=false
+  *.png linguist-detectable=false
+  *.jpg lingguist-detectable=false
+  *.gif linguist-detectable=false
+  *.pdf linguist-detectable=false
+  
+  # --> For any file types we want to Track (Template)
+  *.-- lingust-detectable=false
