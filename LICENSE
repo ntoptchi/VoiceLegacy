@@ -1,0 +1,122 @@
+End User License Agreement (EULA)
+
+Copyright (c) April 2026
+
+Creator: Connor Kouznetsov ("Kuzy")
+Creator: Nicholas Toptchi ("Nick")
+Creator: Amrit Selva Ganesh
+Creator: Jackson Bopp
+
+All rights Reserved & Retained
+
+------------------------------------------------------------
+
+1. Grant of License
+
+Subject to the terms and conditions of this Agreement, VoiceLegacy Solutions hereby grants you a
+non-exclusive, worldwide, royalty-free license to use, copy, modify, merge, publish,
+distribute, and sublicense the Software, including for open-source and commercial purposes.
+
+------------------------------------------------------------
+
+2. Attribution Requirement (Mandatory)
+
+Any use, redistribution, modification, or derivative work of the Software must include
+clear and visible attribution to the original author and licensor:
+
+"Original software © 2026-2027 (VoiceLegacy Solutions Solutions).
+Used under the VoiceLegacy Solutions License."
+
+This attribution must appear in:
+- Source files
+- Documentation
+- License or NOTICE files
+- End-user or distribution materials (where applicable)
+
+Attribution may not be removed, obscured, minimized, or replaced.
+
+------------------------------------------------------------
+
+3. Source File Header Requirement
+
+All source files containing any portion of the Software must include the following
+short-form header at the top of each file, or an equivalent clearly visible notice:
+
+"© 2026 VoiceLegacy Solutions
+Licensed under the VoiceLegacy Solutions EULA. Attribution required."
+
+Failure to include this header (or an equivalent notice) constitutes a violation of
+this Agreement.
+
+------------------------------------------------------------
+
+4. Open-Source Compatibility
+
+This Software may be incorporated into open-source projects, provided that:
+- Attribution to VoiceLegacy Solutions is preserved as described in Sections 2 and 3
+- This license text remains included with the distributed Software
+- No claim of original authorship is made over the portions created by VoiceLegacy Solutions
+
+------------------------------------------------------------
+
+5. Substantial Use Threshold (75% Rule)
+
+If an individual, organization, or entity directly uses, copies, or derives
+more than seventy-five percent (75%) of the original Software’s codebase,
+logic, or structure—whether modified or unmodified—they must contact
+VoiceLegacy Solutions directly to obtain explicit written permission or a separate
+licensing agreement.
+
+Failure to do so constitutes a violation of this Agreement and results in
+immediate termination of all rights granted herein.
+
+------------------------------------------------------------
+
+6. Restrictions
+
+You may not:
+- Claim authorship or ownership of the original Software
+- Remove or alter copyright, attribution, or license notices
+- Use the Software for unlawful or malicious purposes
+- Circumvent the attribution or substantial use requirements of this Agreement
+
+------------------------------------------------------------
+
+7. Disclaimer of Warranty
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE, AND NON-INFRINGEMENT.
+
+------------------------------------------------------------
+
+8. Limitation of Liability
+
+IN NO EVENT SHALL VoiceLegacy Solutions, THE AUTHOR, OR CONTRIBUTORS BE LIABLE FOR ANY CLAIM,
+DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE,
+ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE.
+
+------------------------------------------------------------
+
+9. Termination
+
+This license automatically terminates if you fail to comply with any of its terms,
+including attribution requirements, source file header requirements, or the
+substantial use threshold. Upon termination, all rights granted under this
+Agreement cease immediately and are no longer accessible to the user.
+
+------------------------------------------------------------
+
+10. CONTACT:
+
+For any inquiries regarding issues with the application, inability to access
+specific features, or UI/UX bugs, please contact:
+
+- Connor Kouznetsov ("Kuzy")
+  - Role: Software Engineer (Backend)
+  - Email: c.kuzy92@gmail.com
+
+- Nicholas Toptchi ("Nick")
+  - Role: Software Engineer LEAD
+  - Email: [Please add Nicholas's preferred support email]
