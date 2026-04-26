@@ -117,8 +117,15 @@ export default function DashboardPage() {
     URL.revokeObjectURL(url);
   };
 
-  const handleDeleteAll = () => {
+  const handleDeleteAll = async () => {
     if (!confirm("Delete all your data? This cannot be undone.")) return;
+    if (userId) {
+      try {
+        await fetch(`/api/user/${userId}`, { method: "DELETE" });
+      } catch {
+        // best-effort server-side delete
+      }
+    }
     clearSession();
     router.replace("/");
   };

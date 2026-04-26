@@ -61,6 +61,25 @@ function extensionForMime(mime: string | undefined): string {
   return "webm";
 }
 
+const POLL_INTERVAL_MS = 2000;
+const POLL_MAX_ATTEMPTS = 30;
+
+async function pollVoiceStatus(userId: string): Promise<string | null> {
+  for (let i = 0; i < POLL_MAX_ATTEMPTS; i++) {
+    await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
+    try {
+      const res = await fetch(`/api/voice/status/${userId}`);
+      const data = await res.json().catch(() => ({}));
+      if (data.voiceStatus === "ready" && data.voiceId) {
+        return data.voiceId as string;
+      }
+    } catch {
+      // retry
+    }
+  }
+  return null;
+}
+
 export default function RecordPage() {
   const router = useRouter();
   const userId = useRequireUser();
@@ -245,9 +264,15 @@ export default function RecordPage() {
       if (returnedVoiceId) {
         setVoiceId(returnedVoiceId);
         persistVoiceId(returnedVoiceId);
+        setRecordingState("done");
+      } else {
+        const polled = await pollVoiceStatus(userId);
+        if (polled) {
+          setVoiceId(polled);
+          persistVoiceId(polled);
+        }
+        setRecordingState("done");
       }
-
-      setRecordingState("done");
     } catch (err) {
       console.error("[record] submit failed", err);
       setError(

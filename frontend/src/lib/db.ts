@@ -161,6 +161,21 @@ export async function createPhrase(input: {
   return doc;
 }
 
+export async function deleteUser(id: ObjectId): Promise<boolean> {
+  if (env.MOCK_DB) {
+    const existed = getMockStore().users.delete(id.toHexString());
+    for (const [key, phrase] of getMockStore().phrases) {
+      if (phrase.userId.equals(id)) getMockStore().phrases.delete(key);
+    }
+    return existed;
+  }
+  const phraseCol = await phrasesCollection();
+  await phraseCol.deleteMany({ userId: id });
+  const userCol = await usersCollection();
+  const result = await userCol.deleteOne({ _id: id });
+  return result.deletedCount === 1;
+}
+
 export async function deletePhrase(
   phraseId: ObjectId,
   userId: ObjectId,

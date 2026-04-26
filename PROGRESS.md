@@ -55,7 +55,7 @@ documented `{ success, ... }` shape. All were smoke-tested with the four
 
 - [ ] Verify each route against **real** ElevenLabs / Gemini / Mongo (only the mock paths are exercised so far)
 - [ ] `DELETE /api/voice/:id` or equivalent for "Delete voice data" on the dashboard
-- [ ] `DELETE /api/user/:id` (cascade-delete phrases) for "Delete all data"
+- [x] `DELETE /api/user/:id` (cascade-delete phrases) for "Delete all data"
 - [ ] Phrase favorite-toggle endpoint (`PATCH /api/phrases/[id]`) — plan says "Mark favorites" on `/phrases`
 - [ ] Phrase bank export (`GET /api/phrases/[id]/export?format=json|pdf`) — plan calls for JSON + PDF export
 - [ ] Mongo indexes (`users._id` is automatic; add `phrases.userId` + `phrases.category`)
@@ -86,16 +86,26 @@ visitors to onboarding.
 - [x] Wire `/speak` to Gemini rewrite + ElevenLabs TTS + phrase save
 - [x] Wire `/dashboard` to user fetch, phrase counts, export, and delete-all
 - [x] Loading + error states for every API call
-- [ ] Mobile pass — judges may demo on phones
+- [x] Mobile pass — Navbar has bottom nav for mobile; pages use responsive grid/flex layouts
+- [x] Voice-status polling added to `/record` after upload (polls `GET /api/voice/status/[id]` until ready)
+- [x] Dashboard "Delete all data" calls `DELETE /api/user/[id]` before clearing session
 
 ---
 
 ## 5. Demo readiness (per the plan's "Hours 18–24" block)
 
-- [ ] Pre-load a demo account with 10–15 banked phrases
+- [x] Pre-load a demo account with 14 banked phrases (`npx tsx scripts/seed-demo.ts`)
 - [ ] Practice the 5-minute demo flow end to end (consent → record → save → speak → save)
-- [ ] Prepare the one-liner pitch
-- [ ] Prepare the answer to "how is this different from just using ElevenLabs directly?"
+- [x] One-liner pitch prepared (see below)
+- [x] "How is this different?" answer prepared (see below)
+
+### Pitch
+
+> VoiceLegacy lets people preserve their natural voice, words, and phrases before speech loss — so they can always communicate in a way that sounds and feels like them.
+
+### "How is this different from just using ElevenLabs directly?"
+
+> ElevenLabs gives you a voice clone. VoiceLegacy gives you a **communication toolkit**: phrase bank, AI rewording in your tone, category-organized expressions, and one-tap playback — all built around the idea that *what* you say matters as much as *how* you sound. It is purpose-built for people facing speech loss, not a generic TTS playground.
 
 ---
 
