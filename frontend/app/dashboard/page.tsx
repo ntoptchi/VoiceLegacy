@@ -22,8 +22,8 @@ import {
   COMMUNICATION_STYLES,
   type CommunicationStyle,
 } from "@/lib/types";
+import { useClerk } from "@clerk/nextjs";
 import { useRequireUser } from "@/lib/useRequireUser";
-import { clearSession, getVoiceId } from "@/lib/userSession";
 
 type Category =
   | "family"
@@ -84,7 +84,9 @@ const toneLabels: Record<CommunicationStyle, string> = {
 
 export default function DashboardPage() {
   const router = useRouter();
-  const userId = useRequireUser();
+  const { signOut } = useClerk();
+  const appUser = useRequireUser();
+  const userId = appUser?.id ?? null;
 
   const [voiceStatus, setVoiceStatus] = useState<string>("unknown");
   const [voiceId, setVoiceId] = useState<string | null>(null);
@@ -108,7 +110,7 @@ export default function DashboardPage() {
         const userData = await userRes.json();
         if (userData.success && userData.user) {
           setVoiceStatus(userData.user.voiceStatus ?? "none");
-          setVoiceId(userData.user.voiceId ?? getVoiceId());
+          setVoiceId(userData.user.voiceId ?? null);
           setCommunicationStyle(userData.user.communicationStyle ?? null);
         }
       }
@@ -167,13 +169,10 @@ export default function DashboardPage() {
     try {
       const res = await fetch("/api/voice/delete", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
       });
       if (res.ok) {
         setVoiceId(null);
         setVoiceStatus("none");
-        localStorage.removeItem("voicelegacy_voiceId");
       }
     } catch {
       // best-effort
@@ -189,8 +188,7 @@ export default function DashboardPage() {
         // best-effort server-side delete
       }
     }
-    clearSession();
-    router.replace("/");
+    await signOut({ redirectUrl: "/" });
   };
 
   const handleRerecord = () => {

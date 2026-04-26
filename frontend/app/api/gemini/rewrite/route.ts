@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { jsonError, jsonOk, readJsonBody } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
 import { GeminiError, rewriteMessage } from "@/lib/gemini";
 import {
   COMMUNICATION_STYLES,
@@ -18,6 +19,9 @@ type RewriteBody = {
 };
 
 export async function POST(request: NextRequest) {
+  const authResult = await requireAuth();
+  if (!authResult.ok) return authResult.response;
+
   const body = await readJsonBody<RewriteBody>(request);
   if (!body.ok) return body.response;
 

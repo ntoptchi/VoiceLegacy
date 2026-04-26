@@ -16,7 +16,6 @@ import {
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { useRequireUser } from "@/lib/useRequireUser";
-import { getCommunicationStyle, getVoiceId } from "@/lib/userSession";
 
 type RewriteAction = "warmer" | "shorter" | "sound_like_me" | "translate";
 
@@ -55,7 +54,7 @@ const chips: RewriteChip[] = [
 ];
 
 export default function SpeakPage() {
-  const userId = useRequireUser();
+  const appUser = useRequireUser();
   const [text, setText] = useState("");
   const [rewriting, setRewriting] = useState<RewriteAction | null>(null);
   const [activeAction, setActiveAction] = useState<RewriteAction | null>(null);
@@ -91,7 +90,7 @@ export default function SpeakPage() {
     setRewriting(action);
     setError(null);
 
-    const communicationStyle = getCommunicationStyle() ?? "warm";
+    const communicationStyle = appUser?.communicationStyle ?? "warm";
 
     try {
       const res = await fetch("/api/gemini/rewrite", {
@@ -122,7 +121,7 @@ export default function SpeakPage() {
   const handlePlay = async () => {
     if (isPlaying || isLoadingAudio || text.trim().length === 0) return;
 
-    const voiceId = getVoiceId();
+    const voiceId = appUser?.voiceId;
     if (!voiceId) {
       setError("No voice clone found. Please record your voice first.");
       return;
@@ -170,7 +169,7 @@ export default function SpeakPage() {
   };
 
   const handleSaveToBank = async () => {
-    if (text.trim().length === 0 || !userId) return;
+    if (text.trim().length === 0 || !appUser) return;
     setSavedToBank(false);
     setError(null);
 
@@ -179,7 +178,6 @@ export default function SpeakPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId,
           category: "personal",
           text: text.trim(),
         }),
@@ -204,7 +202,7 @@ export default function SpeakPage() {
   const canPlay = text.trim().length > 0 && !isPlaying && !isLoadingAudio;
   const canSave = text.trim().length > 0 && !savedToBank;
 
-  if (!userId) return null;
+  if (!appUser) return null;
 
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-lg">

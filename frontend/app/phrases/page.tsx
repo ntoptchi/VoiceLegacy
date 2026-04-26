@@ -119,7 +119,8 @@ function makeId() {
 }
 
 export default function PhrasesPage() {
-  const userId = useRequireUser();
+  const appUser = useRequireUser();
+  const userId = appUser?.id ?? null;
   const [phrases, setPhrases] = useState<Phrase[]>([]);
   const [activeFilter, setActiveFilter] = useState<Category | "all">("all");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
@@ -196,7 +197,7 @@ export default function PhrasesPage() {
     fetch(`/api/phrases/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, isFavorite: next }),
+      body: JSON.stringify({ isFavorite: next }),
     }).catch(() => {
       setPhrases((prev) =>
         prev.map((phrase) =>
@@ -212,8 +213,6 @@ export default function PhrasesPage() {
     try {
       await fetch(`/api/phrases/${id}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId }),
       });
     } catch {
       void fetchPhrases();
@@ -234,7 +233,7 @@ export default function PhrasesPage() {
       const res = await fetch("/api/phrases", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, category, text }),
+        body: JSON.stringify({ category, text }),
       });
       const data = await res.json().catch(() => ({}));
       if (res.ok && data.success && data.phrase) {
