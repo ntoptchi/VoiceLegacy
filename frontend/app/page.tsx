@@ -52,7 +52,7 @@ export default function LandingPage() {
               variant="primary"
               size="lg"
               rightIcon={<ArrowRight className="h-5 w-5" aria-hidden="true" />}
-              className="text-lg hover:!text-white hover:[&_svg]:!text-white"
+              className="landing-cta text-lg"
             >
               Record your voice - free
             </Button>

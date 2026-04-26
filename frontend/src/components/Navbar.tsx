@@ -139,7 +139,11 @@ export function Navbar() {
                 </Button>
               </SignInButton>
               <SignUpButton mode="modal">
-                <Button variant="primary" size="sm">
+                <Button
+                  variant="tertiary"
+                  size="sm"
+                  className="bg-[#dcefdc] text-[#244f32] shadow-[0_8px_18px_rgba(71,100,79,0.16)] hover:bg-[#c6e6c8] hover:text-[#183d25]"
+                >
                   Sign up
                 </Button>
               </SignUpButton>
