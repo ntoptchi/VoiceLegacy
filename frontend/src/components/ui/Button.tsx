@@ -21,7 +21,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary text-on-primary hover:bg-primary-container disabled:bg-surface-variant disabled:text-on-surface-variant disabled:opacity-70",
+    "bg-primary text-white hover:bg-primary-container hover:text-white disabled:bg-surface-variant disabled:text-on-surface-variant disabled:opacity-70",
   secondary:
     "bg-secondary text-on-secondary hover:bg-on-secondary-container disabled:opacity-60",
   tertiary:
@@ -63,6 +63,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled}
         className={cn(
           "inline-flex items-center justify-center gap-sm rounded-full font-semibold tracking-[0.02em]",
+          "text-center leading-tight",
           "transition-colors duration-200 active:scale-[0.98]",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
           "disabled:cursor-not-allowed",

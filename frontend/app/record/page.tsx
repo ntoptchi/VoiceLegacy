@@ -386,13 +386,14 @@ export default function RecordPage() {
         className="animate-slidein flex flex-col items-center gap-md"
         style={{ animationDelay: "700ms" }}
       >
-        <div className="flex items-center justify-between gap-md">
+        <div className="grid w-full grid-cols-2 items-center gap-sm sm:grid-cols-[1fr_auto_1fr] sm:gap-md">
           <Button
             variant="ghost"
             size="lg"
             leftIcon={<ArrowLeft className="h-5 w-5" aria-hidden="true" />}
             onClick={() => goToPhrase(phraseIndex - 1)}
             disabled={phraseIndex === 0 || isRecording || isProcessing}
+            className="justify-self-start px-md sm:px-xl"
           >
             Previous
           </Button>
@@ -404,57 +405,59 @@ export default function RecordPage() {
               leftIcon={<Sparkles className="h-5 w-5" aria-hidden="true" />}
               onClick={() => void submitRecordings()}
               disabled={isProcessing}
-              className="px-lg"
+              className="order-first col-span-2 w-full justify-self-center px-lg sm:order-none sm:col-span-1 sm:w-auto sm:min-w-[260px] sm:px-xl"
             >
               {isProcessing ? "Creating clone…" : "Create My Voice Clone"}
             </Button>
           ) : (
-            <div className="relative flex items-center justify-center">
-              {isRecording ? (
-                <>
-                  <span
-                    className="absolute inset-0 -m-2 animate-ping rounded-full bg-error/30"
-                    aria-hidden="true"
-                  />
-                  <span
-                    className="absolute inset-0 -m-4 animate-pulse rounded-full bg-error/15"
-                    aria-hidden="true"
-                  />
-                </>
-              ) : null}
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={handleRecordToggle}
-                disabled={isProcessing}
-                aria-label={
-                  isRecording
-                    ? "Stop recording"
-                    : currentPhraseRecorded
-                      ? "Re-record this phrase"
-                      : "Start recording"
-                }
-                aria-pressed={isRecording}
-                className={cn(
-                  "relative z-10 h-24 w-24 min-h-0 gap-0 rounded-full border-4 border-surface px-0 shadow-ambient",
-                  isRecording &&
-                    "bg-error text-on-error hover:bg-error/90 focus-visible:ring-error",
-                  !isRecording &&
-                    currentPhraseRecorded &&
-                    "bg-primary-container",
-                )}
-              >
+            <div className="order-first col-span-2 flex justify-center sm:order-none sm:col-span-1">
+              <div className="relative flex items-center justify-center">
                 {isRecording ? (
-                  <Square
-                    className="h-8 w-8 fill-current"
-                    aria-hidden="true"
-                  />
-                ) : currentPhraseRecorded ? (
-                  <RotateCcw className="h-8 w-8" aria-hidden="true" />
-                ) : (
-                  <Mic className="h-9 w-9" aria-hidden="true" />
-                )}
-              </Button>
+                  <>
+                    <span
+                      className="absolute inset-0 -m-2 animate-ping rounded-full bg-error/30"
+                      aria-hidden="true"
+                    />
+                    <span
+                      className="absolute inset-0 -m-4 animate-pulse rounded-full bg-error/15"
+                      aria-hidden="true"
+                    />
+                  </>
+                ) : null}
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={handleRecordToggle}
+                  disabled={isProcessing}
+                  aria-label={
+                    isRecording
+                      ? "Stop recording"
+                      : currentPhraseRecorded
+                        ? "Re-record this phrase"
+                        : "Start recording"
+                  }
+                  aria-pressed={isRecording}
+                  className={cn(
+                    "relative z-10 h-24 w-24 min-h-0 gap-0 rounded-full border-4 border-surface px-0 shadow-ambient",
+                    isRecording &&
+                      "bg-error text-on-error hover:bg-error/90 focus-visible:ring-error",
+                    !isRecording &&
+                      currentPhraseRecorded &&
+                      "bg-primary-container",
+                  )}
+                >
+                  {isRecording ? (
+                    <Square
+                      className="h-8 w-8 fill-current"
+                      aria-hidden="true"
+                    />
+                  ) : currentPhraseRecorded ? (
+                    <RotateCcw className="h-8 w-8" aria-hidden="true" />
+                  ) : (
+                    <Mic className="h-9 w-9" aria-hidden="true" />
+                  )}
+                </Button>
+              </div>
             </div>
           )}
 
@@ -466,6 +469,7 @@ export default function RecordPage() {
             disabled={
               phraseIndex === totalPhrases - 1 || isRecording || isProcessing
             }
+            className="justify-self-end px-md sm:px-xl"
           >
             Next
           </Button>
