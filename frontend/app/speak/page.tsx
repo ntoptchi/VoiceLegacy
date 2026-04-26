@@ -301,9 +301,12 @@ export default function SpeakPage() {
           )}
         >
           {isPlaying ? (
-            <Volume2 className="h-10 w-10 animate-pulse" aria-hidden="true" />
+            <Volume2
+              className="h-10 w-10 animate-pulse text-[#fff8ed]"
+              aria-hidden="true"
+            />
           ) : (
-            <Mic className="h-10 w-10" aria-hidden="true" />
+            <Mic className="h-10 w-10 text-[#fff8ed]" aria-hidden="true" />
           )}
         </Button>
 

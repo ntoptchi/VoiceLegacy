@@ -401,7 +401,9 @@ export default function RecordPage() {
             <Button
               variant="primary"
               size="lg"
-              leftIcon={<Mic className="h-5 w-5" aria-hidden="true" />}
+              leftIcon={
+                <Mic className="h-5 w-5 text-[#fff8ed]" aria-hidden="true" />
+              }
               onClick={() => void submitRecordings()}
               disabled={isProcessing}
               className="order-first col-span-2 w-full justify-self-center px-lg sm:order-none sm:col-span-1 sm:w-auto sm:min-w-[260px] sm:px-xl"
@@ -453,7 +455,10 @@ export default function RecordPage() {
                   ) : currentPhraseRecorded ? (
                     <RotateCcw className="h-8 w-8" aria-hidden="true" />
                   ) : (
-                    <Mic className="h-9 w-9" aria-hidden="true" />
+                    <Mic
+                      className="h-9 w-9 text-[#fff8ed]"
+                      aria-hidden="true"
+                    />
                   )}
                 </Button>
               </div>
