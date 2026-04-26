@@ -302,11 +302,11 @@ export default function SpeakPage() {
         >
           {isPlaying ? (
             <Volume2
-              className="h-10 w-10 animate-pulse text-on-primary"
+              className="h-10 w-10 animate-pulse text-[#fff8ed]"
               aria-hidden="true"
             />
           ) : (
-            <Mic className="h-10 w-10 text-on-primary" aria-hidden="true" />
+            <Mic className="h-10 w-10 text-[#fff8ed]" aria-hidden="true" />
           )}
         </Button>
 

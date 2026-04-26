@@ -402,7 +402,7 @@ export default function RecordPage() {
               variant="primary"
               size="lg"
               leftIcon={
-                <Mic className="h-5 w-5 text-on-primary" aria-hidden="true" />
+                <Mic className="h-5 w-5 text-[#fff8ed]" aria-hidden="true" />
               }
               onClick={() => void submitRecordings()}
               disabled={isProcessing}
@@ -456,7 +456,7 @@ export default function RecordPage() {
                     <RotateCcw className="h-8 w-8" aria-hidden="true" />
                   ) : (
                     <Mic
-                      className="h-9 w-9 text-on-primary"
+                      className="h-9 w-9 text-[#fff8ed]"
                       aria-hidden="true"
                     />
                   )}
