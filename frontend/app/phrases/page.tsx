@@ -69,7 +69,7 @@ const initialPhrases: Phrase[] = [
     id: "p-1",
     text: "I love you all so much.",
     category: "family",
-    isFavorite: true,
+    isFavorite: false,
   },
   {
     id: "p-2",
@@ -81,7 +81,7 @@ const initialPhrases: Phrase[] = [
     id: "p-3",
     text: "You are my whole world.",
     category: "family",
-    isFavorite: true,
+    isFavorite: false,
   },
   {
     id: "p-4",
@@ -105,7 +105,7 @@ const initialPhrases: Phrase[] = [
     id: "p-7",
     text: "Everything is going to be alright.",
     category: "comfort",
-    isFavorite: true,
+    isFavorite: false,
   },
   {
     id: "p-8",
@@ -254,7 +254,7 @@ export default function PhrasesPage() {
       <div
         role="tablist"
         aria-label="Filter phrases by category"
-        className="animate-slidein flex flex-wrap items-center gap-xs"
+        className="animate-slidein flex flex-wrap items-center gap-sm"
         style={{ animationDelay: "500ms" }}
       >
         <FilterTab
@@ -277,7 +277,7 @@ export default function PhrasesPage() {
           onClick={() => setFavoritesOnly((prev) => !prev)}
           aria-pressed={favoritesOnly}
           className={cn(
-            "ml-auto flex items-center gap-xs rounded-full px-md py-xs text-label-md transition-colors",
+            "flex min-h-[44px] items-center gap-xs whitespace-nowrap rounded-full px-md py-xs text-label-md transition-colors",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             favoritesOnly
               ? "bg-tertiary text-on-tertiary"
@@ -359,7 +359,7 @@ function FilterTab({
       aria-selected={isActive}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-xs rounded-full px-md py-xs text-label-md transition-colors",
+        "flex min-h-[44px] items-center gap-xs whitespace-nowrap rounded-full px-md py-xs text-label-md transition-colors",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         isActive
           ? "bg-primary text-on-primary"
