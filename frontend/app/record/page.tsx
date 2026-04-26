@@ -446,13 +446,16 @@ export default function RecordPage() {
               >
                 {isRecording ? (
                   <Square
-                    className="h-8 w-8 fill-current"
+                    className="h-8 w-8 fill-current text-white"
                     aria-hidden="true"
                   />
                 ) : currentPhraseRecorded ? (
-                  <RotateCcw className="h-8 w-8" aria-hidden="true" />
+                  <RotateCcw
+                    className="h-8 w-8 text-white"
+                    aria-hidden="true"
+                  />
                 ) : (
-                  <Mic className="h-9 w-9" aria-hidden="true" />
+                  <Mic className="h-9 w-9 text-white" aria-hidden="true" />
                 )}
               </Button>
             </div>
