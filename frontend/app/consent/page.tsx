@@ -103,12 +103,28 @@ export default function ConsentPage() {
     }
   };
 
+  const stepNumber = (n: number, done: boolean) => (
+    <span
+      className={cn(
+        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors",
+        done
+          ? "bg-primary text-on-primary"
+          : "bg-surface-container-high text-on-surface-variant",
+      )}
+    >
+      {done ? <Check className="h-4 w-4" /> : n}
+    </span>
+  );
+
   return (
     <form
       onSubmit={handleSubmit}
       className="mx-auto flex w-full max-w-3xl flex-col gap-6 rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-4 shadow-ambient sm:p-6 md:gap-lg md:p-lg"
     >
-      <header className="flex flex-col gap-sm text-center">
+      <header className="flex flex-col items-center gap-sm text-center">
+        <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <Lock className="h-8 w-8" aria-hidden="true" />
+        </span>
         <h1
           className="animate-slidein text-3xl font-bold leading-tight text-on-surface md:text-headline-lg"
           style={{ animationDelay: "300ms" }}
@@ -122,6 +138,24 @@ export default function ConsentPage() {
           Agree to our privacy terms and tell us about your communication style
           so we can personalize your experience.
         </p>
+
+        {/* Step indicators */}
+        <div className="animate-slidein mt-sm flex items-center gap-sm" style={{ animationDelay: "600ms" }}>
+          <div className="flex items-center gap-xs">
+            {stepNumber(1, consent)}
+            <span className={cn("text-label-md", consent ? "text-primary" : "text-on-surface-variant")}>Privacy</span>
+          </div>
+          <div className="h-px w-6 bg-outline-variant" />
+          <div className="flex items-center gap-xs">
+            {stepNumber(2, tone !== null)}
+            <span className={cn("text-label-md", tone ? "text-primary" : "text-on-surface-variant")}>Style</span>
+          </div>
+          <div className="h-px w-6 bg-outline-variant" />
+          <div className="flex items-center gap-xs">
+            {stepNumber(3, false)}
+            <span className="text-label-md text-on-surface-variant">Done</span>
+          </div>
+        </div>
       </header>
 
       <section

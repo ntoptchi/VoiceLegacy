@@ -33,8 +33,8 @@ export default function LandingPage() {
           className="animate-slidein font-[family-name:var(--font-lora)] text-4xl font-semibold leading-tight text-on-surface md:text-5xl lg:text-6xl"
           style={{ animationDelay: "300ms" }}
         >
-          Preserve the voice that makes you,{" "}
-          <span className="text-primary">you.</span>
+          Preserve the voice, words, and phrases that make communication feel{" "}
+          <span className="text-primary">personal.</span>
         </h1>
         <p
           className="animate-slidein max-w-2xl text-lg text-on-surface-variant md:text-xl"

@@ -7,11 +7,14 @@ import {
   BookHeart,
   MessageCircleHeart,
   Mic,
+  Moon,
   Settings,
+  Sun,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs";
 import { cn } from "@/lib/cn";
+import { useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui";
 
 type NavItem = {
@@ -34,6 +37,24 @@ const authedMobileItems: NavItem[] = [
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function ThemeToggle() {
+  const { theme, toggle } = useTheme();
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+      className="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface"
+    >
+      {theme === "dark" ? (
+        <Sun className="h-5 w-5" />
+      ) : (
+        <Moon className="h-5 w-5" />
+      )}
+    </button>
+  );
 }
 
 export function Navbar() {
@@ -92,9 +113,10 @@ export function Navbar() {
           </nav>
         ) : null}
 
-        <div className="hidden items-center gap-sm md:flex">
+        <div className="flex items-center gap-sm">
+          <ThemeToggle />
           {showAuthNav ? (
-            <>
+            <div className="hidden items-center gap-sm md:flex">
               <Link
                 href="/dashboard"
                 aria-label="Profile and settings"
@@ -108,9 +130,9 @@ export function Navbar() {
                 <Settings className="h-5 w-5" aria-hidden="true" />
               </Link>
               <UserButton />
-            </>
+            </div>
           ) : isLoaded ? (
-            <>
+            <div className="hidden items-center gap-sm md:flex">
               <SignInButton mode="modal">
                 <Button variant="ghost" size="sm">
                   Sign in
@@ -121,7 +143,7 @@ export function Navbar() {
                   Sign up
                 </Button>
               </SignUpButton>
-            </>
+            </div>
           ) : null}
         </div>
       </div>

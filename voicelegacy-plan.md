@@ -4,6 +4,28 @@
 
 ---
 
+## What is VoiceLegacy?
+
+Every year, millions of people lose the ability to speak — due to ALS, stroke, throat cancer, Parkinson's, or progressive neurological conditions. When that happens, they don't just lose words. They lose the sound of themselves. The laugh their kids recognize. The way they say "I love you" that nobody else says quite the same way.
+
+VoiceLegacy is a web app that lets people **preserve their natural voice before it changes** — and then use it to keep communicating in a way that sounds and feels like them.
+
+Here's what it does:
+
+1. **Voice cloning** — The user reads a set of short phrases out loud. We send those recordings to ElevenLabs, which creates a private voice clone. From that point on, any text can be spoken back in their voice.
+
+2. **Phrase bank** — The user builds a personal library of the things they actually say: "I love you more than you know," "Could I have some water, please?", "Don't let me lose my reputation for timing." Organized by category — family, daily needs, comfort, humor, emergency, personal. Each phrase is playable in their cloned voice with one tap.
+
+3. **AI-powered communication** — Using Gemini, the app can suggest phrases for any category, rewrite a message to sound warmer or shorter, or restyle it to match the user's saved communication tone. The user types what they want to say, the AI shapes it, and the cloned voice speaks it.
+
+4. **Privacy-first design** — Explicit consent before anything is recorded. All data is private, never shared, and deletable at any time. The user owns their voice.
+
+The emotional hook of the product: you record your voice, hear it cloned back to you immediately, and *then* we ask you to create an account. By that point, you've already heard yourself preserved — the reason to sign up is real and felt, not theoretical.
+
+This is not a generic text-to-speech tool. It's a **communication toolkit built for people facing speech loss** — so they can always sound like themselves when it matters most.
+
+---
+
 ## Tech Stack
 
 | Layer | Choice | Why |

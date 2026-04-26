@@ -38,6 +38,8 @@ type CategoryMeta = {
   id: Category;
   label: string;
   chip: string;
+  dot: string;
+  cardBorder: string;
 };
 
 const categories: CategoryMeta[] = [
@@ -45,31 +47,43 @@ const categories: CategoryMeta[] = [
     id: "family",
     label: "Family",
     chip: "bg-primary-fixed-dim/40 text-on-primary-fixed-variant",
+    dot: "bg-emerald-400",
+    cardBorder: "border-l-emerald-400",
   },
   {
     id: "daily",
     label: "Daily Needs",
     chip: "bg-secondary-fixed-dim/40 text-on-secondary-fixed-variant",
+    dot: "bg-sky-400",
+    cardBorder: "border-l-sky-400",
   },
   {
     id: "comfort",
     label: "Comfort",
     chip: "bg-tertiary-fixed-dim/40 text-on-tertiary-fixed-variant",
+    dot: "bg-violet-400",
+    cardBorder: "border-l-violet-400",
   },
   {
     id: "humor",
     label: "Humor",
     chip: "bg-tertiary-fixed/60 text-on-tertiary-fixed-variant",
+    dot: "bg-amber-400",
+    cardBorder: "border-l-amber-400",
   },
   {
     id: "emergency",
     label: "Emergency",
     chip: "bg-error-container text-on-error-container",
+    dot: "bg-rose-400",
+    cardBorder: "border-l-rose-400",
   },
   {
     id: "personal",
     label: "Personal",
     chip: "bg-primary-fixed/40 text-on-primary-fixed-variant",
+    dot: "bg-teal-400",
+    cardBorder: "border-l-teal-400",
   },
 ];
 
@@ -405,6 +419,7 @@ export default function PhrasesPage() {
         </p>
       </header>
 
+      {/* Category filters with color dots */}
       <div
         role="tablist"
         aria-label="Filter phrases by category"
@@ -424,6 +439,7 @@ export default function PhrasesPage() {
             count={counts[category.id]}
             isActive={activeFilter === category.id}
             onClick={() => setActiveFilter(category.id)}
+            dotColor={category.dot}
           />
         ))}
         <div className="w-full sm:w-auto">
@@ -451,39 +467,34 @@ export default function PhrasesPage() {
         </div>
       </div>
 
+      {/* AI Suggestions — secondary, compact */}
       <div
-        className="animate-slidein rounded-xl border border-outline-variant/30 bg-surface-container-low p-md shadow-ambient"
+        className="animate-slidein flex flex-wrap items-center justify-between gap-sm rounded-lg border border-outline-variant/20 bg-surface-container-low px-md py-sm"
         style={{ animationDelay: "700ms" }}
       >
-        <div className="flex flex-col items-start justify-between gap-sm md:flex-row md:items-center">
-          <div className="flex flex-col gap-xs">
-            <h2 className="text-headline-sm text-on-surface">
-              Need ideas for the {targetCategoryLabel} category?
-            </h2>
-            <p className="text-body-sm text-on-surface-variant">
-              Get three AI-powered suggestions inspired by your routines and
-              relationships.
-            </p>
-          </div>
-          <Button
-            variant="primary"
-            size="lg"
-            leftIcon={
-              isThinking ? (
-                <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
-              ) : (
-                <Sparkles className="h-5 w-5" aria-hidden="true" />
-              )
-            }
-            onClick={() => void requestSuggestions()}
-            disabled={isThinking}
-            aria-busy={isThinking}
-            className="w-full hover:!text-white hover:[&_svg]:!text-white md:w-auto"
-          >
-            {isThinking ? "Thinking..." : "Ask AI for Suggestions"}
-          </Button>
-        </div>
-        {error ? <p className="mt-sm text-body-sm text-error">{error}</p> : null}
+        <p className="text-body-sm text-on-surface-variant">
+          Need ideas for <span className="font-semibold text-on-surface">{targetCategoryLabel}</span>?
+        </p>
+        <button
+          type="button"
+          onClick={() => void requestSuggestions()}
+          disabled={isThinking}
+          aria-busy={isThinking}
+          className={cn(
+            "flex items-center gap-xs rounded-full px-md py-xs text-label-md transition-colors",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+            "bg-primary/10 text-primary hover:bg-primary/20",
+            isThinking && "cursor-wait opacity-60",
+          )}
+        >
+          {isThinking ? (
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+          ) : (
+            <Sparkles className="h-4 w-4" aria-hidden="true" />
+          )}
+          {isThinking ? "Thinking..." : "AI Suggestions"}
+        </button>
+        {error ? <p className="w-full text-body-sm text-error">{error}</p> : null}
       </div>
 
       {phrases.length === 0 ? (
@@ -504,7 +515,9 @@ export default function PhrasesPage() {
                 key={text}
                 className="flex min-h-[140px] flex-col justify-between rounded-xl border border-outline-variant/20 bg-surface p-md"
               >
-                <p className="text-body-md text-on-surface">{text}</p>
+                <p className="font-serif text-xl italic leading-snug text-on-surface">
+                  &ldquo;{text}&rdquo;
+                </p>
                 <Button
                   variant="secondary"
                   size="sm"
@@ -547,11 +560,13 @@ function FilterTab({
   count,
   isActive,
   onClick,
+  dotColor,
 }: {
   label: string;
   count: number;
   isActive: boolean;
   onClick: () => void;
+  dotColor?: string;
 }) {
   return (
     <button
@@ -567,6 +582,12 @@ function FilterTab({
           : "bg-surface text-on-surface-variant hover:bg-surface-dim hover:text-on-surface",
       )}
     >
+      {dotColor ? (
+        <span
+          className={cn("h-2.5 w-2.5 shrink-0 rounded-full", dotColor)}
+          aria-hidden="true"
+        />
+      ) : null}
       {label}
       <span
         className={cn(
@@ -605,7 +626,8 @@ function PhraseCard({
   return (
     <li
       className={cn(
-        "animate-slidein flex min-h-[180px] flex-col rounded-xl border bg-surface p-md transition-shadow hover:shadow-ambient-hover",
+        "animate-slidein flex min-h-[180px] flex-col rounded-xl border-l-4 border bg-surface p-md transition-shadow hover:shadow-ambient-hover",
+        meta?.cardBorder ?? "border-l-outline-variant",
         isPlaying
           ? "border-primary/50 shadow-ambient ring-1 ring-primary/20"
           : "border-outline-variant/20 shadow-ambient",
@@ -630,33 +652,15 @@ function PhraseCard({
             />
           ) : null}
         </div>
-        <button
-          type="button"
-          onClick={onToggleFavorite}
-          aria-pressed={phrase.isFavorite}
-          aria-label={
-            phrase.isFavorite ? "Remove from favorites" : "Mark as favorite"
-          }
-          className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-full transition-colors",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
-            phrase.isFavorite
-              ? "text-tertiary hover:bg-tertiary-fixed/40"
-              : "text-outline hover:bg-surface-container hover:text-tertiary",
-          )}
-        >
-          <Star
-            className={cn("h-5 w-5", phrase.isFavorite && "fill-current")}
-            aria-hidden="true"
-          />
-        </button>
       </div>
 
-      <p className="flex-grow py-sm text-xl font-semibold leading-snug text-on-surface md:text-headline-sm">
+      {/* Phrase text — serif, larger, italic for emotional weight */}
+      <p className="flex-grow py-sm font-serif text-2xl italic leading-snug text-on-surface md:text-[1.65rem]">
         &ldquo;{phrase.text}&rdquo;
       </p>
 
-      <div className="mt-auto flex items-center justify-between border-t border-surface-variant pt-sm">
+      {/* Actions row: Play | Favorite | Delete */}
+      <div className="mt-auto flex items-center gap-xs border-t border-surface-variant pt-sm">
         {hasVoice ? (
           <button
             type="button"
@@ -699,18 +703,44 @@ function PhraseCard({
         ) : (
           <span />
         )}
-        <button
-          type="button"
-          onClick={onDelete}
-          aria-label="Delete this phrase"
-          className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-full text-on-surface-variant transition-colors",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
-            "hover:bg-error-container hover:text-error",
-          )}
-        >
-          <Trash2 className="h-5 w-5" aria-hidden="true" />
-        </button>
+
+        <div className="ml-auto flex items-center gap-xs">
+          {/* Favorite — prominent, always visible */}
+          <button
+            type="button"
+            onClick={onToggleFavorite}
+            aria-pressed={phrase.isFavorite}
+            aria-label={
+              phrase.isFavorite ? "Remove from favorites" : "Mark as favorite"
+            }
+            className={cn(
+              "flex items-center gap-xs rounded-full px-sm py-xs text-label-md transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+              phrase.isFavorite
+                ? "bg-amber-500/15 text-amber-500"
+                : "text-on-surface-variant hover:bg-amber-500/10 hover:text-amber-500",
+            )}
+          >
+            <Star
+              className={cn("h-4 w-4", phrase.isFavorite && "fill-current")}
+              aria-hidden="true"
+            />
+            <span>{phrase.isFavorite ? "Saved" : "Favorite"}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={onDelete}
+            aria-label="Delete this phrase"
+            className={cn(
+              "flex h-9 w-9 items-center justify-center rounded-full text-on-surface-variant transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+              "hover:bg-error-container hover:text-error",
+            )}
+          >
+            <Trash2 className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </li>
   );
