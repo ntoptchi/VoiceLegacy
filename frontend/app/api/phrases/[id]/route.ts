@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 import { jsonError, jsonOk, readJsonBody, toObjectId } from "@/lib/api";
-import { deletePhrase, listPhrases } from "@/lib/db";
+import { requireAuth } from "@/lib/auth";
+import { deletePhrase, listPhrases, updatePhraseFavorite } from "@/lib/db";
 import {
   isPhraseCategory,
   PHRASE_CATEGORIES,
@@ -9,16 +10,20 @@ import {
 
 export const runtime = "nodejs";
 
-// GET treats [id] as a userId and returns that user's phrases.
-// (Plan calls this `/api/phrases/[userId]`, but Next.js does not allow two
-// different dynamic segment names at the same level, so we collapse them.)
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const authResult = await requireAuth();
+  if (!authResult.ok) return authResult.response;
+
   const { id } = await params;
   const idResult = toObjectId(id);
   if (!idResult.ok) return idResult.response;
+
+  if (!authResult.user._id.equals(idResult.id)) {
+    return jsonError("Forbidden.", 403);
+  }
 
   const url = new URL(request.url);
   const categoryParam = url.searchParams.get("category");
@@ -53,40 +58,56 @@ export async function GET(
   }
 }
 
-// DELETE treats [id] as the phrase id. The owning userId must be provided
-// either in the JSON body or the `x-user-id` header to prevent cross-user
-// deletes.
-export async function DELETE(
+export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const authResult = await requireAuth();
+  if (!authResult.ok) return authResult.response;
+
   const { id } = await params;
   const phraseIdResult = toObjectId(id);
   if (!phraseIdResult.ok) return phraseIdResult.response;
 
-  let userIdRaw = request.headers.get("x-user-id")?.trim() || "";
-  if (!userIdRaw) {
-    const contentType = request.headers.get("content-type") ?? "";
-    if (contentType.includes("application/json")) {
-      const body = await readJsonBody<{ userId?: unknown }>(request);
-      if (!body.ok) return body.response;
-      const candidate = body.data?.userId;
-      if (typeof candidate === "string") userIdRaw = candidate.trim();
-    }
-  }
+  const body = await readJsonBody<{ isFavorite?: unknown }>(request);
+  if (!body.ok) return body.response;
 
-  if (!userIdRaw) {
-    return jsonError(
-      "userId is required (provide it in the body or the x-user-id header).",
-      400,
-    );
+  const { isFavorite } = body.data ?? {};
+  if (typeof isFavorite !== "boolean") {
+    return jsonError("isFavorite (boolean) is required.", 400);
   }
-
-  const userIdResult = toObjectId(userIdRaw);
-  if (!userIdResult.ok) return userIdResult.response;
 
   try {
-    const deleted = await deletePhrase(phraseIdResult.id, userIdResult.id);
+    const updated = await updatePhraseFavorite(
+      phraseIdResult.id,
+      authResult.user._id,
+      isFavorite,
+    );
+    if (!updated) {
+      return jsonError("Phrase not found or does not belong to this user.", 404);
+    }
+    return jsonOk({ updated: true });
+  } catch (error) {
+    console.error("[api/phrases/:id PATCH] failed:", error);
+    const message =
+      error instanceof Error ? error.message : "Failed to update phrase.";
+    return jsonError(message, 500);
+  }
+}
+
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const authResult = await requireAuth();
+  if (!authResult.ok) return authResult.response;
+
+  const { id } = await params;
+  const phraseIdResult = toObjectId(id);
+  if (!phraseIdResult.ok) return phraseIdResult.response;
+
+  try {
+    const deleted = await deletePhrase(phraseIdResult.id, authResult.user._id);
     if (!deleted) {
       return jsonError(
         "Phrase not found or does not belong to this user.",

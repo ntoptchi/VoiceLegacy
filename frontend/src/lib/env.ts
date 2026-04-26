@@ -27,21 +27,12 @@ export const env = {
   get GEMINI_MODEL() {
     return readString("GEMINI_MODEL") ?? "gemini-2.0-flash";
   },
-  get AZURE_SPEECH_KEY() {
-    return readString("AZURE_SPEECH_KEY");
-  },
-  get AZURE_SPEECH_REGION() {
-    return readString("AZURE_SPEECH_REGION");
-  },
 
   get MOCK_VOICE_API() {
     return readBoolean("MOCK_VOICE_API");
   },
   get MOCK_GEMINI_API() {
     return readBoolean("MOCK_GEMINI_API");
-  },
-  get MOCK_AZURE_API() {
-    return readBoolean("MOCK_AZURE_API");
   },
   get MOCK_DB() {
     return readBoolean("MOCK_DB");

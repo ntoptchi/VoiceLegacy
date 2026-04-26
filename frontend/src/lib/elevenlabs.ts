@@ -107,6 +107,38 @@ export async function cloneVoiceFromFiles(
   return { voiceId, mock: false };
 }
 
+export async function deleteVoice(
+  voiceId: string,
+): Promise<{ deleted: boolean; mock: boolean }> {
+  if (env.MOCK_VOICE_API) {
+    console.log(
+      `[elevenlabs] MOCK_VOICE_API enabled — stub delete for voice=${voiceId}`,
+    );
+    return { deleted: true, mock: true };
+  }
+
+  const apiKey = getApiKey();
+  const url = `https://api.elevenlabs.io/v1/voices/${encodeURIComponent(voiceId)}`;
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: { "xi-api-key": apiKey },
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    let parsed: unknown = null;
+    try {
+      parsed = text ? JSON.parse(text) : null;
+    } catch {
+      parsed = null;
+    }
+    const message = extractErrorMessage(parsed, response.status);
+    throw new ElevenLabsError(message, 502);
+  }
+
+  return { deleted: true, mock: false };
+}
+
 // 1-second silent MP3 (used as the mock TTS payload).
 const SILENT_MP3_BASE64 =
   "SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYxLjcuMTAwAAAAAAAAAAAAAAD/+0DAAAAAAAAAAAAAAAAAAAAAAABJbmZvAAAADwAAAAIAAAGwAICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgID//////////////////////////////////////////////////////////////////8AAAAATGF2YzYxLjE5AAAAAAAAAAAAAAAAJAAAAAAAAAAAAbA7l7g/AAAAAAD/+xDEAAPAAAGkAAAAIAAANIAAAARMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+xDEKQPAAAGkAAAAIAAANIAAAARVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+xDEUgPAAAGkAAAAIAAANIAAAARVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+xDEewPAAAGkAAAAIAAANIAAAARVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+xDEpAPAAAGkAAAAIAAANIAAAARVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+xDEzQPAAAGkAAAAIAAANIAAAARVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV";

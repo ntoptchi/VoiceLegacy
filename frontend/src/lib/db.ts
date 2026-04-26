@@ -42,13 +42,19 @@ function getMockStore(): MockStore {
   return g.__voicelegacyMockStore;
 }
 
+function shouldUseMockDb(): boolean {
+  return env.MOCK_DB || !env.MONGODB_URI;
+}
+
 export async function createUser(input: {
+  clerkUserId: string;
   communicationStyle: CommunicationStyle;
   audience?: string;
 }): Promise<UserDoc> {
   const now = new Date();
   const doc: UserDoc = {
     _id: new ObjectId(),
+    clerkUserId: input.clerkUserId,
     consentedAt: now,
     communicationStyle: input.communicationStyle,
     audience: input.audience,
@@ -58,7 +64,7 @@ export async function createUser(input: {
     updatedAt: now,
   };
 
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     getMockStore().users.set(doc._id.toHexString(), doc);
     return doc;
   }
@@ -68,8 +74,21 @@ export async function createUser(input: {
   return doc;
 }
 
+export async function findUserByClerkId(
+  clerkUserId: string,
+): Promise<UserDoc | null> {
+  if (shouldUseMockDb()) {
+    for (const user of getMockStore().users.values()) {
+      if (user.clerkUserId === clerkUserId) return user;
+    }
+    return null;
+  }
+  const col = await usersCollection();
+  return col.findOne({ clerkUserId });
+}
+
 export async function findUser(id: ObjectId): Promise<UserDoc | null> {
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     return getMockStore().users.get(id.toHexString()) ?? null;
   }
   const col = await usersCollection();
@@ -82,7 +101,7 @@ export async function updateUserVoice(
   status: VoiceStatus = "ready",
 ): Promise<UserDoc | null> {
   const updatedAt = new Date();
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     const existing = getMockStore().users.get(id.toHexString());
     if (!existing) return null;
     const next: UserDoc = { ...existing, voiceId, voiceStatus: status, updatedAt };
@@ -103,7 +122,7 @@ export async function setVoiceStatus(
   status: VoiceStatus,
 ): Promise<UserDoc | null> {
   const updatedAt = new Date();
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     const existing = getMockStore().users.get(id.toHexString());
     if (!existing) return null;
     const next: UserDoc = { ...existing, voiceStatus: status, updatedAt };
@@ -119,11 +138,32 @@ export async function setVoiceStatus(
   return result ?? null;
 }
 
+export async function updateUserCommunicationStyle(
+  id: ObjectId,
+  communicationStyle: CommunicationStyle,
+): Promise<UserDoc | null> {
+  const updatedAt = new Date();
+  if (shouldUseMockDb()) {
+    const existing = getMockStore().users.get(id.toHexString());
+    if (!existing) return null;
+    const next: UserDoc = { ...existing, communicationStyle, updatedAt };
+    getMockStore().users.set(id.toHexString(), next);
+    return next;
+  }
+  const col = await usersCollection();
+  const result = await col.findOneAndUpdate(
+    { _id: id },
+    { $set: { communicationStyle, updatedAt } },
+    { returnDocument: "after" },
+  );
+  return result ?? null;
+}
+
 export async function listPhrases(
   userId: ObjectId,
   category?: PhraseCategory,
 ): Promise<PhraseDoc[]> {
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     const all = Array.from(getMockStore().phrases.values()).filter((p) =>
       p.userId.equals(userId),
     );
@@ -152,7 +192,7 @@ export async function createPhrase(input: {
     isFavorite: Boolean(input.isFavorite),
     createdAt: new Date(),
   };
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     getMockStore().phrases.set(doc._id.toHexString(), doc);
     return doc;
   }
@@ -161,11 +201,63 @@ export async function createPhrase(input: {
   return doc;
 }
 
+export async function clearUserVoice(id: ObjectId): Promise<UserDoc | null> {
+  const updatedAt = new Date();
+  if (env.MOCK_DB) {
+    const existing = getMockStore().users.get(id.toHexString());
+    if (!existing) return null;
+    const next: UserDoc = { ...existing, voiceId: null, voiceStatus: "none", updatedAt };
+    getMockStore().users.set(id.toHexString(), next);
+    return next;
+  }
+  const col = await usersCollection();
+  const result = await col.findOneAndUpdate(
+    { _id: id },
+    { $set: { voiceId: null, voiceStatus: "none", updatedAt } },
+    { returnDocument: "after" },
+  );
+  return result ?? null;
+}
+
+export async function deleteUser(id: ObjectId): Promise<boolean> {
+  if (env.MOCK_DB) {
+    const existed = getMockStore().users.delete(id.toHexString());
+    for (const [key, phrase] of getMockStore().phrases) {
+      if (phrase.userId.equals(id)) getMockStore().phrases.delete(key);
+    }
+    return existed;
+  }
+  const phraseCol = await phrasesCollection();
+  await phraseCol.deleteMany({ userId: id });
+  const userCol = await usersCollection();
+  const result = await userCol.deleteOne({ _id: id });
+  return result.deletedCount === 1;
+}
+
+export async function updatePhraseFavorite(
+  phraseId: ObjectId,
+  userId: ObjectId,
+  isFavorite: boolean,
+): Promise<boolean> {
+  if (env.MOCK_DB) {
+    const existing = getMockStore().phrases.get(phraseId.toHexString());
+    if (!existing || !existing.userId.equals(userId)) return false;
+    getMockStore().phrases.set(phraseId.toHexString(), { ...existing, isFavorite });
+    return true;
+  }
+  const col = await phrasesCollection();
+  const result = await col.updateOne(
+    { _id: phraseId, userId },
+    { $set: { isFavorite } },
+  );
+  return result.matchedCount === 1;
+}
+
 export async function deletePhrase(
   phraseId: ObjectId,
   userId: ObjectId,
 ): Promise<boolean> {
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     const existing = getMockStore().phrases.get(phraseId.toHexString());
     if (!existing || !existing.userId.equals(userId)) return false;
     getMockStore().phrases.delete(phraseId.toHexString());

@@ -28,7 +28,7 @@ const PHRASES: readonly string[] = [
   "Could you please help me with this for a moment?",
   "Thank you, that means more to me than you know.",
   "I'm feeling a little tired today, but I'm doing alright.",
-  "Tell me about your day — I want to hear everything.",
+  "Tell me about your day - I want to hear everything.",
   "Everything is going to be okay. We'll figure it out together.",
 ];
 
@@ -172,10 +172,7 @@ export default function RecordPage() {
   }, [phraseIndex, stopStream]);
 
   const stopRecording = useCallback(() => {
-    if (
-      recorderRef.current &&
-      recorderRef.current.state !== "inactive"
-    ) {
+    if (recorderRef.current && recorderRef.current.state !== "inactive") {
       setRecordingState("processing");
       recorderRef.current.stop();
     }
@@ -226,18 +223,25 @@ export default function RecordPage() {
       const payload: {
         success?: boolean;
         voice_id?: string;
+        voiceId?: string;
         error?: string;
       } = await response.json().catch(() => ({}));
 
-      if (!response.ok || !payload.success || !payload.voice_id) {
+      if (!response.ok || !payload.success) {
         throw new Error(
           payload.error ??
             `Voice clone upload failed (status ${response.status}).`,
         );
       }
 
-      setVoiceId(payload.voice_id);
-      setRecordingState("done");
+      const returnedVoiceId = payload.voiceId ?? payload.voice_id;
+      if (returnedVoiceId) {
+        setVoiceId(returnedVoiceId);
+        sessionStorage.setItem("pendingVoiceId", returnedVoiceId);
+        setRecordingState("done");
+      } else {
+        setRecordingState("done");
+      }
     } catch (err) {
       console.error("[record] submit failed", err);
       setError(
@@ -252,43 +256,28 @@ export default function RecordPage() {
   if (isDone) {
     return (
       <section
-        className="animate-slidein mx-auto flex w-full max-w-2xl flex-col items-center gap-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-lg text-center shadow-ambient"
+        className="animate-slidein mx-auto flex w-full max-w-2xl flex-col items-center gap-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-5 text-center shadow-ambient sm:p-lg"
         style={{ animationDelay: "300ms" }}
       >
         <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-on-primary">
           <CheckCircle2 className="h-8 w-8" aria-hidden="true" />
         </span>
-        <h1 className="text-headline-lg text-on-surface">
+        <h1 className="text-3xl font-bold leading-tight text-on-surface md:text-headline-lg">
           Your voice is preserved.
         </h1>
         <p className="max-w-prose text-body-lg text-on-surface-variant">
-          We&apos;ve safely uploaded your recordings and created your private
-          voice prototype. You can now build your phrase bank and speak in your
-          own voice.
+          We&apos;ve created your private voice clone. Hear how you sound —
+          then create a free account to save it forever.
         </p>
-        {voiceId ? (
-          <p className="text-body-sm text-on-surface-variant">
-            <span className="font-semibold text-on-surface">Voice ID:</span>{" "}
-            <code className="rounded-sm bg-surface-container-low px-xs py-[2px] font-mono text-on-surface">
-              {voiceId}
-            </code>
-          </p>
-        ) : null}
-        <div className="mt-md flex flex-col gap-sm sm:flex-row">
+        <div className="mt-md flex w-full flex-col gap-sm sm:w-auto sm:flex-row">
           <Button
             variant="primary"
             size="lg"
             rightIcon={<ArrowRight className="h-5 w-5" aria-hidden="true" />}
-            onClick={() => router.push("/phrases")}
+            onClick={() => router.push("/preview")}
+            className="w-full sm:w-auto"
           >
-            Build Your Phrase Bank
-          </Button>
-          <Button
-            variant="ghost"
-            size="lg"
-            onClick={() => router.push("/dashboard")}
-          >
-            Go to Dashboard
+            Hear Your Voice
           </Button>
         </div>
       </section>
@@ -300,10 +289,10 @@ export default function RecordPage() {
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-lg">
       <header
-        className="animate-slidein flex flex-col gap-sm rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-md shadow-ambient"
+        className="animate-slidein flex flex-col gap-sm rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-4 shadow-ambient sm:p-md"
         style={{ animationDelay: "300ms" }}
       >
-        <div className="flex items-center justify-between gap-sm">
+        <div className="flex flex-col gap-sm sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-xs rounded-full bg-surface-container-high px-sm py-xs">
             <span
               className={cn(
@@ -320,10 +309,7 @@ export default function RecordPage() {
                   : "Ready"}
             </span>
           </div>
-          <p
-            className="text-label-lg text-on-surface"
-            aria-live="polite"
-          >
+          <p className="text-label-lg text-on-surface sm:text-right" aria-live="polite">
             Phrase {phraseIndex + 1} of {totalPhrases}
           </p>
           <p className="text-label-md text-on-surface-variant">
@@ -346,13 +332,13 @@ export default function RecordPage() {
       </header>
 
       <article
-        className="animate-slidein flex flex-col items-center gap-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-lg text-center shadow-ambient"
+        className="animate-slidein flex flex-col items-center gap-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-5 text-center shadow-ambient sm:p-lg"
         style={{ animationDelay: "500ms" }}
       >
         <p className="text-label-md uppercase tracking-wider text-on-surface-variant">
           Read this aloud, in your natural voice
         </p>
-        <h1 className="max-w-2xl text-headline-lg text-on-primary-fixed-variant">
+        <h1 className="max-w-2xl text-3xl font-bold leading-tight text-on-primary-fixed-variant md:text-headline-lg">
           &ldquo;{phrase}&rdquo;
         </h1>
         {currentPhraseRecorded ? (
@@ -386,13 +372,15 @@ export default function RecordPage() {
         className="animate-slidein flex flex-col items-center gap-md"
         style={{ animationDelay: "700ms" }}
       >
-        <div className="flex items-center justify-between gap-md">
+        <div className="grid w-full max-w-lg grid-cols-2 items-center gap-sm sm:flex sm:max-w-none sm:items-center sm:justify-between sm:gap-md">
           <Button
             variant="ghost"
             size="lg"
             leftIcon={<ArrowLeft className="h-5 w-5" aria-hidden="true" />}
             onClick={() => goToPhrase(phraseIndex - 1)}
             disabled={phraseIndex === 0 || isRecording || isProcessing}
+            fullWidth
+            className="order-2 sm:order-none sm:w-auto"
           >
             Previous
           </Button>
@@ -404,12 +392,13 @@ export default function RecordPage() {
               leftIcon={<Sparkles className="h-5 w-5" aria-hidden="true" />}
               onClick={() => void submitRecordings()}
               disabled={isProcessing}
-              className="px-lg"
+              fullWidth
+              className="order-1 col-span-2 sm:order-none sm:w-auto sm:px-lg"
             >
-              {isProcessing ? "Creating clone…" : "Create My Voice Clone"}
+              {isProcessing ? "Creating clone..." : "Create My Voice Clone"}
             </Button>
           ) : (
-            <div className="relative flex items-center justify-center">
+            <div className="relative order-1 col-span-2 flex items-center justify-center sm:order-none">
               {isRecording ? (
                 <>
                   <span
@@ -467,12 +456,14 @@ export default function RecordPage() {
             disabled={
               phraseIndex === totalPhrases - 1 || isRecording || isProcessing
             }
+            fullWidth
+            className="order-3 sm:order-none sm:w-auto"
           >
             Next
           </Button>
         </div>
 
-        <p className="text-body-sm text-on-surface-variant">
+        <p className="w-full max-w-[28rem] text-center text-body-sm leading-relaxed text-on-surface-variant">
           {isRecording
             ? "Tap stop when you've finished reading the phrase."
             : allRecorded

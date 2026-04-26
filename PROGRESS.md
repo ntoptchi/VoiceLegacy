@@ -13,97 +13,108 @@ Legend: `[x]` done · `[~]` partially done · `[ ]` not started
 - [x] Tailwind v4 configured (`tailwind.config.ts`, `postcss.config.mjs`)
 - [x] TypeScript + ESLint configured
 - [x] `mongodb` driver added to dependencies (`frontend/package.json`)
-- [x] `.env.local.example` documents every key + every mock flag (`frontend/.env.local.example`)
-- [ ] Real `.env.local` populated with live keys (Mongo, ElevenLabs, Gemini, Azure)
-- [ ] MongoDB Atlas cluster provisioned + connection verified end-to-end (currently only smoke-tested with `MOCK_DB=true`)
+- [x] `@clerk/nextjs` installed and wired (ClerkProvider, middleware, sign-in/up pages)
+- [x] `.env.local.example` documents every key + every mock flag + Clerk keys
+- [x] Real `.env.local` populated with live keys (Mongo, ElevenLabs; Gemini deferred)
+- [x] MongoDB Atlas cluster provisioned + connection verified end-to-end
 - [ ] Vercel project connected to GitHub for auto-deploy
 
 ---
 
-## 2. Backend — `frontend/src/lib/*`
+## 2. Authentication — Clerk
+
+- [x] `ClerkProvider` wraps root layout (`app/layout.tsx`)
+- [x] `middleware.ts` protects `/consent`, `/phrases`, `/speak`, `/dashboard` via `clerkMiddleware`
+- [x] `/sign-in` and `/sign-up` pages with Clerk hosted UI
+- [x] `NEXT_PUBLIC_CLERK_SIGN_UP_FORCE_REDIRECT_URL=/consent` sends new users to consent page
+- [x] `UserDoc.clerkUserId` field added; `findUserByClerkId()` in `db.ts`
+- [x] `requireAuth()` helper in `auth.ts` — extracts Clerk userId → looks up Mongo user
+- [x] All protected API routes use `requireAuth()` (no more userId in request body)
+- [x] Navbar shows `UserButton` + Sign in/Sign up buttons conditionally
+
+---
+
+## 3. Backend — `frontend/src/lib/*`
 
 All shared infrastructure is in place.
 
 - [x] `mongodb.ts` — cached `MongoClient` via `globalThis`
-- [x] `db.ts` — typed repo functions, in-memory `MOCK_DB` fallback
+- [x] `db.ts` — typed repo functions, in-memory `MOCK_DB` fallback, `findUserByClerkId`, `clearUserVoice`
 - [x] `env.ts` — central env reader + mock flags
 - [x] `api.ts` — `jsonOk` / `jsonError` / `readJsonBody` / `toObjectId`
-- [x] `types.ts` — `UserDoc`, `PhraseDoc`, `PhraseCategory`, `CommunicationStyle`, `RewriteMode`
-- [x] `elevenlabs.ts` — `cloneVoiceFromFiles` + `synthesizeSpeech`, mockable
+- [x] `auth.ts` — `requireAuth()` helper (Clerk → Mongo user)
+- [x] `types.ts` — `UserDoc` (with `clerkUserId`), `PhraseDoc`, `PhraseCategory`, `CommunicationStyle`, `RewriteMode`
+- [x] `elevenlabs.ts` — `cloneVoiceFromFiles` + `synthesizeSpeech` + `deleteVoice`, mockable
 - [x] `gemini.ts` — `suggestPhrases` + `rewriteMessage`, mockable
-- [x] `azure.ts` — `transcribeAudio`, mockable
 
 ---
 
-## 3. Backend — API routes (`frontend/app/api/*`)
+## 4. Backend — API routes (`frontend/app/api/*`)
 
-Every route from the plan exists, validates input, and returns the
-documented `{ success, ... }` shape. All were smoke-tested with the four
-`MOCK_*` flags on.
+Every route validates input and returns `{ success, ... }`. Protected routes use Clerk auth.
 
-- [x] `POST /api/user/create`
-- [x] `GET  /api/user/[id]`
-- [x] `POST /api/voice/upload` (also persists `voice_id` and flips `voiceStatus` when `userId` is supplied)
+- [x] `POST /api/user/create` (Clerk auth; idempotent — returns existing user if found)
+- [x] `GET  /api/user/me` (Clerk auth; returns current user profile)
+- [x] `GET  /api/user/[id]` (Clerk auth; ownership check)
+- [x] `DELETE /api/user/[id]` (Clerk auth; cascade-deletes phrases)
+- [x] `PATCH /api/user/[id]` (Clerk auth; update communicationStyle)
+- [x] `POST /api/voice/upload` (anonymous — pre-auth voice clone)
+- [x] `POST /api/voice/claim` (Clerk auth; links pending voiceId to user after signup)
+- [x] `POST /api/voice/delete` (Clerk auth; deletes voice from ElevenLabs + DB)
 - [x] `GET  /api/voice/status/[id]`
-- [x] `POST /api/phrases`
-- [x] `GET  /api/phrases/[id]` (lists phrases for a userId; supports `?category=`)
-- [x] `DELETE /api/phrases/[id]` (ownership enforced via body or `x-user-id` header)
-- [x] `POST /api/gemini/suggest`
-- [x] `POST /api/gemini/rewrite`
-- [x] `POST /api/speak` (returns `audio/mpeg`)
-- [x] `POST /api/azure/transcribe`
+- [x] `POST /api/phrases` (Clerk auth)
+- [x] `GET  /api/phrases/[id]` (Clerk auth; ownership check)
+- [x] `PATCH /api/phrases/[id]` (Clerk auth; favorite toggle)
+- [x] `DELETE /api/phrases/[id]` (Clerk auth)
+- [x] `POST /api/gemini/suggest` (Clerk auth)
+- [x] `POST /api/gemini/rewrite` (Clerk auth)
+- [x] `POST /api/speak` (anonymous — needed for `/preview` pre-auth)
 
-### Backend gaps still to close
+### Remaining gaps
 
-- [ ] Verify each route against **real** ElevenLabs / Gemini / Azure / Mongo (only the mock paths are exercised so far)
-- [ ] `DELETE /api/voice/:id` or equivalent for "Delete voice data" on the dashboard
-- [ ] `DELETE /api/user/:id` (cascade-delete phrases) for "Delete all data"
-- [ ] Phrase favorite-toggle endpoint (`PATCH /api/phrases/[id]`) — plan says "Mark favorites" on `/phrases`
-- [ ] Phrase bank export (`GET /api/phrases/[id]/export?format=json|pdf`) — plan calls for JSON + PDF export
-- [ ] Mongo indexes (`users._id` is automatic; add `phrases.userId` + `phrases.category`)
+- [ ] Phrase bank export (`GET /api/phrases/[id]/export?format=json|pdf`) — optional
+- [x] Mongo indexes — `phrases.userId_1` and compound `phrases.userId_1_category_1`
 
 ---
 
-## 4. Frontend — pages
+## 5. Frontend — pages
 
-Static UI for every page already exists under `frontend/app/`. None of
-them (except `/record`) are wired to the backend yet.
+New "emotional hook" flow: record anonymously → hear your clone → sign up → consent → use.
 
-| Page | UI exists? | Wired to backend? | Notes |
+| Page | Auth? | Wired? | Notes |
 |---|---|---|---|
-| `/` (consent + onboarding) | [x] | [ ] | Calls `router.push("/record")` instead of `POST /api/user/create`. Selected tone/audience are not persisted. |
-| `/record` | [x] | [~] | Calls `POST /api/voice/upload` (good), but does not pass a `userId` and does not poll `GET /api/voice/status/[id]`. No Azure transcription verification yet. |
-| `/phrases` | [x] | [ ] | Add / list / favorite / delete are all local state — none of `GET /api/phrases/[id]`, `POST /api/phrases`, `DELETE /api/phrases/[id]`, `POST /api/gemini/suggest` are called. |
-| `/speak` | [x] | [ ] | "Make warmer / shorter / sound like me / translate" buttons need `POST /api/gemini/rewrite`; play button needs `POST /api/speak`; "save" needs `POST /api/phrases`. |
-| `/dashboard` | [x] | [ ] | Voice status, phrase counts, export, and delete actions all need backend wiring. |
-
-### Frontend gaps still to close
-
-- [ ] Persist `userId` after onboarding (cookie or `localStorage`) and read it from every page
-- [ ] Wire `/` to `POST /api/user/create` (block submit until 201, then store `userId`)
-- [ ] Wire `/record` to send `userId` with the upload, and to poll `GET /api/voice/status/[id]` until `"ready"`
-- [ ] Add Azure transcription check inside the recording flow (per-phrase `POST /api/azure/transcribe` against the prompt text)
-- [ ] Wire `/phrases` to all phrase routes + Gemini suggest
-- [ ] Wire `/speak` to Gemini rewrite + ElevenLabs TTS + phrase save
-- [ ] Wire `/dashboard` to user fetch, phrase counts, export, and delete-voice / delete-all
-- [ ] Loading + error states for every API call
-- [ ] Mobile pass — judges may demo on phones
+| `/` (landing) | No | — | Hero page with CTA to `/record` |
+| `/record` | No | [x] | Anonymous recording; stores `voiceId` in `sessionStorage`; navigates to `/preview` |
+| `/preview` | No | [x] | Auto-plays TTS demo; Clerk `SignUpButton` CTA → redirects to `/consent` |
+| `/sign-up` | — | [x] | Clerk hosted sign-up UI |
+| `/sign-in` | — | [x] | Clerk hosted sign-in UI |
+| `/consent` | Yes | [x] | Consent + tone + audience form; `POST /api/user/create` + `POST /api/voice/claim` |
+| `/phrases` | Yes | [x] | CRUD phrases, Gemini suggestions, favorite toggle |
+| `/speak` | Yes | [x] | Gemini rewrite + ElevenLabs TTS + save to bank |
+| `/dashboard` | Yes | [x] | User profile, phrase stats, export, delete voice/data |
 
 ---
 
-## 5. Demo readiness (per the plan's "Hours 18–24" block)
+## 6. Demo readiness
 
-- [ ] Pre-load a demo account with 10–15 banked phrases
-- [ ] Practice the 5-minute demo flow end to end (consent → record → save → speak → save)
-- [ ] Prepare the one-liner pitch
-- [ ] Prepare the answer to "how is this different from just using ElevenLabs directly?"
+- [x] Pre-load a demo account with 14 banked phrases (`npx tsx scripts/seed-demo.ts`)
+- [ ] Practice the 5-minute demo flow end to end
+- [x] One-liner pitch prepared (see below)
+- [x] "How is this different?" answer prepared (see below)
+
+### Pitch
+
+> VoiceLegacy lets people preserve their natural voice, words, and phrases before speech loss — so they can always communicate in a way that sounds and feels like them.
+
+### "How is this different from just using ElevenLabs directly?"
+
+> ElevenLabs gives you a voice clone. VoiceLegacy gives you a **communication toolkit**: phrase bank, AI rewording in your tone, category-organized expressions, and one-tap playback — all built around the idea that *what* you say matters as much as *how* you sound. It is purpose-built for people facing speech loss, not a generic TTS playground.
 
 ---
 
-## 6. Out of scope (intentionally not building)
+## 7. Out of scope
 
-- Auth / sessions — using a raw `userId` from the client is fine for MVP
-- A standalone service in `backend/` — the plan is full-stack Next.js; that folder stays empty
+- A standalone service in `backend/` — full-stack Next.js
 - Snowflake — explicitly dropped in `voicelegacy-plan.md`
 
 ---
@@ -112,10 +123,11 @@ them (except `/record`) are wired to the backend yet.
 
 | Area | Status |
 |---|---|
+| Authentication (Clerk) | Complete |
 | Backend infrastructure (lib/) | Complete |
-| Backend API routes (plan items) | Complete |
-| Backend extras (delete-all, favorite, export) | Not started |
-| Real-credential verification | Not started |
-| Frontend pages — UI | Complete |
-| Frontend pages — backend wiring | ~10% (only `/record` partial) |
-| Demo prep | Not started |
+| Backend API routes | Complete |
+| Real-credential verification | Mongo + ElevenLabs complete; Gemini deferred |
+| Frontend pages — UI + wiring | Complete (9 pages) |
+| Emotional hook flow | Complete (record → preview → signup → consent) |
+| Demo prep | Mostly complete (need rehearsal) |
+| Vercel deployment | Deferred |
