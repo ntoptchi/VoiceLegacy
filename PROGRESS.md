@@ -1,9 +1,9 @@
-# VoiceLegacy — Progress Tracker
+# VoiceLegacy - Progress Tracker
 
 Living checklist of what is built versus what still needs to be implemented.
 Source of truth for scope is [`voicelegacy-plan.md`](./voicelegacy-plan.md).
 
-Legend: `[x]` done · `[~]` partially done · `[ ]` not started
+Legend: `[x]` done - `[~]` partially done - `[ ]` not started
 
 ---
 
@@ -20,21 +20,21 @@ Legend: `[x]` done · `[~]` partially done · `[ ]` not started
 
 ---
 
-## 2. Backend — `frontend/src/lib/*`
+## 2. Backend - `frontend/src/lib/*`
 
 All shared infrastructure is in place.
 
-- [x] `mongodb.ts` — cached `MongoClient` via `globalThis`
-- [x] `db.ts` — typed repo functions, in-memory `MOCK_DB` fallback
-- [x] `env.ts` — central env reader + mock flags
-- [x] `api.ts` — `jsonOk` / `jsonError` / `readJsonBody` / `toObjectId`
-- [x] `types.ts` — `UserDoc`, `PhraseDoc`, `PhraseCategory`, `CommunicationStyle`, `RewriteMode`
-- [x] `elevenlabs.ts` — `cloneVoiceFromFiles` + `synthesizeSpeech`, mockable
-- [x] `gemini.ts` — `suggestPhrases` + `rewriteMessage`, mockable
+- [x] `mongodb.ts` - cached `MongoClient` via `globalThis`
+- [x] `db.ts` - typed repo functions, in-memory `MOCK_DB` fallback
+- [x] `env.ts` - central env reader + mock flags
+- [x] `api.ts` - `jsonOk` / `jsonError` / `readJsonBody` / `toObjectId`
+- [x] `types.ts` - `UserDoc`, `PhraseDoc`, `PhraseCategory`, `CommunicationStyle`, `RewriteMode`
+- [x] `elevenlabs.ts` - `cloneVoiceFromFiles` + `synthesizeSpeech`, mockable
+- [x] `gemini.ts` - `suggestPhrases` + `rewriteMessage`, mockable
 
 ---
 
-## 3. Backend — API routes (`frontend/app/api/*`)
+## 3. Backend - API routes (`frontend/app/api/*`)
 
 Every route from the plan exists, validates input, and returns the
 documented `{ success, ... }` shape. All were smoke-tested with the four
@@ -53,16 +53,16 @@ documented `{ success, ... }` shape. All were smoke-tested with the four
 
 ### Backend gaps still to close
 
-- [ ] Verify each route against **real** ElevenLabs / Gemini / Mongo (only the mock paths are exercised so far)
+- [ ] Verify each route against real ElevenLabs / Gemini / Mongo (only the mock paths are exercised so far)
 - [ ] `DELETE /api/voice/:id` or equivalent for "Delete voice data" on the dashboard
 - [ ] `DELETE /api/user/:id` (cascade-delete phrases) for "Delete all data"
-- [ ] Phrase favorite-toggle endpoint (`PATCH /api/phrases/[id]`) — plan says "Mark favorites" on `/phrases`
-- [ ] Phrase bank export (`GET /api/phrases/[id]/export?format=json|pdf`) — plan calls for JSON + PDF export
+- [ ] Phrase favorite-toggle endpoint (`PATCH /api/phrases/[id]`) - plan says "Mark favorites" on `/phrases`
+- [ ] Phrase bank export (`GET /api/phrases/[id]/export?format=json|pdf`) - plan calls for JSON + PDF export
 - [ ] Mongo indexes (`users._id` is automatic; add `phrases.userId` + `phrases.category`)
 
 ---
 
-## 4. Frontend — pages
+## 4. Frontend - pages
 
 All pages are wired to the backend via API routes. Client identity is
 managed through `localStorage` helpers in `frontend/src/lib/userSession.ts`,
@@ -86,14 +86,14 @@ visitors to onboarding.
 - [x] Wire `/speak` to Gemini rewrite + ElevenLabs TTS + phrase save
 - [x] Wire `/dashboard` to user fetch, phrase counts, export, and delete-all
 - [x] Loading + error states for every API call
-- [ ] Mobile pass — judges may demo on phones
+- [ ] Mobile pass - judges may demo on phones
 
 ---
 
-## 5. Demo readiness (per the plan's "Hours 18–24" block)
+## 5. Demo readiness (per the plan's "Hours 18-24" block)
 
-- [ ] Pre-load a demo account with 10–15 banked phrases
-- [ ] Practice the 5-minute demo flow end to end (consent → record → save → speak → save)
+- [ ] Pre-load a demo account with 10-15 banked phrases
+- [ ] Practice the 5-minute demo flow end to end (consent -> record -> save -> speak -> save)
 - [ ] Prepare the one-liner pitch
 - [ ] Prepare the answer to "how is this different from just using ElevenLabs directly?"
 
@@ -101,9 +101,9 @@ visitors to onboarding.
 
 ## 6. Out of scope (intentionally not building)
 
-- Auth / sessions — using a raw `userId` from the client is fine for MVP
-- A standalone service in `backend/` — the plan is full-stack Next.js; that folder stays empty
-- Snowflake — explicitly dropped in `voicelegacy-plan.md`
+- Auth / sessions - using a raw `userId` from the client is fine for MVP
+- A standalone service in `backend/` - the plan is full-stack Next.js; that folder stays empty
+- Snowflake - explicitly dropped in `voicelegacy-plan.md`
 
 ---
 
@@ -115,6 +115,6 @@ visitors to onboarding.
 | Backend API routes (plan items) | Complete |
 | Backend extras (delete-all, favorite, export) | Not started |
 | Real-credential verification | Not started |
-| Frontend pages — UI | Complete |
-| Frontend pages — backend wiring | Complete (all 5 pages) |
+| Frontend pages - UI | Complete |
+| Frontend pages - backend wiring | Complete (all 5 pages) |
 | Demo prep | Not started |

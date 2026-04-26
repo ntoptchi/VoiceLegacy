@@ -16,7 +16,13 @@ import { Button } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { useRequireUser } from "@/lib/useRequireUser";
 
-type Category = "family" | "daily" | "comfort" | "humor" | "emergency" | "personal";
+type Category =
+  | "family"
+  | "daily"
+  | "comfort"
+  | "humor"
+  | "emergency"
+  | "personal";
 
 type Phrase = {
   id: string;
@@ -271,7 +277,9 @@ export default function PhrasesPage() {
   };
 
   const targetCategoryLabel =
-    activeFilter === "all" ? "Family" : categoryById[activeFilter]?.label ?? activeFilter;
+    activeFilter === "all"
+      ? "Family"
+      : categoryById[activeFilter]?.label ?? activeFilter;
   const starterCategory: Category =
     activeFilter === "all" ? "family" : activeFilter;
   const starterPhrases = STARTER_PHRASES[starterCategory];
@@ -292,7 +300,9 @@ export default function PhrasesPage() {
         className="animate-slidein flex flex-col gap-sm"
         style={{ animationDelay: "300ms" }}
       >
-        <h1 className="text-headline-lg text-on-surface">Your Phrase Bank</h1>
+        <h1 className="text-3xl font-bold leading-tight text-on-surface md:text-headline-lg">
+          Your Phrase Bank
+        </h1>
         <p className="max-w-2xl text-body-lg text-on-surface-variant">
           Capture and organize the expressions, wisdom, and daily requests that
           make up your unique voice.
@@ -302,7 +312,7 @@ export default function PhrasesPage() {
       <div
         role="tablist"
         aria-label="Filter phrases by category"
-        className="animate-slidein flex flex-wrap items-center gap-sm rounded-xl border border-outline-variant/20 bg-surface-container-low p-sm"
+        className="animate-slidein flex flex-wrap items-start gap-xs rounded-xl border border-outline-variant/20 bg-surface-container-low p-sm sm:items-center sm:gap-sm"
         style={{ animationDelay: "500ms" }}
       >
         <FilterTab
@@ -320,13 +330,13 @@ export default function PhrasesPage() {
             onClick={() => setActiveFilter(category.id)}
           />
         ))}
-        <div className="ml-auto">
+        <div className="w-full sm:ml-auto sm:w-auto">
           <button
             type="button"
             onClick={() => setFavoritesOnly((prev) => !prev)}
             aria-pressed={favoritesOnly}
             className={cn(
-              "flex items-center gap-xs rounded-full px-md py-xs text-label-md transition-colors",
+              "flex w-full items-center justify-center gap-xs rounded-full px-md py-xs text-label-md transition-colors sm:w-auto",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
               favoritesOnly
                 ? "bg-tertiary text-on-tertiary"
@@ -372,14 +382,12 @@ export default function PhrasesPage() {
             onClick={() => void requestSuggestions()}
             disabled={isThinking}
             aria-busy={isThinking}
-            className="hover:!text-white hover:[&_svg]:!text-white"
+            className="w-full hover:!text-white hover:[&_svg]:!text-white md:w-auto"
           >
-            {isThinking ? "Thinking…" : "Ask AI for Suggestions"}
+            {isThinking ? "Thinking..." : "Ask AI for Suggestions"}
           </Button>
         </div>
-        {error ? (
-          <p className="mt-sm text-body-sm text-error">{error}</p>
-        ) : null}
+        {error ? <p className="mt-sm text-body-sm text-error">{error}</p> : null}
       </div>
 
       {phrases.length === 0 ? (
@@ -389,8 +397,8 @@ export default function PhrasesPage() {
               Starter phrases for {categoryById[starterCategory].label}
             </h2>
             <p className="max-w-2xl text-body-sm text-on-surface-variant">
-              Local demo mode uses a curated starter set so the page stays useful
-              even before API keys are configured.
+              Local demo mode uses a curated starter set so the page stays
+              useful even before API keys are configured.
             </p>
           </div>
 
@@ -405,7 +413,7 @@ export default function PhrasesPage() {
                   variant="secondary"
                   size="sm"
                   onClick={() => void addPhrase(text, starterCategory)}
-                  className="mt-md self-start"
+                  className="mt-md self-stretch sm:self-start"
                 >
                   Save phrase
                 </Button>
@@ -452,7 +460,7 @@ function FilterTab({
       aria-selected={isActive}
       onClick={onClick}
       className={cn(
-        "flex min-h-11 items-center gap-xs rounded-full px-md py-xs text-label-md transition-colors",
+        "flex min-h-10 items-center gap-xs rounded-full px-sm py-xs text-label-md transition-colors sm:min-h-11 sm:px-md",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         isActive
           ? "bg-primary text-on-primary"
@@ -523,7 +531,7 @@ function PhraseCard({
         </button>
       </div>
 
-      <p className="flex-grow py-sm text-headline-sm text-on-surface">
+      <p className="flex-grow py-sm text-xl font-semibold leading-snug text-on-surface md:text-headline-sm">
         &ldquo;{phrase.text}&rdquo;
       </p>
 
@@ -569,7 +577,7 @@ function EmptyState({ favoritesOnly }: { favoritesOnly: boolean }) {
           ? "No favorites in this view yet."
           : "Nothing here yet."}
       </p>
-      <p className="max-w-md text-balance text-body-sm text-on-surface-variant">
+      <p className="w-full max-w-[28rem] text-body-sm leading-relaxed text-on-surface-variant">
         {favoritesOnly
           ? "Tap the star on any phrase to keep it close at hand."
           : "Switch categories or ask the assistant to suggest a few starter phrases."}

@@ -24,6 +24,11 @@ const navItems: NavItem[] = [
   { href: "/speak", label: "Speak", icon: MessageCircleHeart },
 ];
 
+const mobileNavItems: NavItem[] = [
+  ...navItems,
+  { href: "/dashboard", label: "Settings", icon: Settings },
+];
+
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -34,7 +39,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-outline-variant/30 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-content items-center justify-between gap-md px-margin py-sm">
+      <div className="mx-auto flex w-full max-w-content items-center justify-between gap-sm px-4 py-sm sm:px-6 md:gap-md md:px-margin">
         <Link
           href="/"
           className="group flex items-center gap-sm text-primary transition-colors hover:text-primary-container"
@@ -43,7 +48,7 @@ export function Navbar() {
           <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed transition-transform group-hover:scale-105">
             <Waves className="h-5 w-5" aria-hidden="true" />
           </span>
-          <span className="text-headline-sm font-semibold tracking-tight">
+          <span className="text-lg font-semibold text-on-surface md:text-headline-sm">
             VoiceLegacy
           </span>
         </Link>
@@ -74,7 +79,7 @@ export function Navbar() {
           })}
         </nav>
 
-        <div className="flex items-center gap-xs">
+        <div className="hidden items-center gap-xs md:flex">
           <Link
             href="/dashboard"
             aria-label="Profile and settings"
@@ -94,7 +99,7 @@ export function Navbar() {
         aria-label="Primary mobile"
         className="flex items-center justify-around gap-xs border-t border-outline-variant/30 px-md py-xs md:hidden"
       >
-        {navItems.map((item) => {
+        {mobileNavItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(pathname, item.href);
           return (
@@ -103,14 +108,14 @@ export function Navbar() {
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex flex-1 flex-col items-center gap-1 rounded-md px-xs py-xs text-label-md transition-colors",
+                "flex min-w-0 flex-1 flex-col items-center gap-1 rounded-md px-xs py-xs text-label-md transition-colors",
                 active
                   ? "text-primary"
                   : "text-on-surface-variant hover:text-on-surface",
               )}
             >
               <Icon className="h-5 w-5" aria-hidden="true" />
-              <span className="text-[11px] uppercase tracking-wider">
+              <span className="text-center text-[11px] uppercase">
                 {item.label}
               </span>
             </Link>
