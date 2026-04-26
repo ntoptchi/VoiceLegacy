@@ -102,7 +102,7 @@ export default function OnboardingPage() {
     >
       <header className="flex flex-col gap-sm text-center">
         <h1
-          className="animate-slidein text-3xl font-bold leading-tight text-on-surface md:text-headline-lg"
+          className="animate-slidein font-[family-name:var(--font-lora)] text-3xl font-semibold leading-tight text-on-surface md:text-headline-lg"
           style={{ animationDelay: "300ms" }}
         >
           Welcome to VoiceLegacy
