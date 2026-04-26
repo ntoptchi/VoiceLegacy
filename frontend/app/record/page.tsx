@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   Mic,
   RotateCcw,
+  Sparkles,
   Square,
   TriangleAlert,
 } from "lucide-react";
@@ -401,7 +402,7 @@ export default function RecordPage() {
             <Button
               variant="primary"
               size="lg"
-              leftIcon={<Mic className="h-5 w-5" aria-hidden="true" />}
+              leftIcon={<Sparkles className="h-5 w-5" aria-hidden="true" />}
               onClick={() => void submitRecordings()}
               disabled={isProcessing}
               className="order-first col-span-2 w-full justify-self-center px-lg sm:order-none sm:col-span-1 sm:w-auto sm:min-w-[260px] sm:px-xl"
