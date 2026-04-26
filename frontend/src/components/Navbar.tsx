@@ -142,7 +142,7 @@ export function Navbar() {
                 <Button
                   variant="tertiary"
                   size="sm"
-                  className="bg-[#ffd8df] text-[#6f2636] shadow-[0_8px_18px_rgba(190,76,98,0.16)] hover:bg-[#ffc2cf] hover:text-[#5a1c2a]"
+                  className="bg-[#dcefdc] text-[#244f32] shadow-[0_8px_18px_rgba(71,100,79,0.16)] hover:bg-[#c6e6c8] hover:text-[#183d25]"
                 >
                   Sign up
                 </Button>
