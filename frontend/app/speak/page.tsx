@@ -8,7 +8,7 @@ import {
   Library,
   Loader2,
   MessageSquareQuote,
-  Play,
+  Mic,
   Scissors,
   Sparkles,
   Volume2,
@@ -294,7 +294,7 @@ export default function SpeakPage() {
           onClick={handlePlay}
           disabled={!canPlay}
           aria-pressed={isPlaying}
-          aria-label={isPlaying ? "Audio is playing" : "Play audio"}
+          aria-label={isPlaying ? "Audio is playing" : "Speak this aloud"}
           className={cn(
             "relative z-10 h-28 w-28 min-h-0 gap-0 rounded-full border-4 border-surface px-0 shadow-ambient",
             isPlaying && "bg-primary-container",
@@ -303,7 +303,7 @@ export default function SpeakPage() {
           {isPlaying ? (
             <Volume2 className="h-10 w-10 animate-pulse" aria-hidden="true" />
           ) : (
-            <Play className="h-10 w-10 fill-current" aria-hidden="true" />
+            <Mic className="h-10 w-10" aria-hidden="true" />
           )}
         </Button>
 
