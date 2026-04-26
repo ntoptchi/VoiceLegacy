@@ -251,7 +251,10 @@ export default function RecordPage() {
 
   if (isDone) {
     return (
-      <section className="mx-auto flex w-full max-w-2xl flex-col items-center gap-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-lg text-center shadow-ambient">
+      <section
+        className="animate-slidein mx-auto flex w-full max-w-2xl flex-col items-center gap-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-lg text-center shadow-ambient"
+        style={{ animationDelay: "300ms" }}
+      >
         <span className="flex h-16 w-16 items-center justify-center rounded-full bg-primary text-on-primary">
           <CheckCircle2 className="h-8 w-8" aria-hidden="true" />
         </span>
@@ -259,9 +262,9 @@ export default function RecordPage() {
           Your voice is preserved.
         </h1>
         <p className="max-w-prose text-body-lg text-on-surface-variant">
-          We've safely uploaded your recordings and created your private voice
-          prototype. You can now build your phrase bank and speak in your own
-          voice.
+          We&apos;ve safely uploaded your recordings and created your private
+          voice prototype. You can now build your phrase bank and speak in your
+          own voice.
         </p>
         {voiceId ? (
           <p className="text-body-sm text-on-surface-variant">
@@ -296,7 +299,10 @@ export default function RecordPage() {
 
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-lg">
-      <header className="flex flex-col gap-sm rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-md shadow-ambient">
+      <header
+        className="animate-slidein flex flex-col gap-sm rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-md shadow-ambient"
+        style={{ animationDelay: "300ms" }}
+      >
         <div className="flex items-center justify-between gap-sm">
           <div className="flex items-center gap-xs rounded-full bg-surface-container-high px-sm py-xs">
             <span
@@ -339,7 +345,10 @@ export default function RecordPage() {
         </div>
       </header>
 
-      <article className="flex flex-col items-center gap-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-lg text-center shadow-ambient">
+      <article
+        className="animate-slidein flex flex-col items-center gap-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-lg text-center shadow-ambient"
+        style={{ animationDelay: "500ms" }}
+      >
         <p className="text-label-md uppercase tracking-wider text-on-surface-variant">
           Read this aloud, in your natural voice
         </p>
@@ -373,7 +382,10 @@ export default function RecordPage() {
         </div>
       ) : null}
 
-      <div className="flex flex-col items-center gap-md">
+      <div
+        className="animate-slidein flex flex-col items-center gap-md"
+        style={{ animationDelay: "700ms" }}
+      >
         <div className="flex items-center justify-between gap-md">
           <Button
             variant="ghost"
@@ -461,11 +473,11 @@ export default function RecordPage() {
 
         <p className="text-body-sm text-on-surface-variant">
           {isRecording
-            ? "Tap stop when you've finished reading the phrase."
+            ? "Tap stop when you&apos;ve finished reading the phrase."
             : allRecorded
-              ? "All phrases captured. Create your voice clone whenever you're ready."
+              ? "All phrases captured. Create your voice clone whenever you&apos;re ready."
               : currentPhraseRecorded
-                ? "Move to the next phrase, or re-record if you'd like another take."
+                ? "Move to the next phrase, or re-record if you&apos;d like another take."
                 : "Tap the microphone to start recording this phrase."}
         </p>
       </div>

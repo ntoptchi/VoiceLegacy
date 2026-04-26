@@ -240,7 +240,10 @@ export default function PhrasesPage() {
 
   return (
     <section className="flex w-full flex-col gap-lg">
-      <header className="flex flex-col gap-sm">
+      <header
+        className="animate-slidein flex flex-col gap-sm"
+        style={{ animationDelay: "300ms" }}
+      >
         <h1 className="text-headline-lg text-on-surface">Your Phrase Bank</h1>
         <p className="max-w-2xl text-body-lg text-on-surface-variant">
           Capture and organize the expressions, wisdom, and daily requests that
@@ -251,7 +254,8 @@ export default function PhrasesPage() {
       <div
         role="tablist"
         aria-label="Filter phrases by category"
-        className="flex flex-wrap items-center gap-xs"
+        className="animate-slidein flex flex-wrap items-center gap-xs"
+        style={{ animationDelay: "500ms" }}
       >
         <FilterTab
           label="All"
@@ -291,7 +295,10 @@ export default function PhrasesPage() {
         </button>
       </div>
 
-      <div className="rounded-xl border border-outline-variant/30 bg-surface-container-low p-md shadow-ambient">
+      <div
+        className="animate-slidein rounded-xl border border-outline-variant/30 bg-surface-container-low p-md shadow-ambient"
+        style={{ animationDelay: "700ms" }}
+      >
         <div className="flex flex-col items-start justify-between gap-sm md:flex-row md:items-center">
           <div className="flex flex-col gap-xs">
             <h2 className="text-headline-sm text-on-surface">
@@ -319,10 +326,11 @@ export default function PhrasesPage() {
         <EmptyState favoritesOnly={favoritesOnly} />
       ) : (
         <ul className="grid grid-cols-1 gap-md md:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((phrase) => (
+          {filtered.map((phrase, index) => (
             <PhraseCard
               key={phrase.id}
               phrase={phrase}
+              animationDelay={`${900 + index * 200}ms`}
               onToggleFavorite={() => toggleFavorite(phrase.id)}
               onDelete={() => deletePhrase(phrase.id)}
             />
@@ -375,16 +383,21 @@ function FilterTab({
 
 function PhraseCard({
   phrase,
+  animationDelay,
   onToggleFavorite,
   onDelete,
 }: {
   phrase: Phrase;
+  animationDelay: string;
   onToggleFavorite: () => void;
   onDelete: () => void;
 }) {
   const meta = categoryById[phrase.category];
   return (
-    <li className="ambient-shadow flex min-h-[180px] flex-col rounded-xl border border-outline-variant/20 bg-surface p-md transition-shadow hover:shadow-ambient-hover">
+    <li
+      className="animate-slidein ambient-shadow flex min-h-[180px] flex-col rounded-xl border border-outline-variant/20 bg-surface p-md transition-shadow hover:shadow-ambient-hover"
+      style={{ animationDelay }}
+    >
       <div className="mb-sm flex items-start justify-between gap-sm">
         <span
           className={cn(
