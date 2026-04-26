@@ -169,9 +169,11 @@ The app deploys to Vercel:
 
 ## Team
 
-Built at [hackathon name] by:
+Built at Hackabull by:
 - Nick Toptchi
-- [Add teammates here]
+- Jackson Bopp
+- Amrit Selva Ganesh
+- Connor Kouznetsov
 
 ---
 
