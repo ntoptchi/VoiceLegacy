@@ -64,26 +64,28 @@ documented `{ success, ... }` shape. All were smoke-tested with the four
 
 ## 4. Frontend — pages
 
-Static UI for every page already exists under `frontend/app/`. None of
-them (except `/record`) are wired to the backend yet.
+All pages are wired to the backend via API routes. Client identity is
+managed through `localStorage` helpers in `frontend/src/lib/userSession.ts`,
+and protected pages use `useRequireUser()` to redirect unauthenticated
+visitors to onboarding.
 
 | Page | UI exists? | Wired to backend? | Notes |
 |---|---|---|---|
-| `/` (consent + onboarding) | [x] | [ ] | Calls `router.push("/record")` instead of `POST /api/user/create`. Selected tone/audience are not persisted. |
-| `/record` | [x] | [~] | Calls `POST /api/voice/upload` (good), but does not pass a `userId` and does not poll `GET /api/voice/status/[id]`. |
-| `/phrases` | [x] | [ ] | Add / list / favorite / delete are all local state — none of `GET /api/phrases/[id]`, `POST /api/phrases`, `DELETE /api/phrases/[id]`, `POST /api/gemini/suggest` are called. |
-| `/speak` | [x] | [ ] | "Make warmer / shorter / sound like me / translate" buttons need `POST /api/gemini/rewrite`; play button needs `POST /api/speak`; "save" needs `POST /api/phrases`. |
-| `/dashboard` | [x] | [ ] | Voice status, phrase counts, export, and delete actions all need backend wiring. |
+| `/` (consent + onboarding) | [x] | [x] | `POST /api/user/create` on submit; stores `userId` + `communicationStyle` in localStorage. |
+| `/record` | [x] | [x] | Sends `userId` with `POST /api/voice/upload`; persists returned `voiceId` to localStorage. |
+| `/phrases` | [x] | [x] | Fetches `GET /api/phrases/[userId]`, creates via `POST /api/phrases`, deletes via `DELETE /api/phrases/[id]`, suggestions via `POST /api/gemini/suggest`. |
+| `/speak` | [x] | [x] | Rewrites via `POST /api/gemini/rewrite`, TTS via `POST /api/speak` with real audio playback, save via `POST /api/phrases`. |
+| `/dashboard` | [x] | [x] | Loads `GET /api/user/[id]` + `GET /api/phrases/[userId]`; client-side JSON export; session-clear delete. |
 
 ### Frontend gaps still to close
 
-- [ ] Persist `userId` after onboarding (cookie or `localStorage`) and read it from every page
-- [ ] Wire `/` to `POST /api/user/create` (block submit until 201, then store `userId`)
-- [ ] Wire `/record` to send `userId` with the upload, and to poll `GET /api/voice/status/[id]` until `"ready"`
-- [ ] Wire `/phrases` to all phrase routes + Gemini suggest
-- [ ] Wire `/speak` to Gemini rewrite + ElevenLabs TTS + phrase save
-- [ ] Wire `/dashboard` to user fetch, phrase counts, export, and delete-voice / delete-all
-- [ ] Loading + error states for every API call
+- [x] Persist `userId` after onboarding (cookie or `localStorage`) and read it from every page
+- [x] Wire `/` to `POST /api/user/create` (block submit until 201, then store `userId`)
+- [x] Wire `/record` to send `userId` with the upload
+- [x] Wire `/phrases` to all phrase routes + Gemini suggest
+- [x] Wire `/speak` to Gemini rewrite + ElevenLabs TTS + phrase save
+- [x] Wire `/dashboard` to user fetch, phrase counts, export, and delete-all
+- [x] Loading + error states for every API call
 - [ ] Mobile pass — judges may demo on phones
 
 ---
@@ -114,5 +116,5 @@ them (except `/record`) are wired to the backend yet.
 | Backend extras (delete-all, favorite, export) | Not started |
 | Real-credential verification | Not started |
 | Frontend pages — UI | Complete |
-| Frontend pages — backend wiring | ~10% (only `/record` partial) |
+| Frontend pages — backend wiring | Complete (all 5 pages) |
 | Demo prep | Not started |

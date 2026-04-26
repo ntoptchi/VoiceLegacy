@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import { useRequireUser } from "@/lib/useRequireUser";
+import { setVoiceId as persistVoiceId } from "@/lib/userSession";
 
 const PHRASES: readonly string[] = [
   "I am recording my voice so I can always sound like myself.",
@@ -61,6 +63,7 @@ function extensionForMime(mime: string | undefined): string {
 
 export default function RecordPage() {
   const router = useRouter();
+  const userId = useRequireUser();
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [recordingState, setRecordingState] = useState<RecordingState>("idle");
   const [audioBlobs, setAudioBlobs] = useState<(Blob | null)[]>(() =>
@@ -203,13 +206,14 @@ export default function RecordPage() {
   );
 
   const submitRecordings = useCallback(async () => {
-    if (!allRecorded || isProcessing) return;
+    if (!allRecorded || isProcessing || !userId) return;
 
     setRecordingState("processing");
     setError(null);
 
     try {
       const formData = new FormData();
+      formData.append("userId", userId);
       const mimeType = pickAudioMimeType();
       const ext = extensionForMime(mimeType);
       audioBlobs.forEach((blob, index) => {
@@ -226,17 +230,23 @@ export default function RecordPage() {
       const payload: {
         success?: boolean;
         voice_id?: string;
+        voiceId?: string;
         error?: string;
       } = await response.json().catch(() => ({}));
 
-      if (!response.ok || !payload.success || !payload.voice_id) {
+      if (!response.ok || !payload.success) {
         throw new Error(
           payload.error ??
             `Voice clone upload failed (status ${response.status}).`,
         );
       }
 
-      setVoiceId(payload.voice_id);
+      const returnedVoiceId = payload.voiceId ?? payload.voice_id;
+      if (returnedVoiceId) {
+        setVoiceId(returnedVoiceId);
+        persistVoiceId(returnedVoiceId);
+      }
+
       setRecordingState("done");
     } catch (err) {
       console.error("[record] submit failed", err);
@@ -247,7 +257,11 @@ export default function RecordPage() {
       );
       setRecordingState("idle");
     }
-  }, [allRecorded, audioBlobs, isProcessing]);
+  }, [allRecorded, audioBlobs, isProcessing, userId]);
+
+  if (!userId) {
+    return null;
+  }
 
   if (isDone) {
     return (

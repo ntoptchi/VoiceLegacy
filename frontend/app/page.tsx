@@ -6,6 +6,7 @@ import {
   ArrowRight,
   Check,
   Heart,
+  Loader2,
   Lock,
   Smile,
   Zap,
@@ -13,6 +14,10 @@ import {
 } from "lucide-react";
 import { Button, TextInput } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import {
+  setUserId,
+  setCommunicationStyle,
+} from "@/lib/userSession";
 
 type Tone = "warm" | "direct" | "humorous";
 
@@ -49,13 +54,49 @@ export default function OnboardingPage() {
   const [consent, setConsent] = useState(false);
   const [tone, setTone] = useState<Tone | null>(null);
   const [audience, setAudience] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const canContinue = consent && tone !== null;
+  const canContinue = consent && tone !== null && !isSubmitting;
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!canContinue) return;
-    router.push("/record");
+    if (!canContinue || !tone) return;
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/user/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          consent: true,
+          communicationStyle: tone,
+          audience: audience.trim() || undefined,
+        }),
+      });
+
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok || !payload.success || !payload.userId) {
+        throw new Error(
+          payload.error ?? `Failed to create user (status ${response.status}).`,
+        );
+      }
+
+      setUserId(payload.userId);
+      setCommunicationStyle(tone);
+      router.push("/record");
+    } catch (err) {
+      console.error("[onboarding] submit failed", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong. Please try again.",
+      );
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -64,16 +105,10 @@ export default function OnboardingPage() {
       className="mx-auto flex w-full max-w-3xl flex-col gap-lg rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-md md:p-lg shadow-ambient"
     >
       <header className="flex flex-col gap-sm text-center">
-        <h1
-          className="animate-slidein text-headline-lg text-on-surface"
-          style={{ animationDelay: "300ms" }}
-        >
+        <h1 className="text-headline-lg text-on-surface">
           Welcome to VoiceLegacy
         </h1>
-        <p
-          className="animate-slidein mx-auto max-w-2xl text-body-lg text-on-surface-variant"
-          style={{ animationDelay: "500ms" }}
-        >
+        <p className="mx-auto max-w-2xl text-body-lg text-on-surface-variant">
           Safely preserve the voice, words, and phrases that make your
           communication feel personal — before anything changes.
         </p>
@@ -81,8 +116,7 @@ export default function OnboardingPage() {
 
       <section
         aria-labelledby="consent-heading"
-        className="animate-slidein flex flex-col gap-sm rounded-xl border border-outline-variant/50 bg-surface-container-low p-md"
-        style={{ animationDelay: "700ms" }}
+        className="flex flex-col gap-sm rounded-xl border border-outline-variant/50 bg-surface-container-low p-md"
       >
         <div className="flex items-start gap-md">
           <button
@@ -127,8 +161,7 @@ export default function OnboardingPage() {
 
       <section
         aria-labelledby="tone-heading"
-        className="animate-slidein flex flex-col gap-md"
-        style={{ animationDelay: "700ms" }}
+        className="flex flex-col gap-md"
       >
         <div className="flex flex-col gap-xs border-b border-outline-variant/30 pb-sm">
           <h2
@@ -184,10 +217,7 @@ export default function OnboardingPage() {
         </div>
       </section>
 
-      <section
-        className="animate-slidein flex flex-col gap-sm"
-        style={{ animationDelay: "700ms" }}
-      >
+      <section className="flex flex-col gap-sm">
         <TextInput
           label="Who is this primarily for? (Optional)"
           placeholder="e.g., My grandchildren, my partner, my future self..."
@@ -197,18 +227,30 @@ export default function OnboardingPage() {
         />
       </section>
 
-      <footer
-        className="animate-slidein mt-sm flex justify-end border-t border-outline-variant/30 pt-md"
-        style={{ animationDelay: "900ms" }}
-      >
+      {error ? (
+        <div
+          role="alert"
+          className="rounded-xl border border-error/30 bg-error-container/40 px-md py-sm text-body-sm text-on-error-container"
+        >
+          {error}
+        </div>
+      ) : null}
+
+      <footer className="mt-sm flex justify-end border-t border-outline-variant/30 pt-md">
         <Button
           type="submit"
           variant="primary"
           size="lg"
-          rightIcon={<ArrowRight className="h-5 w-5" aria-hidden="true" />}
+          rightIcon={
+            isSubmitting ? (
+              <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" />
+            ) : (
+              <ArrowRight className="h-5 w-5" aria-hidden="true" />
+            )
+          }
           disabled={!canContinue}
         >
-          Continue to Recording
+          {isSubmitting ? "Setting up…" : "Continue to Recording"}
         </Button>
       </footer>
     </form>
