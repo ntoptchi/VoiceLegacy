@@ -260,7 +260,7 @@ export default function OnboardingPage() {
             )
           }
           disabled={!canContinue}
-          className="w-full sm:w-auto"
+          className="w-full hover:!text-white hover:[&_svg]:!text-white sm:w-auto"
         >
           {isSubmitting ? "Setting up..." : "Continue to Recording"}
         </Button>
