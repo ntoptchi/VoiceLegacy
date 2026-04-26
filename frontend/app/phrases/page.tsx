@@ -179,13 +179,25 @@ export default function PhrasesPage() {
   }, [phrases]);
 
   const toggleFavorite = (id: string) => {
+    const target = phrases.find((p) => p.id === id);
+    if (!target || !userId) return;
+    const next = !target.isFavorite;
     setPhrases((prev) =>
       prev.map((phrase) =>
-        phrase.id === id
-          ? { ...phrase, isFavorite: !phrase.isFavorite }
-          : phrase,
+        phrase.id === id ? { ...phrase, isFavorite: next } : phrase,
       ),
     );
+    fetch(`/api/phrases/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, isFavorite: next }),
+    }).catch(() => {
+      setPhrases((prev) =>
+        prev.map((phrase) =>
+          phrase.id === id ? { ...phrase, isFavorite: !next } : phrase,
+        ),
+      );
+    });
   };
 
   const deletePhrase = async (id: string) => {

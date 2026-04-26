@@ -21,8 +21,22 @@ function getCachedClient(): Promise<MongoClient> {
     return globalWithMongo.__voicelegacyMongo.promise;
   }
 
-  const client = new MongoClient(uri);
-  const promise = client.connect();
+  const client = new MongoClient(uri, {
+    serverSelectionTimeoutMS: 10_000,
+    connectTimeoutMS: 10_000,
+  });
+  const promise = client.connect().catch((err) => {
+    delete globalWithMongo.__voicelegacyMongo;
+    const msg = err instanceof Error ? err.message : String(err);
+    if (msg.includes("SSL") || msg.includes("TLS") || msg.includes("ssl")) {
+      throw new Error(
+        "Could not connect to MongoDB (TLS rejected). " +
+          "This usually means your IP is not in the Atlas Network Access allowlist. " +
+          "Go to cloud.mongodb.com → Network Access → Add Current IP Address.",
+      );
+    }
+    throw err;
+  });
   globalWithMongo.__voicelegacyMongo = { client, promise };
   return promise;
 }

@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { jsonError, jsonOk, readJsonBody, toObjectId } from "@/lib/api";
-import { deletePhrase, listPhrases } from "@/lib/db";
+import { deletePhrase, listPhrases, updatePhraseFavorite } from "@/lib/db";
 import {
   isPhraseCategory,
   PHRASE_CATEGORIES,
@@ -49,6 +49,42 @@ export async function GET(
     console.error("[api/phrases/:id GET] failed:", error);
     const message =
       error instanceof Error ? error.message : "Failed to load phrases.";
+    return jsonError(message, 500);
+  }
+}
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  const phraseIdResult = toObjectId(id);
+  if (!phraseIdResult.ok) return phraseIdResult.response;
+
+  const body = await readJsonBody<{ userId?: unknown; isFavorite?: unknown }>(request);
+  if (!body.ok) return body.response;
+
+  const { userId, isFavorite } = body.data ?? {};
+  if (!userId || typeof userId !== "string") {
+    return jsonError("userId is required.", 400);
+  }
+  if (typeof isFavorite !== "boolean") {
+    return jsonError("isFavorite (boolean) is required.", 400);
+  }
+
+  const userIdResult = toObjectId(userId);
+  if (!userIdResult.ok) return userIdResult.response;
+
+  try {
+    const updated = await updatePhraseFavorite(phraseIdResult.id, userIdResult.id, isFavorite);
+    if (!updated) {
+      return jsonError("Phrase not found or does not belong to this user.", 404);
+    }
+    return jsonOk({ updated: true });
+  } catch (error) {
+    console.error("[api/phrases/:id PATCH] failed:", error);
+    const message =
+      error instanceof Error ? error.message : "Failed to update phrase.";
     return jsonError(message, 500);
   }
 }
