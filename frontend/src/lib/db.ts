@@ -165,6 +165,24 @@ export async function createPhrase(input: {
   return doc;
 }
 
+export async function clearUserVoice(id: ObjectId): Promise<UserDoc | null> {
+  const updatedAt = new Date();
+  if (env.MOCK_DB) {
+    const existing = getMockStore().users.get(id.toHexString());
+    if (!existing) return null;
+    const next: UserDoc = { ...existing, voiceId: null, voiceStatus: "none", updatedAt };
+    getMockStore().users.set(id.toHexString(), next);
+    return next;
+  }
+  const col = await usersCollection();
+  const result = await col.findOneAndUpdate(
+    { _id: id },
+    { $set: { voiceId: null, voiceStatus: "none", updatedAt } },
+    { returnDocument: "after" },
+  );
+  return result ?? null;
+}
+
 export async function deleteUser(id: ObjectId): Promise<boolean> {
   if (env.MOCK_DB) {
     const existed = getMockStore().users.delete(id.toHexString());
@@ -178,6 +196,25 @@ export async function deleteUser(id: ObjectId): Promise<boolean> {
   const userCol = await usersCollection();
   const result = await userCol.deleteOne({ _id: id });
   return result.deletedCount === 1;
+}
+
+export async function updatePhraseFavorite(
+  phraseId: ObjectId,
+  userId: ObjectId,
+  isFavorite: boolean,
+): Promise<boolean> {
+  if (env.MOCK_DB) {
+    const existing = getMockStore().phrases.get(phraseId.toHexString());
+    if (!existing || !existing.userId.equals(userId)) return false;
+    getMockStore().phrases.set(phraseId.toHexString(), { ...existing, isFavorite });
+    return true;
+  }
+  const col = await phrasesCollection();
+  const result = await col.updateOne(
+    { _id: phraseId, userId },
+    { $set: { isFavorite } },
+  );
+  return result.matchedCount === 1;
 }
 
 export async function deletePhrase(

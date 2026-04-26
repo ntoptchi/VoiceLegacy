@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { useRequireUser } from "@/lib/useRequireUser";
-import { clearSession, getVoiceId } from "@/lib/userSession";
+import { clearSession, getVoiceId, setVoiceId as persistVoiceId } from "@/lib/userSession";
 
 type Category = "family" | "daily" | "comfort" | "humor" | "emergency" | "personal";
 
@@ -115,6 +115,25 @@ export default function DashboardPage() {
     a.download = "voicelegacy-phrases.json";
     a.click();
     URL.revokeObjectURL(url);
+  };
+
+  const handleDeleteVoice = async () => {
+    if (!userId || !voiceId) return;
+    if (!confirm("Delete your voice clone? You can re-record later.")) return;
+    try {
+      const res = await fetch("/api/voice/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId }),
+      });
+      if (res.ok) {
+        setVoiceId(null);
+        setVoiceStatus("none");
+        localStorage.removeItem("voicelegacy_voiceId");
+      }
+    } catch {
+      // best-effort
+    }
   };
 
   const handleDeleteAll = async () => {
@@ -269,11 +288,21 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex flex-col gap-sm sm:flex-row">
+          {voiceId ? (
+            <Button
+              variant="destructive"
+              size="md"
+              leftIcon={<Trash2 className="h-5 w-5" aria-hidden="true" />}
+              onClick={() => void handleDeleteVoice()}
+            >
+              Delete voice data
+            </Button>
+          ) : null}
           <Button
             variant="destructive"
             size="md"
             leftIcon={<Trash2 className="h-5 w-5" aria-hidden="true" />}
-            onClick={handleDeleteAll}
+            onClick={() => void handleDeleteAll()}
           >
             Delete all data
           </Button>

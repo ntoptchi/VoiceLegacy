@@ -14,8 +14,8 @@ Legend: `[x]` done · `[~]` partially done · `[ ]` not started
 - [x] TypeScript + ESLint configured
 - [x] `mongodb` driver added to dependencies (`frontend/package.json`)
 - [x] `.env.local.example` documents every key + every mock flag (`frontend/.env.local.example`)
-- [ ] Real `.env.local` populated with live keys (Mongo, ElevenLabs, Gemini)
-- [ ] MongoDB Atlas cluster provisioned + connection verified end-to-end (currently only smoke-tested with `MOCK_DB=true`)
+- [x] Real `.env.local` populated with live keys (Mongo, ElevenLabs; Gemini deferred)
+- [x] MongoDB Atlas cluster provisioned + connection verified end-to-end (real Mongo, real ElevenLabs)
 - [ ] Vercel project connected to GitHub for auto-deploy
 
 ---
@@ -53,10 +53,10 @@ documented `{ success, ... }` shape. All were smoke-tested with the four
 
 ### Backend gaps still to close
 
-- [ ] Verify each route against **real** ElevenLabs / Gemini / Mongo (only the mock paths are exercised so far)
-- [ ] `DELETE /api/voice/:id` or equivalent for "Delete voice data" on the dashboard
+- [x] Verify routes against **real** Mongo + ElevenLabs (all pass; Gemini deferred — `MOCK_GEMINI_API=true`)
+- [x] `POST /api/voice/delete` — deletes voice from ElevenLabs + clears user voiceId in DB; dashboard wired
 - [x] `DELETE /api/user/:id` (cascade-delete phrases) for "Delete all data"
-- [ ] Phrase favorite-toggle endpoint (`PATCH /api/phrases/[id]`) — plan says "Mark favorites" on `/phrases`
+- [x] Phrase favorite-toggle endpoint (`PATCH /api/phrases/[id]`) — persists to DB with optimistic UI — plan says "Mark favorites" on `/phrases`
 - [ ] Phrase bank export (`GET /api/phrases/[id]/export?format=json|pdf`) — plan calls for JSON + PDF export
 - [ ] Mongo indexes (`users._id` is automatic; add `phrases.userId` + `phrases.category`)
 
