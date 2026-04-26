@@ -120,7 +120,7 @@ export async function suggestPhrases(
   count: number,
 ): Promise<{ suggestions: string[]; mock: boolean }> {
   const safeCount = Math.max(1, Math.min(10, Math.trunc(count)));
-  if (env.MOCK_GEMINI_API) {
+  if (env.MOCK_GEMINI_API || !env.GEMINI_API_KEY) {
     return {
       suggestions: MOCK_SUGGESTIONS[category].slice(0, safeCount),
       mock: true,
@@ -160,7 +160,7 @@ export async function rewriteMessage(input: {
   mode: RewriteMode;
   communicationStyle: CommunicationStyle;
 }): Promise<{ rewritten: string; mock: boolean }> {
-  if (env.MOCK_GEMINI_API) {
+  if (env.MOCK_GEMINI_API || !env.GEMINI_API_KEY) {
     const tag =
       input.mode === "warmer"
         ? "[warmer]"
