@@ -73,7 +73,7 @@ const REWRITE_DELAY_MS = 1000;
 const PLAY_DURATION_MS = 3000;
 
 export default function SpeakPage() {
-  const [text, setText] = useState(SAMPLE_PROMPT);
+  const [text, setText] = useState("");
   const [rewriting, setRewriting] = useState<RewriteAction | null>(null);
   const [activeAction, setActiveAction] = useState<RewriteAction | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -144,7 +144,7 @@ export default function SpeakPage() {
             setText(event.target.value);
             setActiveAction(null);
           }}
-          placeholder="What do you want to say?"
+          placeholder={SAMPLE_PROMPT}
           rows={4}
           className={cn(
             "w-full resize-none rounded-xl border-2 border-outline-variant/50 bg-surface-container-lowest p-md text-body-lg text-on-surface",

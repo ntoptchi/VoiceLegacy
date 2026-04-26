@@ -7,6 +7,7 @@ import {
   Check,
   Heart,
   Lock,
+  ShieldAlert,
   Smile,
   Zap,
   type LucideIcon,
@@ -115,6 +116,20 @@ export default function OnboardingPage() {
               </span>
             </span>
           </div>
+        </div>
+
+        <div
+          role="note"
+          className="mt-sm flex items-start gap-xs rounded-md border border-error/30 bg-error-container/40 p-sm text-on-error-container"
+        >
+          <ShieldAlert
+            className="mt-[2px] h-4 w-4 shrink-0 text-error"
+            aria-hidden="true"
+          />
+          <p className="text-body-sm">
+            <span className="font-semibold">This is not for impersonation.</span>{" "}
+            Voices may only be cloned with the speaker&apos;s explicit consent.
+          </p>
         </div>
       </section>
 
