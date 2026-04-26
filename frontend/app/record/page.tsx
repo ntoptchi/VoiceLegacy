@@ -20,8 +20,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import { useRequireUser } from "@/lib/useRequireUser";
-import { setVoiceId as persistVoiceId } from "@/lib/userSession";
 
 const PHRASES: readonly string[] = [
   "I am recording my voice so I can always sound like myself.",
@@ -61,28 +59,8 @@ function extensionForMime(mime: string | undefined): string {
   return "webm";
 }
 
-const POLL_INTERVAL_MS = 2000;
-const POLL_MAX_ATTEMPTS = 30;
-
-async function pollVoiceStatus(userId: string): Promise<string | null> {
-  for (let i = 0; i < POLL_MAX_ATTEMPTS; i++) {
-    await new Promise((r) => setTimeout(r, POLL_INTERVAL_MS));
-    try {
-      const res = await fetch(`/api/voice/status/${userId}`);
-      const data = await res.json().catch(() => ({}));
-      if (data.voiceStatus === "ready" && data.voiceId) {
-        return data.voiceId as string;
-      }
-    } catch {
-      // retry
-    }
-  }
-  return null;
-}
-
 export default function RecordPage() {
   const router = useRouter();
-  const userId = useRequireUser();
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [recordingState, setRecordingState] = useState<RecordingState>("idle");
   const [audioBlobs, setAudioBlobs] = useState<(Blob | null)[]>(() =>
@@ -222,14 +200,13 @@ export default function RecordPage() {
   );
 
   const submitRecordings = useCallback(async () => {
-    if (!allRecorded || isProcessing || !userId) return;
+    if (!allRecorded || isProcessing) return;
 
     setRecordingState("processing");
     setError(null);
 
     try {
       const formData = new FormData();
-      formData.append("userId", userId);
       const mimeType = pickAudioMimeType();
       const ext = extensionForMime(mimeType);
       audioBlobs.forEach((blob, index) => {
@@ -260,14 +237,9 @@ export default function RecordPage() {
       const returnedVoiceId = payload.voiceId ?? payload.voice_id;
       if (returnedVoiceId) {
         setVoiceId(returnedVoiceId);
-        persistVoiceId(returnedVoiceId);
+        sessionStorage.setItem("pendingVoiceId", returnedVoiceId);
         setRecordingState("done");
       } else {
-        const polled = await pollVoiceStatus(userId);
-        if (polled) {
-          setVoiceId(polled);
-          persistVoiceId(polled);
-        }
         setRecordingState("done");
       }
     } catch (err) {
@@ -279,11 +251,7 @@ export default function RecordPage() {
       );
       setRecordingState("idle");
     }
-  }, [allRecorded, audioBlobs, isProcessing, userId]);
-
-  if (!userId) {
-    return null;
-  }
+  }, [allRecorded, audioBlobs, isProcessing]);
 
   if (isDone) {
     return (
@@ -298,35 +266,18 @@ export default function RecordPage() {
           Your voice is preserved.
         </h1>
         <p className="max-w-prose text-body-lg text-on-surface-variant">
-          We&apos;ve safely uploaded your recordings and created your private
-          voice prototype. You can now build your phrase bank and speak in your
-          own voice.
+          We&apos;ve created your private voice clone. Hear how you sound —
+          then create a free account to save it forever.
         </p>
-        {voiceId ? (
-          <p className="text-body-sm text-on-surface-variant">
-            <span className="font-semibold text-on-surface">Voice ID:</span>{" "}
-            <code className="rounded-sm bg-surface-container-low px-xs py-[2px] font-mono text-on-surface">
-              {voiceId}
-            </code>
-          </p>
-        ) : null}
         <div className="mt-md flex w-full flex-col gap-sm sm:w-auto sm:flex-row">
           <Button
             variant="primary"
             size="lg"
             rightIcon={<ArrowRight className="h-5 w-5" aria-hidden="true" />}
-            onClick={() => router.push("/phrases")}
+            onClick={() => router.push("/preview")}
             className="w-full sm:w-auto"
           >
-            Build Your Phrase Bank
-          </Button>
-          <Button
-            variant="ghost"
-            size="lg"
-            onClick={() => router.push("/dashboard")}
-            className="w-full sm:w-auto"
-          >
-            Go to Dashboard
+            Hear Your Voice
           </Button>
         </div>
       </section>

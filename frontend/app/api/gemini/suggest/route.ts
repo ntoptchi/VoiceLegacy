@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { jsonError, jsonOk, readJsonBody } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
 import { GeminiError, suggestPhrases } from "@/lib/gemini";
 import { isPhraseCategory, PHRASE_CATEGORIES } from "@/lib/types";
 
@@ -11,6 +12,9 @@ type SuggestBody = {
 };
 
 export async function POST(request: NextRequest) {
+  const authResult = await requireAuth();
+  if (!authResult.ok) return authResult.response;
+
   const body = await readJsonBody<SuggestBody>(request);
   if (!body.ok) return body.response;
 

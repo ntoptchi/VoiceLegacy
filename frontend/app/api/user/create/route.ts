@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
+import { auth } from "@clerk/nextjs/server";
 import { jsonError, jsonOk, readJsonBody } from "@/lib/api";
-import { createUser } from "@/lib/db";
+import { createUser, findUserByClerkId } from "@/lib/db";
 import { isCommunicationStyle } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -12,6 +13,20 @@ type CreateUserBody = {
 };
 
 export async function POST(request: NextRequest) {
+  const { userId: clerkUserId } = await auth();
+  if (!clerkUserId) {
+    return jsonError("Unauthorized.", 401);
+  }
+
+  const existing = await findUserByClerkId(clerkUserId);
+  if (existing) {
+    return jsonOk({
+      userId: existing._id.toHexString(),
+      voiceStatus: existing.voiceStatus,
+      alreadyExists: true,
+    });
+  }
+
   const body = await readJsonBody<CreateUserBody>(request);
   if (!body.ok) return body.response;
 
@@ -42,6 +57,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const user = await createUser({
+      clerkUserId,
       communicationStyle,
       audience: audienceValue,
     });

@@ -1,4 +1,5 @@
 import { jsonError, jsonOk, readJsonBody, toObjectId } from "@/lib/api";
+import { requireAuth } from "@/lib/auth";
 import { findUser, deleteUser, updateUserCommunicationStyle } from "@/lib/db";
 import { isCommunicationStyle } from "@/lib/types";
 
@@ -8,9 +9,16 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const authResult = await requireAuth();
+  if (!authResult.ok) return authResult.response;
+
   const { id } = await params;
   const idResult = toObjectId(id);
   if (!idResult.ok) return idResult.response;
+
+  if (!authResult.user._id.equals(idResult.id)) {
+    return jsonError("Forbidden.", 403);
+  }
 
   try {
     const user = await findUser(idResult.id);
@@ -41,9 +49,16 @@ export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const authResult = await requireAuth();
+  if (!authResult.ok) return authResult.response;
+
   const { id } = await params;
   const idResult = toObjectId(id);
   if (!idResult.ok) return idResult.response;
+
+  if (!authResult.user._id.equals(idResult.id)) {
+    return jsonError("Forbidden.", 403);
+  }
 
   try {
     const deleted = await deleteUser(idResult.id);
@@ -67,9 +82,16 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const authResult = await requireAuth();
+  if (!authResult.ok) return authResult.response;
+
   const { id } = await params;
   const idResult = toObjectId(id);
   if (!idResult.ok) return idResult.response;
+
+  if (!authResult.user._id.equals(idResult.id)) {
+    return jsonError("Forbidden.", 403);
+  }
 
   const body = await readJsonBody<UpdateUserBody>(request);
   if (!body.ok) return body.response;
