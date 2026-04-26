@@ -1,19 +1,15 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  Download,
   HeartHandshake,
   Laugh,
-  PlusCircle,
   Loader2,
   ShieldAlert,
   Sparkles,
   Star,
   Sun,
   Trash2,
-  UserCircle2,
   User,
 } from "lucide-react";
 import { Button } from "@/components/ui";
@@ -69,8 +65,6 @@ const categories: CategoryMeta[] = [
   },
   {
     id: "personal",
-    label: "Personal Names",
-    chip: "bg-secondary-container/60 text-on-secondary-container",
     label: "Personal",
     chip: "bg-primary-fixed/40 text-on-primary-fixed-variant",
   },
@@ -114,11 +108,6 @@ const STARTER_PHRASES: Record<Category, string[]> = {
     "Hi, sweetheart.",
     "I'm so glad you came today.",
     "Love you, kiddo.",
-  ],
-  personal: [
-    "Goodnight, my Sunshine.",
-    "Hey there, Captain — ready for our walk?",
-    "Sweet pea, come give Grandma a hug.",
   ],
 };
 
@@ -316,42 +305,7 @@ export default function PhrasesPage() {
     );
   }
 
-  const handleAddPhrase = (payload: { text: string; category: Category }) => {
-    console.log("[phrases] (mock) Save Phrase clicked.", payload);
-    const newPhrase: Phrase = {
-      id: makeId(),
-      text: payload.text,
-      category: payload.category,
-      isFavorite: false,
-    };
-    setPhrases((prev) => [newPhrase, ...prev]);
-  };
-
-  const handleExport = () => {
-    console.log("[phrases] (mock) Export Phrase Bank clicked.", {
-      total: phrases.length,
-    });
-  };
-
   return (
-    <section className="flex w-full flex-col gap-lg">
-      <header className="flex flex-col items-start justify-between gap-sm md:flex-row md:items-end">
-        <div className="flex flex-col gap-sm">
-          <h1 className="text-headline-lg text-on-surface">Your Phrase Bank</h1>
-          <p className="max-w-2xl text-body-lg text-on-surface-variant">
-            Capture and organize the expressions, wisdom, and daily requests
-            that make up your unique voice.
-          </p>
-        </div>
-        <Button
-          variant="secondary"
-          size="md"
-          leftIcon={<Download className="h-5 w-5" aria-hidden="true" />}
-          onClick={handleExport}
-          className="self-start md:self-end"
-        >
-          Export phrase bank
-        </Button>
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-lg">
       <header
         className="animate-slidein flex flex-col gap-sm text-center"
@@ -365,8 +319,6 @@ export default function PhrasesPage() {
           make up your unique voice.
         </p>
       </header>
-
-      <ManualPhraseForm onSubmit={handleAddPhrase} />
 
       <div
         role="tablist"
@@ -623,105 +575,9 @@ function CategoryGlyph({ category }: { category: Category }) {
           : category === "humor"
             ? Laugh
             : category === "personal"
-              ? UserCircle2
               ? User
               : ShieldAlert;
   return <Icon className="h-3.5 w-3.5" aria-hidden="true" />;
-}
-
-function ManualPhraseForm({
-  onSubmit,
-}: {
-  onSubmit: (payload: { text: string; category: Category }) => void;
-}) {
-  const [text, setText] = useState("");
-  const [category, setCategory] = useState<Category>("family");
-
-  const trimmed = text.trim();
-  const canSubmit = trimmed.length > 0;
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!canSubmit) return;
-    onSubmit({ text: trimmed, category });
-    setText("");
-    setCategory("family");
-  };
-
-  return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-sm rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-md shadow-ambient"
-      aria-labelledby="manual-phrase-heading"
-    >
-      <div className="flex flex-col gap-xs">
-        <h2
-          id="manual-phrase-heading"
-          className="text-headline-sm text-on-surface"
-        >
-          Add a phrase
-        </h2>
-        <p className="text-body-sm text-on-surface-variant">
-          Save something you say often, a favorite saying, or a personal name.
-        </p>
-      </div>
-
-      <label htmlFor="manual-phrase-text" className="sr-only">
-        Phrase text
-      </label>
-      <textarea
-        id="manual-phrase-text"
-        value={text}
-        onChange={(event) => setText(event.target.value)}
-        placeholder="Type a phrase you want to preserve…"
-        rows={3}
-        className={cn(
-          "w-full resize-none rounded-xl border-2 border-outline-variant/50 bg-surface-container-lowest p-sm text-body-md text-on-surface",
-          "placeholder:text-outline",
-          "transition-colors duration-200",
-          "focus:border-primary focus:outline-none focus:ring-0",
-        )}
-      />
-
-      <div className="flex flex-col gap-sm sm:flex-row sm:items-end sm:justify-between">
-        <div className="flex flex-col gap-xs">
-          <label
-            htmlFor="manual-phrase-category"
-            className="text-label-md text-on-surface-variant"
-          >
-            Category
-          </label>
-          <select
-            id="manual-phrase-category"
-            value={category}
-            onChange={(event) => setCategory(event.target.value as Category)}
-            className={cn(
-              "h-12 rounded-xl border-2 border-outline-variant/50 bg-surface-container-lowest px-sm text-body-md text-on-surface",
-              "transition-colors duration-200",
-              "focus:border-primary focus:outline-none focus:ring-0",
-            )}
-          >
-            {categories.map((cat) => (
-              <option key={cat.id} value={cat.id}>
-                {cat.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <Button
-          type="submit"
-          variant="primary"
-          size="md"
-          leftIcon={<PlusCircle className="h-5 w-5" aria-hidden="true" />}
-          disabled={!canSubmit}
-          className="sm:self-end"
-        >
-          Save phrase
-        </Button>
-      </div>
-    </form>
-  );
 }
 
 function EmptyState({ favoritesOnly }: { favoritesOnly: boolean }) {
