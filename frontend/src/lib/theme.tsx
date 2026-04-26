@@ -17,7 +17,7 @@ type ThemeCtx = {
 };
 
 const ThemeContext = createContext<ThemeCtx>({
-  theme: "dark",
+  theme: "light",
   toggle: () => {},
 });
 
@@ -26,11 +26,11 @@ export function useTheme() {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
     const saved = localStorage.getItem("voicelegacy_theme") as Theme | null;
-    const initial = saved === "light" ? "light" : "dark";
+    const initial = saved === "dark" ? "dark" : "light";
     setTheme(initial);
     document.documentElement.classList.toggle("dark", initial === "dark");
     document.documentElement.classList.toggle("light", initial === "light");

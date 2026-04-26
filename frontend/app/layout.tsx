@@ -34,7 +34,7 @@ export default function RootLayout({
     <ClerkProvider appearance={{ baseTheme: dark }}>
       <html
         lang="en"
-        className={`${plusJakartaSans.variable} ${lora.variable} dark h-full antialiased`}
+        className={`${plusJakartaSans.variable} ${lora.variable} light h-full antialiased`}
       >
         <body className="flex min-h-full flex-col overflow-x-hidden bg-background text-on-background">
           <ThemeProvider>
