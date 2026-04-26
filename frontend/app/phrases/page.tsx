@@ -69,7 +69,7 @@ const initialPhrases: Phrase[] = [
     id: "p-1",
     text: "I love you all so much.",
     category: "family",
-    isFavorite: false,
+    isFavorite: true,
   },
   {
     id: "p-2",
@@ -81,7 +81,7 @@ const initialPhrases: Phrase[] = [
     id: "p-3",
     text: "You are my whole world.",
     category: "family",
-    isFavorite: false,
+    isFavorite: true,
   },
   {
     id: "p-4",
@@ -105,7 +105,7 @@ const initialPhrases: Phrase[] = [
     id: "p-7",
     text: "Everything is going to be alright.",
     category: "comfort",
-    isFavorite: false,
+    isFavorite: true,
   },
   {
     id: "p-8",
