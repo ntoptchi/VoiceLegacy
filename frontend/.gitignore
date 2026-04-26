@@ -44,3 +44,6 @@ next-env.d.ts
 cache-life.d.ts
 routes.d.ts
 validator.ts
+
+# clerk configuration (can include secrets)
+/.clerk/

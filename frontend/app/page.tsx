@@ -14,63 +14,47 @@ import {
 } from "lucide-react";
 import { Button, TextInput } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import Link from "next/link";
+import { ArrowRight, Mic, Shield, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui";
 
-type Tone = "warm" | "direct" | "humorous";
-
-type ToneOption = {
-  id: Tone;
-  label: string;
-  description: string;
-  icon: LucideIcon;
-};
-
-const toneOptions: ToneOption[] = [
+const features = [
   {
-    id: "warm",
-    label: "Warm",
-    description: "Expressive and gentle",
-    icon: Heart,
+    icon: Mic,
+    title: "Clone your voice",
+    description: "Read a few phrases and we create a private voice prototype in seconds.",
   },
   {
-    id: "direct",
-    label: "Direct",
-    description: "Clear and to the point",
-    icon: Zap,
+    icon: Sparkles,
+    title: "Build your phrase bank",
+    description:
+      "Save the words and expressions that matter most — with AI help to capture your tone.",
   },
   {
-    id: "humorous",
-    label: "Humorous",
-    description: "Playful and light",
-    icon: Smile,
+    icon: Shield,
+    title: "Private and yours",
+    description:
+      "Your voice data is never shared. Delete it any time, no questions asked.",
   },
 ];
 
-export default function OnboardingPage() {
-  const router = useRouter();
-  const [consent, setConsent] = useState(false);
-  const [tone, setTone] = useState<Tone | null>(null);
-  const [audience, setAudience] = useState("");
-
-  const canContinue = consent && tone !== null;
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!canContinue) return;
-    router.push("/record");
-  };
-
+export default function LandingPage() {
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mx-auto flex w-full max-w-3xl flex-col gap-lg rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-md md:p-lg shadow-ambient"
-    >
-      <header className="flex flex-col gap-sm text-center">
-        <h1 className="text-headline-lg text-on-surface">
-          Welcome to VoiceLegacy
+    <div className="flex flex-col items-center gap-12 py-8 md:py-16">
+      <header className="flex max-w-3xl flex-col items-center gap-md text-center">
+        <h1
+          className="animate-slidein text-4xl font-bold leading-tight text-on-surface md:text-5xl lg:text-6xl"
+          style={{ animationDelay: "300ms" }}
+        >
+          Preserve the voice that makes you,{" "}
+          <span className="text-primary">you.</span>
         </h1>
-        <p className="mx-auto max-w-2xl text-body-lg text-on-surface-variant">
-          Safely preserve the voice, words, and phrases that make your
-          communication feel personal — before anything changes.
+        <p
+          className="animate-slidein max-w-2xl text-lg text-on-surface-variant md:text-xl"
+          style={{ animationDelay: "500ms" }}
+        >
+          VoiceLegacy lets you record, clone, and protect your natural voice —
+          so the people you love can always hear <em>you</em>.
         </p>
       </header>
 
@@ -150,68 +134,48 @@ export default function OnboardingPage() {
         </div>
 
         <div
-          role="radiogroup"
-          aria-labelledby="tone-heading"
-          className="grid grid-cols-1 gap-md md:grid-cols-3"
+          className="animate-slidein mt-md"
+          style={{ animationDelay: "700ms" }}
         >
-          {toneOptions.map(({ id, label, description, icon: Icon }) => {
-            const selected = tone === id;
-            return (
-              <button
-                key={id}
-                type="button"
-                role="radio"
-                aria-checked={selected}
-                onClick={() => setTone(id)}
-                className={cn(
-                  "group flex h-full min-h-[160px] flex-col items-center justify-center gap-sm rounded-xl border-2 p-md text-center transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-lowest",
-                  selected
-                    ? "border-primary bg-primary-fixed/40 text-on-primary-fixed"
-                    : "border-outline-variant/50 bg-surface-container-lowest text-on-surface hover:border-primary/50 hover:bg-primary-fixed/10",
-                )}
-              >
-                <span
-                  className={cn(
-                    "flex h-12 w-12 items-center justify-center rounded-full transition-transform group-hover:scale-105",
-                    selected
-                      ? "bg-primary text-on-primary"
-                      : "bg-primary-fixed text-on-primary-fixed",
-                  )}
-                >
-                  <Icon className="h-6 w-6" aria-hidden="true" />
-                </span>
-                <span className="text-headline-sm">{label}</span>
-                <span className="text-body-sm text-on-surface-variant">
-                  {description}
-                </span>
-              </button>
-            );
-          })}
+          <Link href="/record">
+            <Button
+              variant="primary"
+              size="lg"
+              rightIcon={<ArrowRight className="h-5 w-5" aria-hidden="true" />}
+              className="text-lg hover:!text-white hover:[&_svg]:!text-white"
+            >
+              Record your voice — free
+            </Button>
+          </Link>
         </div>
-      </section>
-
-      <section className="flex flex-col gap-sm">
-        <TextInput
-          label="Who is this primarily for? (Optional)"
-          placeholder="e.g., My grandchildren, my partner, my future self..."
-          value={audience}
-          onChange={(event) => setAudience(event.target.value)}
-          autoComplete="off"
-        />
-      </section>
-
-      <footer className="mt-sm flex justify-end border-t border-outline-variant/30 pt-md">
-        <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          rightIcon={<ArrowRight className="h-5 w-5" aria-hidden="true" />}
-          disabled={!canContinue}
+        <p
+          className="animate-slidein text-body-sm text-on-surface-variant"
+          style={{ animationDelay: "800ms" }}
         >
-          Continue to Recording
-        </Button>
-      </footer>
-    </form>
+          No account needed to start. Hear your clone before you sign up.
+        </p>
+      </header>
+
+      <section className="grid w-full max-w-4xl grid-cols-1 gap-md md:grid-cols-3">
+        {features.map((f, i) => {
+          const Icon = f.icon;
+          return (
+            <article
+              key={f.title}
+              className="animate-slidein flex flex-col items-center gap-sm rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-lg text-center shadow-ambient"
+              style={{ animationDelay: `${900 + i * 150}ms` }}
+            >
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed">
+                <Icon className="h-6 w-6" aria-hidden="true" />
+              </span>
+              <h2 className="text-headline-sm text-on-surface">{f.title}</h2>
+              <p className="text-body-md text-on-surface-variant">
+                {f.description}
+              </p>
+            </article>
+          );
+        })}
+      </section>
+    </div>
   );
 }
