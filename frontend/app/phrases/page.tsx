@@ -307,15 +307,15 @@ export default function PhrasesPage() {
   }
 
   return (
-    <section className="flex w-full flex-col gap-lg">
+    <section className="mx-auto flex w-full max-w-3xl flex-col gap-lg">
       <header
-        className="animate-slidein flex flex-col gap-sm"
+        className="animate-slidein flex flex-col gap-sm text-center"
         style={{ animationDelay: "300ms" }}
       >
         <h1 className="text-3xl font-bold leading-tight text-on-surface md:text-headline-lg">
           Your Phrase Bank
         </h1>
-        <p className="max-w-2xl text-body-lg text-on-surface-variant">
+        <p className="mx-auto max-w-2xl text-body-lg text-on-surface-variant">
           Capture and organize the expressions, wisdom, and daily requests that
           make up your unique voice.
         </p>
@@ -342,7 +342,7 @@ export default function PhrasesPage() {
             onClick={() => setActiveFilter(category.id)}
           />
         ))}
-        <div className="w-full sm:ml-auto sm:w-auto">
+        <div className="w-full sm:w-auto">
           <button
             type="button"
             onClick={() => setFavoritesOnly((prev) => !prev)}
