@@ -3,8 +3,8 @@
 
 html,
 body {
-  background-color: #fbf9f8;
-  color: #1b1c1c;
+  background-color: #fbf7f2;
+  color: #211d1a;
   font-family: var(--font-plus-jakarta-sans), system-ui, -apple-system,
     "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -30,13 +30,13 @@ body {
 
   .ambient-shadow {
     box-shadow:
-      0 4px 24px -4px rgba(71, 100, 79, 0.08),
-      0 2px 8px -2px rgba(71, 100, 79, 0.04);
+      0 4px 24px -4px rgba(83, 107, 85, 0.1),
+      0 2px 8px -2px rgba(122, 92, 73, 0.08);
   }
 
   .ambient-shadow-hover:hover {
     box-shadow:
-      0 12px 32px -8px rgba(71, 100, 79, 0.12),
-      0 4px 12px -4px rgba(71, 100, 79, 0.06);
+      0 12px 32px -8px rgba(83, 107, 85, 0.16),
+      0 4px 12px -4px rgba(122, 92, 73, 0.1);
   }
 }
