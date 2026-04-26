@@ -14,12 +14,11 @@ import {
 } from "lucide-react";
 import { Button, TextInput } from "@/components/ui";
 import { cn } from "@/lib/cn";
+import type { CommunicationStyle } from "@/lib/types";
 import { setCommunicationStyle, setUserId } from "@/lib/userSession";
 
-type Tone = "warm" | "direct" | "humorous";
-
 type ToneOption = {
-  id: Tone;
+  id: CommunicationStyle;
   label: string;
   description: string;
   icon: LucideIcon;
@@ -49,7 +48,7 @@ const toneOptions: ToneOption[] = [
 export default function OnboardingPage() {
   const router = useRouter();
   const [consent, setConsent] = useState(false);
-  const [tone, setTone] = useState<Tone | null>(null);
+  const [tone, setTone] = useState<CommunicationStyle | null>(null);
   const [audience, setAudience] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

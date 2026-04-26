@@ -79,7 +79,6 @@ const toneLabels: Record<CommunicationStyle, string> = {
   warm: "Warm",
   direct: "Direct",
   humorous: "Humorous",
-  calm: "Calm",
 };
 
 export default function DashboardPage() {

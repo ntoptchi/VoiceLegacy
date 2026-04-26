@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
 
   if (!isCommunicationStyle(communicationStyle)) {
     return jsonError(
-      "communicationStyle must be one of: warm, direct, humorous, calm.",
+      "communicationStyle must be one of: warm, direct, humorous.",
       400,
     );
   }
