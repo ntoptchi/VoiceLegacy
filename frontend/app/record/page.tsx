@@ -443,18 +443,19 @@ export default function RecordPage() {
                     currentPhraseRecorded &&
                     "bg-primary-container",
                 )}
+              />
+              <span
+                className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center text-white"
+                aria-hidden="true"
               >
                 {isRecording ? (
-                  <Square
-                    className="h-8 w-8 fill-current"
-                    aria-hidden="true"
-                  />
+                  <Square className="h-8 w-8 fill-current" strokeWidth={3} />
                 ) : currentPhraseRecorded ? (
-                  <RotateCcw className="h-8 w-8" aria-hidden="true" />
+                  <RotateCcw className="h-8 w-8" strokeWidth={3} />
                 ) : (
-                  <Mic className="h-9 w-9" aria-hidden="true" />
+                  <Mic className="h-9 w-9" strokeWidth={2.25} />
                 )}
-              </Button>
+              </span>
             </div>
           )}
 
@@ -473,11 +474,11 @@ export default function RecordPage() {
 
         <p className="text-body-sm text-on-surface-variant">
           {isRecording
-            ? "Tap stop when you&apos;ve finished reading the phrase."
+            ? "Tap stop when you've finished reading the phrase."
             : allRecorded
-              ? "All phrases captured. Create your voice clone whenever you&apos;re ready."
+              ? "All phrases captured. Create your voice clone whenever you're ready."
               : currentPhraseRecorded
-                ? "Move to the next phrase, or re-record if you&apos;d like another take."
+                ? "Move to the next phrase, or re-record if you'd like another take."
                 : "Tap the microphone to start recording this phrase."}
         </p>
       </div>
