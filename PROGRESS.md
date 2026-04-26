@@ -58,7 +58,7 @@ documented `{ success, ... }` shape. All were smoke-tested with the four
 - [x] `DELETE /api/user/:id` (cascade-delete phrases) for "Delete all data"
 - [x] Phrase favorite-toggle endpoint (`PATCH /api/phrases/[id]`) — persists to DB with optimistic UI — plan says "Mark favorites" on `/phrases`
 - [ ] Phrase bank export (`GET /api/phrases/[id]/export?format=json|pdf`) — plan calls for JSON + PDF export
-- [ ] Mongo indexes (`users._id` is automatic; add `phrases.userId` + `phrases.category`)
+- [x] Mongo indexes — `phrases.userId_1` and compound `phrases.userId_1_category_1` created via `scripts/ensure-indexes.ts`
 
 ---
 
