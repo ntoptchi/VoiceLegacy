@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -7,7 +8,6 @@ import {
   MessageCircleHeart,
   Mic,
   Settings,
-  Waves,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs";
@@ -50,8 +50,14 @@ export function Navbar() {
           className="group flex items-center gap-sm text-primary transition-colors hover:text-primary-container"
           aria-label="VoiceLegacy home"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed transition-transform group-hover:scale-105">
-            <Waves className="h-5 w-5" aria-hidden="true" />
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed transition-transform group-hover:scale-105">
+            <Image
+              src="/logo.png"
+              alt=""
+              width={24}
+              height={24}
+              className="object-contain"
+            />
           </span>
           <span className="text-lg font-semibold text-on-surface md:text-headline-sm">
             VoiceLegacy

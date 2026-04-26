@@ -1,16 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   HeartHandshake,
   Laugh,
   Loader2,
+  Pause,
+  Play,
   ShieldAlert,
   Sparkles,
   Star,
   Sun,
   Trash2,
   User,
+  Volume2,
 } from "lucide-react";
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/cn";
@@ -127,6 +130,88 @@ export default function PhrasesPage() {
   const [isThinking, setIsThinking] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [playingId, setPlayingId] = useState<string | null>(null);
+  const [loadingAudioId, setLoadingAudioId] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioUrlRef = useRef<string | null>(null);
+
+  const cleanupAudio = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    if (audioUrlRef.current) {
+      URL.revokeObjectURL(audioUrlRef.current);
+      audioUrlRef.current = null;
+    }
+    setPlayingId(null);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) audioRef.current.pause();
+      if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
+    };
+  }, []);
+
+  const playPhrase = useCallback(
+    async (phraseId: string, text: string) => {
+      const voiceId = appUser?.voiceId;
+      if (!voiceId) return;
+
+      if (playingId === phraseId) {
+        cleanupAudio();
+        return;
+      }
+
+      cleanupAudio();
+      setLoadingAudioId(phraseId);
+
+      try {
+        const res = await fetch("/api/speak", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text, voiceId }),
+        });
+
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(
+            (data as { error?: string }).error ?? `TTS failed (${res.status})`,
+          );
+        }
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+        audioUrlRef.current = url;
+
+        const audio = new Audio(url);
+        audioRef.current = audio;
+
+        audio.onplay = () => {
+          setPlayingId(phraseId);
+          setLoadingAudioId(null);
+        };
+        audio.onended = () => {
+          setPlayingId(null);
+          URL.revokeObjectURL(url);
+          audioUrlRef.current = null;
+        };
+        audio.onerror = () => {
+          setPlayingId(null);
+          setLoadingAudioId(null);
+          URL.revokeObjectURL(url);
+          audioUrlRef.current = null;
+        };
+
+        await audio.play();
+      } catch {
+        setLoadingAudioId(null);
+      }
+    },
+    [appUser?.voiceId, playingId, cleanupAudio],
+  );
 
   const fetchPhrases = useCallback(async () => {
     if (!userId) return;
@@ -443,6 +528,10 @@ export default function PhrasesPage() {
               key={phrase.id}
               phrase={phrase}
               animationDelay={`${900 + index * 200}ms`}
+              isPlaying={playingId === phrase.id}
+              isLoadingAudio={loadingAudioId === phrase.id}
+              hasVoice={!!appUser?.voiceId}
+              onPlay={() => void playPhrase(phrase.id, phrase.text)}
               onToggleFavorite={() => toggleFavorite(phrase.id)}
               onDelete={() => void deletePhrase(phrase.id)}
             />
@@ -496,30 +585,51 @@ function FilterTab({
 function PhraseCard({
   phrase,
   animationDelay,
+  isPlaying,
+  isLoadingAudio,
+  hasVoice,
+  onPlay,
   onToggleFavorite,
   onDelete,
 }: {
   phrase: Phrase;
   animationDelay: string;
+  isPlaying: boolean;
+  isLoadingAudio: boolean;
+  hasVoice: boolean;
+  onPlay: () => void;
   onToggleFavorite: () => void;
   onDelete: () => void;
 }) {
   const meta = categoryById[phrase.category];
   return (
     <li
-      className="animate-slidein ambient-shadow flex min-h-[180px] flex-col rounded-xl border border-outline-variant/20 bg-surface p-md transition-shadow hover:shadow-ambient-hover"
+      className={cn(
+        "animate-slidein flex min-h-[180px] flex-col rounded-xl border bg-surface p-md transition-shadow hover:shadow-ambient-hover",
+        isPlaying
+          ? "border-primary/50 shadow-ambient ring-1 ring-primary/20"
+          : "border-outline-variant/20 shadow-ambient",
+      )}
       style={{ animationDelay }}
     >
       <div className="mb-sm flex items-start justify-between gap-sm">
-        <span
-          className={cn(
-            "inline-flex items-center gap-xs rounded-md px-sm py-xs text-label-md",
-            meta?.chip ?? "bg-surface-container text-on-surface-variant",
-          )}
-        >
-          <CategoryGlyph category={phrase.category} />
-          {meta?.label ?? phrase.category}
-        </span>
+        <div className="flex items-center gap-xs">
+          <span
+            className={cn(
+              "inline-flex items-center gap-xs rounded-md px-sm py-xs text-label-md",
+              meta?.chip ?? "bg-surface-container text-on-surface-variant",
+            )}
+          >
+            <CategoryGlyph category={phrase.category} />
+            {meta?.label ?? phrase.category}
+          </span>
+          {isPlaying ? (
+            <Volume2
+              className="h-4 w-4 animate-pulse text-primary"
+              aria-label="Playing"
+            />
+          ) : null}
+        </div>
         <button
           type="button"
           onClick={onToggleFavorite}
@@ -546,7 +656,49 @@ function PhraseCard({
         &ldquo;{phrase.text}&rdquo;
       </p>
 
-      <div className="mt-auto flex items-center justify-end border-t border-surface-variant pt-sm">
+      <div className="mt-auto flex items-center justify-between border-t border-surface-variant pt-sm">
+        {hasVoice ? (
+          <button
+            type="button"
+            onClick={onPlay}
+            disabled={isLoadingAudio}
+            aria-label={
+              isLoadingAudio
+                ? "Generating audio"
+                : isPlaying
+                  ? "Pause playback"
+                  : "Play phrase in your voice"
+            }
+            className={cn(
+              "flex items-center gap-xs rounded-full px-sm py-xs text-label-md transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+              isLoadingAudio
+                ? "cursor-wait text-on-surface-variant"
+                : isPlaying
+                  ? "bg-primary/10 text-primary hover:bg-primary/20"
+                  : "text-on-surface-variant hover:bg-surface-container hover:text-primary",
+            )}
+          >
+            {isLoadingAudio ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                <span>Generating...</span>
+              </>
+            ) : isPlaying ? (
+              <>
+                <Pause className="h-4 w-4" aria-hidden="true" />
+                <span>Pause</span>
+              </>
+            ) : (
+              <>
+                <Play className="h-4 w-4" aria-hidden="true" />
+                <span>Play</span>
+              </>
+            )}
+          </button>
+        ) : (
+          <span />
+        )}
         <button
           type="button"
           onClick={onDelete}
