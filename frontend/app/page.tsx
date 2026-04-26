@@ -105,10 +105,16 @@ export default function OnboardingPage() {
       className="mx-auto flex w-full max-w-3xl flex-col gap-lg rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-md md:p-lg shadow-ambient"
     >
       <header className="flex flex-col gap-sm text-center">
-        <h1 className="text-headline-lg text-on-surface">
+        <h1
+          className="animate-slidein text-headline-lg text-on-surface"
+          style={{ animationDelay: "300ms" }}
+        >
           Welcome to VoiceLegacy
         </h1>
-        <p className="mx-auto max-w-2xl text-body-lg text-on-surface-variant">
+        <p
+          className="animate-slidein mx-auto max-w-2xl text-body-lg text-on-surface-variant"
+          style={{ animationDelay: "500ms" }}
+        >
           Safely preserve the voice, words, and phrases that make your
           communication feel personal — before anything changes.
         </p>
@@ -116,7 +122,8 @@ export default function OnboardingPage() {
 
       <section
         aria-labelledby="consent-heading"
-        className="flex flex-col gap-sm rounded-xl border border-outline-variant/50 bg-surface-container-low p-md"
+        className="animate-slidein flex flex-col gap-sm rounded-xl border border-outline-variant/50 bg-surface-container-low p-md"
+        style={{ animationDelay: "700ms" }}
       >
         <div className="flex items-start gap-md">
           <button
@@ -161,7 +168,8 @@ export default function OnboardingPage() {
 
       <section
         aria-labelledby="tone-heading"
-        className="flex flex-col gap-md"
+        className="animate-slidein flex flex-col gap-md"
+        style={{ animationDelay: "700ms" }}
       >
         <div className="flex flex-col gap-xs border-b border-outline-variant/30 pb-sm">
           <h2
@@ -217,7 +225,10 @@ export default function OnboardingPage() {
         </div>
       </section>
 
-      <section className="flex flex-col gap-sm">
+      <section
+        className="animate-slidein flex flex-col gap-sm"
+        style={{ animationDelay: "700ms" }}
+      >
         <TextInput
           label="Who is this primarily for? (Optional)"
           placeholder="e.g., My grandchildren, my partner, my future self..."
@@ -236,7 +247,10 @@ export default function OnboardingPage() {
         </div>
       ) : null}
 
-      <footer className="mt-sm flex justify-end border-t border-outline-variant/30 pt-md">
+      <footer
+        className="animate-slidein mt-sm flex justify-end border-t border-outline-variant/30 pt-md"
+        style={{ animationDelay: "900ms" }}
+      >
         <Button
           type="submit"
           variant="primary"

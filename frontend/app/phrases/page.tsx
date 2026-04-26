@@ -111,7 +111,10 @@ export default function PhrasesPage() {
   }, [userId]);
 
   useEffect(() => {
-    void fetchPhrases();
+    const timeoutId = window.setTimeout(() => {
+      void fetchPhrases();
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
   }, [fetchPhrases]);
 
   const filtered = useMemo(() => {
@@ -331,6 +334,7 @@ export default function PhrasesPage() {
             onClick={() => void requestSuggestions()}
             disabled={isThinking}
             aria-busy={isThinking}
+            className="hover:!text-white hover:[&_svg]:!text-white"
           >
             {isThinking ? "Thinking…" : "Ask AI for Suggestions"}
           </Button>
@@ -488,13 +492,13 @@ function CategoryGlyph({ category }: { category: Category }) {
 
 function EmptyState({ favoritesOnly }: { favoritesOnly: boolean }) {
   return (
-    <div className="flex flex-col items-center gap-sm rounded-xl border border-dashed border-outline-variant/60 bg-surface-container-lowest p-lg text-center">
+    <div className="flex w-full flex-col items-center gap-sm rounded-xl border border-dashed border-outline-variant/60 bg-surface-container-lowest p-lg text-center">
       <p className="text-headline-sm text-on-surface">
         {favoritesOnly
           ? "No favorites in this view yet."
           : "Nothing here yet."}
       </p>
-      <p className="max-w-md text-body-sm text-on-surface-variant">
+      <p className="w-full max-w-md text-body-sm text-on-surface-variant">
         {favoritesOnly
           ? "Tap the star on any phrase to keep it close at hand."
           : "Switch categories or ask the assistant to suggest a few starter phrases."}

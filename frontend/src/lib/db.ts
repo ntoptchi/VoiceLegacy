@@ -42,6 +42,10 @@ function getMockStore(): MockStore {
   return g.__voicelegacyMockStore;
 }
 
+function shouldUseMockDb(): boolean {
+  return env.MOCK_DB || !env.MONGODB_URI;
+}
+
 export async function createUser(input: {
   communicationStyle: CommunicationStyle;
   audience?: string;
@@ -58,7 +62,7 @@ export async function createUser(input: {
     updatedAt: now,
   };
 
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     getMockStore().users.set(doc._id.toHexString(), doc);
     return doc;
   }
@@ -69,7 +73,7 @@ export async function createUser(input: {
 }
 
 export async function findUser(id: ObjectId): Promise<UserDoc | null> {
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     return getMockStore().users.get(id.toHexString()) ?? null;
   }
   const col = await usersCollection();
@@ -82,7 +86,7 @@ export async function updateUserVoice(
   status: VoiceStatus = "ready",
 ): Promise<UserDoc | null> {
   const updatedAt = new Date();
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     const existing = getMockStore().users.get(id.toHexString());
     if (!existing) return null;
     const next: UserDoc = { ...existing, voiceId, voiceStatus: status, updatedAt };
@@ -103,7 +107,7 @@ export async function setVoiceStatus(
   status: VoiceStatus,
 ): Promise<UserDoc | null> {
   const updatedAt = new Date();
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     const existing = getMockStore().users.get(id.toHexString());
     if (!existing) return null;
     const next: UserDoc = { ...existing, voiceStatus: status, updatedAt };
@@ -123,7 +127,7 @@ export async function listPhrases(
   userId: ObjectId,
   category?: PhraseCategory,
 ): Promise<PhraseDoc[]> {
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     const all = Array.from(getMockStore().phrases.values()).filter((p) =>
       p.userId.equals(userId),
     );
@@ -152,7 +156,7 @@ export async function createPhrase(input: {
     isFavorite: Boolean(input.isFavorite),
     createdAt: new Date(),
   };
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     getMockStore().phrases.set(doc._id.toHexString(), doc);
     return doc;
   }
@@ -180,7 +184,7 @@ export async function deletePhrase(
   phraseId: ObjectId,
   userId: ObjectId,
 ): Promise<boolean> {
-  if (env.MOCK_DB) {
+  if (shouldUseMockDb()) {
     const existing = getMockStore().phrases.get(phraseId.toHexString());
     if (!existing || !existing.userId.equals(userId)) return false;
     getMockStore().phrases.delete(phraseId.toHexString());
