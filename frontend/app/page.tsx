@@ -8,13 +8,14 @@ const features = [
   {
     icon: Mic,
     title: "Clone your voice",
-    description: "Read a few phrases and we create a private voice prototype in seconds.",
+    description:
+      "Read a few phrases and we create a private voice prototype in seconds.",
   },
   {
     icon: Sparkles,
     title: "Build your phrase bank",
     description:
-      "Save the words and expressions that matter most — with AI help to capture your tone.",
+      "Save the words and expressions that matter most - with AI help to capture your tone.",
   },
   {
     icon: Shield,
@@ -29,7 +30,7 @@ export default function LandingPage() {
     <div className="flex flex-col items-center gap-12 py-8 md:py-16">
       <header className="flex max-w-3xl flex-col items-center gap-md text-center">
         <h1
-          className="animate-slidein text-4xl font-bold leading-tight text-on-surface md:text-5xl lg:text-6xl"
+          className="animate-slidein font-[family-name:var(--font-lora)] text-4xl font-semibold leading-tight text-on-surface md:text-5xl lg:text-6xl"
           style={{ animationDelay: "300ms" }}
         >
           Preserve the voice that makes you,{" "}
@@ -39,7 +40,7 @@ export default function LandingPage() {
           className="animate-slidein max-w-2xl text-lg text-on-surface-variant md:text-xl"
           style={{ animationDelay: "500ms" }}
         >
-          VoiceLegacy lets you record, clone, and protect your natural voice —
+          VoiceLegacy lets you record, clone, and protect your natural voice -
           so the people you love can always hear <em>you</em>.
         </p>
         <div
@@ -53,7 +54,7 @@ export default function LandingPage() {
               rightIcon={<ArrowRight className="h-5 w-5" aria-hidden="true" />}
               className="text-lg hover:!text-white hover:[&_svg]:!text-white"
             >
-              Record your voice — free
+              Record your voice - free
             </Button>
           </Link>
         </div>
@@ -66,20 +67,22 @@ export default function LandingPage() {
       </header>
 
       <section className="grid w-full max-w-4xl grid-cols-1 gap-md md:grid-cols-3">
-        {features.map((f, i) => {
-          const Icon = f.icon;
+        {features.map((feature, index) => {
+          const Icon = feature.icon;
           return (
             <article
-              key={f.title}
+              key={feature.title}
               className="animate-slidein flex flex-col items-center gap-sm rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-lg text-center shadow-ambient"
-              style={{ animationDelay: `${900 + i * 150}ms` }}
+              style={{ animationDelay: `${900 + index * 150}ms` }}
             >
               <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed">
                 <Icon className="h-6 w-6" aria-hidden="true" />
               </span>
-              <h2 className="text-headline-sm text-on-surface">{f.title}</h2>
-              <p className="text-body-md text-on-surface-variant">
-                {f.description}
+              <h2 className="text-headline-sm text-on-surface">
+                {feature.title}
+              </h2>
+              <p className="text-body-sm text-on-surface-variant">
+                {feature.description}
               </p>
             </article>
           );

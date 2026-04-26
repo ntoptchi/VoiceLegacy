@@ -22,7 +22,6 @@ export const COMMUNICATION_STYLES = [
   "warm",
   "direct",
   "humorous",
-  "calm",
 ] as const;
 
 export type CommunicationStyle = (typeof COMMUNICATION_STYLES)[number];
