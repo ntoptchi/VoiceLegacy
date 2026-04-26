@@ -18,10 +18,20 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui";
+import {
+  COMMUNICATION_STYLES,
+  type CommunicationStyle,
+} from "@/lib/types";
 import { useRequireUser } from "@/lib/useRequireUser";
-import { clearSession, getVoiceId, setVoiceId as persistVoiceId } from "@/lib/userSession";
+import { clearSession, getVoiceId } from "@/lib/userSession";
 
-type Category = "family" | "daily" | "comfort" | "humor" | "emergency" | "personal";
+type Category =
+  | "family"
+  | "daily"
+  | "comfort"
+  | "humor"
+  | "emergency"
+  | "personal";
 
 type SummaryRow = {
   id: Category;
@@ -37,13 +47,39 @@ type PhraseData = {
   category: Category;
 };
 
-const categoryMeta: Record<Category, { label: string; icon: LucideIcon; iconClass: string }> = {
-  family: { label: "Family", icon: HeartHandshake, iconClass: "text-on-primary-fixed-variant" },
-  daily: { label: "Daily Needs", icon: Sun, iconClass: "text-on-secondary-fixed-variant" },
-  comfort: { label: "Comfort", icon: HeartHandshake, iconClass: "text-on-tertiary-fixed-variant" },
+const categoryMeta: Record<
+  Category,
+  { label: string; icon: LucideIcon; iconClass: string }
+> = {
+  family: {
+    label: "Family",
+    icon: HeartHandshake,
+    iconClass: "text-on-primary-fixed-variant",
+  },
+  daily: {
+    label: "Daily Needs",
+    icon: Sun,
+    iconClass: "text-on-secondary-fixed-variant",
+  },
+  comfort: {
+    label: "Comfort",
+    icon: HeartHandshake,
+    iconClass: "text-on-tertiary-fixed-variant",
+  },
   humor: { label: "Humor", icon: Laugh, iconClass: "text-tertiary" },
-  emergency: { label: "Emergency", icon: ShieldAlert, iconClass: "text-error" },
+  emergency: {
+    label: "Emergency",
+    icon: ShieldAlert,
+    iconClass: "text-error",
+  },
   personal: { label: "Personal", icon: User, iconClass: "text-primary" },
+};
+
+const toneLabels: Record<CommunicationStyle, string> = {
+  warm: "Warm",
+  direct: "Direct",
+  humorous: "Humorous",
+  calm: "Calm",
 };
 
 export default function DashboardPage() {
@@ -52,9 +88,12 @@ export default function DashboardPage() {
 
   const [voiceStatus, setVoiceStatus] = useState<string>("unknown");
   const [voiceId, setVoiceId] = useState<string | null>(null);
-  const [communicationStyle, setCommunicationStyle] = useState<string | null>(null);
+  const [communicationStyle, setCommunicationStyle] =
+    useState<CommunicationStyle | null>(null);
   const [phrases, setPhrases] = useState<PhraseData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [savingTone, setSavingTone] = useState<CommunicationStyle | null>(null);
+  const [toneError, setToneError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!userId) return;
@@ -94,14 +133,19 @@ export default function DashboardPage() {
   }, [userId]);
 
   useEffect(() => {
-    void fetchData();
+    const timeoutId = window.setTimeout(() => {
+      void fetchData();
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
   }, [fetchData]);
 
-  const summary: SummaryRow[] = Object.entries(categoryMeta).map(([id, meta]) => ({
-    id: id as Category,
-    ...meta,
-    count: phrases.filter((p) => p.category === id).length,
-  })).filter((row) => row.count > 0);
+  const summary: SummaryRow[] = Object.entries(categoryMeta)
+    .map(([id, meta]) => ({
+      id: id as Category,
+      ...meta,
+      count: phrases.filter((p) => p.category === id).length,
+    }))
+    .filter((row) => row.count > 0);
 
   const totalPhrases = phrases.length;
 
@@ -153,6 +197,34 @@ export default function DashboardPage() {
     router.push("/record");
   };
 
+  const handleToneChange = async (nextTone: CommunicationStyle) => {
+    if (!userId || nextTone === communicationStyle || savingTone) return;
+    const previousTone = communicationStyle;
+    setCommunicationStyle(nextTone);
+    setSavingTone(nextTone);
+    setToneError(null);
+
+    try {
+      const res = await fetch(`/api/user/${userId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ communicationStyle: nextTone }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error ?? "Failed to update voice tone.");
+      }
+      setCommunicationStyle(data.user.communicationStyle);
+    } catch (error) {
+      setCommunicationStyle(previousTone);
+      setToneError(
+        error instanceof Error ? error.message : "Failed to update voice tone.",
+      );
+    } finally {
+      setSavingTone(null);
+    }
+  };
+
   if (!userId) return null;
 
   if (isLoading) {
@@ -168,18 +240,20 @@ export default function DashboardPage() {
   return (
     <section className="flex w-full flex-col gap-lg">
       <header className="flex flex-col gap-sm">
-        <h1 className="text-headline-lg text-on-surface">
+        <h1 className="text-3xl font-bold leading-tight text-on-surface md:text-headline-lg">
           Profile & Settings
         </h1>
         <p className="max-w-2xl text-body-lg text-on-surface-variant">
-          Manage your voice identity, review what you've saved, and control
+          Manage your voice identity, review what you&apos;ve saved, and control
           your privacy preferences.
         </p>
       </header>
 
-      <article className="flex flex-col gap-md rounded-xl border border-outline-variant/30 bg-surface-container p-md shadow-ambient md:p-lg">
-        <div className="flex items-center gap-sm">
-          <span className={`flex h-12 w-12 items-center justify-center rounded-full ${isVoiceReady ? "bg-primary text-on-primary" : "bg-surface-container-high text-on-surface-variant"}`}>
+      <article className="flex flex-col gap-md rounded-xl border border-outline-variant/30 bg-surface-container p-4 shadow-ambient sm:p-md md:p-lg">
+        <div className="flex items-start gap-sm sm:items-center">
+          <span
+            className={`flex h-12 w-12 items-center justify-center rounded-full ${isVoiceReady ? "bg-primary text-on-primary" : "bg-surface-container-high text-on-surface-variant"}`}
+          >
             {isVoiceReady ? (
               <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
             ) : (
@@ -188,7 +262,12 @@ export default function DashboardPage() {
           </span>
           <div className="flex flex-col">
             <h2 className="text-headline-sm text-on-surface">
-              Voice Status: {isVoiceReady ? "Ready" : voiceStatus === "none" ? "Not recorded" : voiceStatus}
+              Voice Status:{" "}
+              {isVoiceReady
+                ? "Ready"
+                : voiceStatus === "none"
+                  ? "Not recorded"
+                  : voiceStatus}
             </h2>
             <p className="text-body-sm text-on-surface-variant">
               {isVoiceReady
@@ -198,10 +277,52 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-sm md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-sm sm:grid-cols-2 lg:grid-cols-3">
           {voiceId ? <InfoTile label="Voice ID" value={voiceId} mono /> : null}
-          {communicationStyle ? (
-            <InfoTile label="Communication tone" value={communicationStyle} />
+        </div>
+
+        <div className="flex flex-col gap-sm rounded-xl bg-surface p-md">
+          <div className="flex flex-col gap-xs">
+            <h3 className="text-label-lg text-on-surface">Voice tone</h3>
+            <p className="text-body-sm text-on-surface-variant">
+              Choose the tone used when the assistant rewrites saved messages in
+              your voice.
+            </p>
+          </div>
+          <div
+            role="radiogroup"
+            aria-label="Voice tone"
+            className="grid grid-cols-2 gap-xs sm:grid-cols-4"
+          >
+            {COMMUNICATION_STYLES.map((style) => {
+              const isSelected = communicationStyle === style;
+              const isSaving = savingTone === style;
+              return (
+                <button
+                  key={style}
+                  type="button"
+                  role="radio"
+                  aria-checked={isSelected}
+                  onClick={() => void handleToneChange(style)}
+                  disabled={savingTone !== null}
+                  className={`flex min-h-11 items-center justify-center gap-xs rounded-full px-sm text-label-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface ${
+                    isSelected
+                      ? "bg-primary text-on-primary"
+                      : "bg-surface-container text-on-surface-variant hover:bg-surface-dim hover:text-on-surface"
+                  } disabled:cursor-not-allowed disabled:opacity-70`}
+                >
+                  {isSaving ? (
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  ) : null}
+                  {toneLabels[style]}
+                </button>
+              );
+            })}
+          </div>
+          {toneError ? (
+            <p className="text-body-sm text-error" role="alert">
+              {toneError}
+            </p>
           ) : null}
         </div>
 
@@ -210,21 +331,24 @@ export default function DashboardPage() {
           size="lg"
           leftIcon={<Mic className="h-5 w-5" aria-hidden="true" />}
           onClick={handleRerecord}
-          className="self-start"
+          className="w-full self-stretch sm:w-auto sm:self-start"
         >
           {isVoiceReady ? "Re-record voice" : "Record voice"}
         </Button>
       </article>
 
-      <article className="flex flex-col gap-md rounded-xl border border-outline-variant/20 bg-surface-container-low p-md shadow-ambient md:p-lg">
-        <div className="flex flex-wrap items-center justify-between gap-sm">
+      <article className="flex flex-col gap-md rounded-xl border border-outline-variant/20 bg-surface-container-low p-4 shadow-ambient sm:p-md md:p-lg">
+        <div className="flex flex-col gap-sm md:flex-row md:items-center md:justify-between">
           <div className="flex flex-col gap-xs">
             <h2 className="text-headline-sm text-on-surface">
               Phrase Bank Summary
             </h2>
             <p className="text-body-sm text-on-surface-variant">
               {totalPhrases} phrase{totalPhrases !== 1 ? "s" : ""} saved
-              {summary.length > 0 ? ` across ${summary.length} categor${summary.length !== 1 ? "ies" : "y"}` : ""}.
+              {summary.length > 0
+                ? ` across ${summary.length} categor${summary.length !== 1 ? "ies" : "y"}`
+                : ""}
+              .
             </p>
           </div>
           <Button
@@ -233,6 +357,7 @@ export default function DashboardPage() {
             leftIcon={<Download className="h-5 w-5" aria-hidden="true" />}
             onClick={handleExport}
             disabled={phrases.length === 0}
+            className="w-full md:w-auto"
           >
             Export phrase bank
           </Button>
@@ -266,23 +391,22 @@ export default function DashboardPage() {
           </ul>
         ) : (
           <p className="text-body-sm text-on-surface-variant">
-            No phrases saved yet. Head to the Phrases page to start building your bank.
+            No phrases saved yet. Head to the Phrases page to start building
+            your bank.
           </p>
         )}
       </article>
 
-      <article className="flex flex-col gap-md rounded-xl border border-error/30 bg-error-container/30 p-md md:p-lg">
+      <article className="flex flex-col gap-md rounded-xl border border-error/30 bg-error-container/30 p-4 sm:p-md md:p-lg">
         <div className="flex items-start gap-sm">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-error-container text-error">
             <TriangleAlert className="h-5 w-5" aria-hidden="true" />
           </span>
           <div className="flex flex-col gap-xs">
-            <h2 className="text-headline-sm text-on-surface">
-              Data & Privacy
-            </h2>
+            <h2 className="text-headline-sm text-on-surface">Data & Privacy</h2>
             <p className="text-body-sm text-on-surface-variant">
               Your data is private. You have full control to remove your voice
-              clone, your phrase bank, or everything we've stored for you.
+              clone, your phrase bank, or everything we&apos;ve stored for you.
             </p>
           </div>
         </div>
@@ -303,6 +427,7 @@ export default function DashboardPage() {
             size="md"
             leftIcon={<Trash2 className="h-5 w-5" aria-hidden="true" />}
             onClick={() => void handleDeleteAll()}
+            className="w-full sm:w-auto"
           >
             Delete all data
           </Button>
@@ -322,14 +447,14 @@ function InfoTile({
   mono?: boolean;
 }) {
   return (
-    <div className="flex flex-col gap-xs rounded-xl bg-surface p-md">
+    <div className="flex min-w-0 flex-col gap-xs rounded-xl bg-surface p-md">
       <span className="text-label-md uppercase tracking-wider text-on-surface-variant">
         {label}
       </span>
       <span
         className={
           mono
-            ? "font-mono text-body-md text-on-surface"
+            ? "overflow-hidden text-ellipsis font-mono text-body-md text-on-surface"
             : "text-body-lg text-on-surface"
         }
       >

@@ -14,10 +14,7 @@ import {
 } from "lucide-react";
 import { Button, TextInput } from "@/components/ui";
 import { cn } from "@/lib/cn";
-import {
-  setUserId,
-  setCommunicationStyle,
-} from "@/lib/userSession";
+import { setCommunicationStyle, setUserId } from "@/lib/userSession";
 
 type Tone = "warm" | "direct" | "humorous";
 
@@ -102,11 +99,11 @@ export default function OnboardingPage() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto flex w-full max-w-3xl flex-col gap-lg rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-md md:p-lg shadow-ambient"
+      className="mx-auto flex w-full max-w-3xl flex-col gap-6 rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-4 shadow-ambient sm:p-6 md:gap-lg md:p-lg"
     >
       <header className="flex flex-col gap-sm text-center">
         <h1
-          className="animate-slidein text-headline-lg text-on-surface"
+          className="animate-slidein text-3xl font-bold leading-tight text-on-surface md:text-headline-lg"
           style={{ animationDelay: "300ms" }}
         >
           Welcome to VoiceLegacy
@@ -116,7 +113,7 @@ export default function OnboardingPage() {
           style={{ animationDelay: "500ms" }}
         >
           Safely preserve the voice, words, and phrases that make your
-          communication feel personal — before anything changes.
+          communication feel personal before anything changes.
         </p>
       </header>
 
@@ -125,7 +122,7 @@ export default function OnboardingPage() {
         className="animate-slidein flex flex-col gap-sm rounded-xl border border-outline-variant/50 bg-surface-container-low p-md"
         style={{ animationDelay: "700ms" }}
       >
-        <div className="flex items-start gap-md">
+        <div className="flex items-start gap-sm sm:gap-md">
           <button
             type="button"
             role="checkbox"
@@ -149,7 +146,7 @@ export default function OnboardingPage() {
           <div className="flex flex-col gap-xs">
             <span
               id="consent-heading"
-              className="cursor-pointer select-none text-headline-sm text-on-surface"
+              className="cursor-pointer select-none text-xl font-semibold leading-snug text-on-surface md:text-headline-sm"
               onClick={() => setConsent((prev) => !prev)}
             >
               I confirm this is my voice, or I have explicit permission to
@@ -174,7 +171,7 @@ export default function OnboardingPage() {
         <div className="flex flex-col gap-xs border-b border-outline-variant/30 pb-sm">
           <h2
             id="tone-heading"
-            className="text-headline-md text-on-surface"
+            className="text-2xl font-semibold leading-tight text-on-surface md:text-headline-md"
           >
             Communication Style
           </h2>
@@ -198,7 +195,7 @@ export default function OnboardingPage() {
                 aria-checked={selected}
                 onClick={() => setTone(id)}
                 className={cn(
-                  "group flex h-full min-h-[160px] flex-col items-center justify-center gap-sm rounded-xl border-2 p-md text-center transition-colors",
+                  "group flex h-full min-h-[140px] flex-col items-center justify-center gap-sm rounded-xl border-2 p-md text-center transition-colors md:min-h-[160px]",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-lowest",
                   selected
                     ? "border-primary bg-primary-fixed/40 text-on-primary-fixed"
@@ -248,7 +245,7 @@ export default function OnboardingPage() {
       ) : null}
 
       <footer
-        className="animate-slidein mt-sm flex justify-end border-t border-outline-variant/30 pt-md"
+        className="animate-slidein mt-sm flex justify-stretch border-t border-outline-variant/30 pt-md sm:justify-end"
         style={{ animationDelay: "900ms" }}
       >
         <Button
@@ -263,8 +260,9 @@ export default function OnboardingPage() {
             )
           }
           disabled={!canContinue}
+          className="w-full hover:!text-white hover:[&_svg]:!text-white sm:w-auto"
         >
-          {isSubmitting ? "Setting up…" : "Continue to Recording"}
+          {isSubmitting ? "Setting up..." : "Continue to Recording"}
         </Button>
       </footer>
     </form>

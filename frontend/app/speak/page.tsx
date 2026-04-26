@@ -16,10 +16,7 @@ import {
 import { Button } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { useRequireUser } from "@/lib/useRequireUser";
-import {
-  getCommunicationStyle,
-  getVoiceId,
-} from "@/lib/userSession";
+import { getCommunicationStyle, getVoiceId } from "@/lib/userSession";
 
 type RewriteAction = "warmer" | "shorter" | "sound_like_me" | "translate";
 
@@ -59,9 +56,7 @@ const chips: RewriteChip[] = [
 
 export default function SpeakPage() {
   const userId = useRequireUser();
-  const [text, setText] = useState(
-    "Tell my daughter I'm really glad she came today.",
-  );
+  const [text, setText] = useState("");
   const [rewriting, setRewriting] = useState<RewriteAction | null>(null);
   const [activeAction, setActiveAction] = useState<RewriteAction | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -207,20 +202,32 @@ export default function SpeakPage() {
   };
 
   const canPlay = text.trim().length > 0 && !isPlaying && !isLoadingAudio;
+  const canSave = text.trim().length > 0 && !savedToBank;
 
   if (!userId) return null;
 
   return (
     <section className="mx-auto flex w-full max-w-3xl flex-col gap-lg">
       <header className="flex flex-col gap-sm text-center">
-        <h1 className="text-headline-lg text-on-surface">Speak For Me</h1>
-        <p className="mx-auto max-w-2xl text-body-lg text-on-surface-variant">
+        <h1
+          className="animate-slidein text-3xl font-bold leading-tight text-on-surface md:text-headline-lg"
+          style={{ animationDelay: "300ms" }}
+        >
+          Speak For Me
+        </h1>
+        <p
+          className="animate-slidein mx-auto max-w-2xl text-body-lg text-on-surface-variant"
+          style={{ animationDelay: "500ms" }}
+        >
           Type what you&apos;d like to say. Reshape it in your own voice, then
           play it back in your preserved sound.
         </p>
       </header>
 
-      <article className="flex flex-col gap-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-md shadow-ambient md:p-lg">
+      <article
+        className="animate-slidein flex flex-col gap-md rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-4 shadow-ambient sm:p-md md:p-lg"
+        style={{ animationDelay: "700ms" }}
+      >
         <label htmlFor="speak-input" className="sr-only">
           What do you want to say?
         </label>
@@ -234,7 +241,7 @@ export default function SpeakPage() {
           placeholder="What do you want to say?"
           rows={4}
           className={cn(
-            "w-full resize-none rounded-xl border-2 border-outline-variant/50 bg-surface-container-lowest p-md text-body-lg text-on-surface",
+            "min-h-[172px] w-full resize-none rounded-xl border-2 border-outline-variant/50 bg-surface-container-lowest p-md text-body-lg text-on-surface",
             "placeholder:text-outline",
             "transition-colors duration-200",
             "focus:border-primary focus:outline-none focus:ring-0",
@@ -282,9 +289,9 @@ export default function SpeakPage() {
                     <Icon className="h-5 w-5" />
                   )}
                 </span>
-                <span className="flex flex-col gap-xs">
+                <span className="flex min-w-0 flex-col gap-xs">
                   <span className="text-label-lg">
-                    {isLoading ? "Rewriting…" : chip.label}
+                    {isLoading ? "Rewriting..." : chip.label}
                   </span>
                   <span className="text-body-sm text-on-surface-variant">
                     {chip.description}
@@ -299,56 +306,62 @@ export default function SpeakPage() {
       {error ? (
         <div
           role="alert"
-          className="rounded-xl border border-error/30 bg-error-container/40 px-md py-sm text-body-sm text-on-error-container"
+          className="animate-slidein rounded-xl border border-error/30 bg-error-container/40 px-md py-sm text-body-sm text-on-error-container"
+          style={{ animationDelay: "900ms" }}
         >
           {error}
         </div>
       ) : null}
 
-      <div className="relative flex flex-col items-center gap-md">
+      <div
+        className="animate-slidein relative flex flex-col items-center gap-md px-2 text-center"
+        style={{ animationDelay: "900ms" }}
+      >
         {isPlaying ? (
           <>
             <span
-              className="absolute inset-x-0 top-2 mx-auto h-32 w-32 animate-ping rounded-full bg-primary/20"
+              className="absolute inset-0 -m-2 animate-ping rounded-full bg-primary/20"
               aria-hidden="true"
             />
             <span
-              className="absolute inset-x-0 top-4 mx-auto h-28 w-28 animate-pulse rounded-full bg-primary/15"
+              className="absolute inset-0 -m-4 animate-pulse rounded-full bg-primary/15"
               aria-hidden="true"
             />
           </>
         ) : null}
 
-        <Button
-          variant="primary"
-          size="lg"
-          onClick={() => void handlePlay()}
-          disabled={!canPlay}
-          aria-pressed={isPlaying}
-          aria-label={
-            isLoadingAudio
-              ? "Loading audio"
-              : isPlaying
-                ? "Audio is playing"
-                : "Speak this aloud"
-          }
-          className={cn(
-            "relative z-10 h-28 w-28 min-h-0 gap-0 rounded-full border-4 border-surface px-0 shadow-ambient",
-            isPlaying && "bg-primary-container",
-          )}
-        />
-        <span
-          className="pointer-events-none absolute top-0 z-20 flex h-28 w-28 items-center justify-center text-white"
-          aria-hidden="true"
-        >
-          {isLoadingAudio ? (
-            <Loader2 className="h-10 w-10 animate-spin" strokeWidth={2.25} />
-          ) : isPlaying ? (
-            <Volume2 className="h-10 w-10 animate-pulse" strokeWidth={2.25} />
-          ) : (
-            <Mic className="h-10 w-10" strokeWidth={2.25} />
-          )}
-        </span>
+        <div className="relative flex h-24 w-24 items-center justify-center">
+          <Button
+            variant="primary"
+            size="lg"
+            onClick={() => void handlePlay()}
+            disabled={!canPlay}
+            aria-pressed={isPlaying}
+            aria-label={
+              isLoadingAudio
+                ? "Loading audio"
+                : isPlaying
+                  ? "Audio is playing"
+                  : "Speak this aloud"
+            }
+            className={cn(
+              "relative z-10 h-24 w-24 min-h-0 gap-0 rounded-full border-4 border-surface px-0 shadow-ambient",
+              isPlaying && "bg-primary-container",
+            )}
+          />
+          <span
+            className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center text-white"
+            aria-hidden="true"
+          >
+            {isLoadingAudio ? (
+              <Loader2 className="h-10 w-10 animate-spin" strokeWidth={2.25} />
+            ) : isPlaying ? (
+              <Volume2 className="h-10 w-10 animate-pulse" strokeWidth={2.25} />
+            ) : (
+              <Mic className="h-9 w-9" strokeWidth={2.25} />
+            )}
+          </span>
+        </div>
 
         <p
           aria-live="polite"
@@ -358,9 +371,9 @@ export default function SpeakPage() {
           )}
         >
           {isLoadingAudio
-            ? "Generating audio…"
+            ? "Generating audio..."
             : isPlaying
-              ? "Playing audio in your preserved voice…"
+              ? "Playing audio in your preserved voice..."
               : canPlay
                 ? "Tap play to hear it in your voice."
                 : "Type something above, then play it back."}
@@ -371,9 +384,10 @@ export default function SpeakPage() {
           size="md"
           leftIcon={<BookmarkPlus className="h-5 w-5" aria-hidden="true" />}
           onClick={() => void handleSaveToBank()}
-          disabled={text.trim().length === 0}
+          disabled={!canSave}
+          className="w-full sm:w-auto"
         >
-          Save to phrase bank
+          {savedToBank ? "Saved to phrase bank" : "Save to phrase bank"}
         </Button>
 
         {savedToBank ? (

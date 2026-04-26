@@ -1,21 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { getUserId } from "./userSession";
 
+function subscribe() {
+  return () => {};
+}
+
+function getServerSnapshot(): string | null {
+  return null;
+}
+
 export function useRequireUser(): string | null {
   const router = useRouter();
-  const [userId, setUserId] = useState<string | null>(null);
+  const userId = useSyncExternalStore(subscribe, getUserId, getServerSnapshot);
 
   useEffect(() => {
-    const id = getUserId();
-    if (!id) {
+    if (!userId) {
       router.replace("/");
-    } else {
-      setUserId(id);
     }
-  }, [router]);
+  }, [router, userId]);
 
   return userId;
 }
