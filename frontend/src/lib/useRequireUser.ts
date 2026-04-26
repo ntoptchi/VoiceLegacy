@@ -1,26 +1,53 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
-import { getUserId } from "./userSession";
 
-function subscribe() {
-  return () => {};
-}
+export type AppUser = {
+  id: string;
+  clerkUserId: string;
+  communicationStyle: string;
+  audience: string | null;
+  voiceId: string | null;
+  voiceStatus: string;
+};
 
-function getServerSnapshot(): string | null {
-  return null;
-}
-
-export function useRequireUser(): string | null {
+export function useRequireUser(): AppUser | null {
+  const { isLoaded, isSignedIn } = useAuth();
   const router = useRouter();
-  const userId = useSyncExternalStore(subscribe, getUserId, getServerSnapshot);
+  const [user, setUser] = useState<AppUser | null>(null);
 
   useEffect(() => {
-    if (!userId) {
+    if (!isLoaded) return;
+    if (!isSignedIn) {
       router.replace("/");
+      return;
     }
-  }, [router, userId]);
 
-  return userId;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/user/me");
+        if (!res.ok) {
+          if (res.status === 404) {
+            router.replace("/consent");
+            return;
+          }
+          return;
+        }
+        const data = await res.json();
+        if (!cancelled && data.success && data.user) {
+          setUser(data.user as AppUser);
+        }
+      } catch {
+        // network error — leave user as null
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isLoaded, isSignedIn, router]);
+
+  return user;
 }

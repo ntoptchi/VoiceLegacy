@@ -47,12 +47,14 @@ function shouldUseMockDb(): boolean {
 }
 
 export async function createUser(input: {
+  clerkUserId: string;
   communicationStyle: CommunicationStyle;
   audience?: string;
 }): Promise<UserDoc> {
   const now = new Date();
   const doc: UserDoc = {
     _id: new ObjectId(),
+    clerkUserId: input.clerkUserId,
     consentedAt: now,
     communicationStyle: input.communicationStyle,
     audience: input.audience,
@@ -70,6 +72,19 @@ export async function createUser(input: {
   const col = await usersCollection();
   await col.insertOne(doc);
   return doc;
+}
+
+export async function findUserByClerkId(
+  clerkUserId: string,
+): Promise<UserDoc | null> {
+  if (shouldUseMockDb()) {
+    for (const user of getMockStore().users.values()) {
+      if (user.clerkUserId === clerkUserId) return user;
+    }
+    return null;
+  }
+  const col = await usersCollection();
+  return col.findOne({ clerkUserId });
 }
 
 export async function findUser(id: ObjectId): Promise<UserDoc | null> {
