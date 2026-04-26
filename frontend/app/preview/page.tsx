@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { SignUpButton } from "@clerk/nextjs";
 import {
   Loader2,
-  Play,
   RotateCcw,
   Shield,
   Sparkles,
@@ -17,22 +16,19 @@ const DEMO_PHRASE = "This is your voice, preserved forever.";
 
 export default function PreviewPage() {
   const router = useRouter();
-  const [voiceId, setVoiceId] = useState<string | null>(null);
+  const [voiceId] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return sessionStorage.getItem("pendingVoiceId");
+  });
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasPlayed, setHasPlayed] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    const pending = sessionStorage.getItem("pendingVoiceId");
-    if (!pending) {
+    if (!voiceId) {
       router.replace("/record");
-      return;
     }
-    setVoiceId(pending);
-    setIsLoading(false);
-  }, [router]);
+  }, [router, voiceId]);
 
   const playVoice = useCallback(async () => {
     if (!voiceId || isPlaying) return;
@@ -62,7 +58,6 @@ export default function PreviewPage() {
 
       audio.onended = () => {
         setIsPlaying(false);
-        setHasPlayed(true);
         URL.revokeObjectURL(url);
       };
       audio.onerror = () => {
@@ -80,12 +75,6 @@ export default function PreviewPage() {
   }, [voiceId, isPlaying]);
 
   useEffect(() => {
-    if (voiceId && !hasPlayed && !isPlaying && !error) {
-      void playVoice();
-    }
-  }, [voiceId, hasPlayed, isPlaying, error, playVoice]);
-
-  useEffect(() => {
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -94,7 +83,7 @@ export default function PreviewPage() {
     };
   }, []);
 
-  if (isLoading) return null;
+  if (!voiceId) return null;
 
   return (
     <section className="mx-auto flex w-full max-w-2xl flex-col items-center gap-lg py-8 md:py-16">
@@ -115,7 +104,7 @@ export default function PreviewPage() {
           className="animate-slidein max-w-prose text-body-lg text-on-surface-variant"
           style={{ animationDelay: "500ms" }}
         >
-          We just played a preview of your voice clone saying: &ldquo;
+          Tap play to hear a preview of your voice clone saying: &ldquo;
           {DEMO_PHRASE}&rdquo;
         </p>
       </header>

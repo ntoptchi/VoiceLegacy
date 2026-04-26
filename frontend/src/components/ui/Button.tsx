@@ -56,6 +56,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) => {
+    const isBusy = props["aria-busy"] === true || props["aria-busy"] === "true";
+    const interactive = !disabled && !isBusy;
+
     return (
       <button
         ref={ref}
@@ -63,9 +66,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         disabled={disabled}
         className={cn(
           "inline-flex items-center justify-center gap-sm rounded-full font-semibold tracking-[0.02em]",
-          "transition-colors duration-200 active:scale-[0.98]",
+          "transition-all duration-300 ease-in-out active:scale-[0.98] will-change-transform",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-          "disabled:cursor-not-allowed",
+          "disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none aria-busy:hover:scale-100 aria-busy:hover:shadow-none",
+          interactive &&
+            "hover:scale-[1.03] hover:shadow-[0_0_24px_rgba(71,100,79,0.35)]",
           variantStyles[variant],
           sizeStyles[size],
           fullWidth && "w-full",
