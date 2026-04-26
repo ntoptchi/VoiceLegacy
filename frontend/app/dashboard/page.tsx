@@ -18,6 +18,10 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui";
+import {
+  COMMUNICATION_STYLES,
+  type CommunicationStyle,
+} from "@/lib/types";
 import { useRequireUser } from "@/lib/useRequireUser";
 import { clearSession, getVoiceId } from "@/lib/userSession";
 
@@ -71,17 +75,25 @@ const categoryMeta: Record<
   personal: { label: "Personal", icon: User, iconClass: "text-primary" },
 };
 
+const toneLabels: Record<CommunicationStyle, string> = {
+  warm: "Warm",
+  direct: "Direct",
+  humorous: "Humorous",
+  calm: "Calm",
+};
+
 export default function DashboardPage() {
   const router = useRouter();
   const userId = useRequireUser();
 
   const [voiceStatus, setVoiceStatus] = useState<string>("unknown");
   const [voiceId, setVoiceId] = useState<string | null>(null);
-  const [communicationStyle, setCommunicationStyle] = useState<string | null>(
-    null,
-  );
+  const [communicationStyle, setCommunicationStyle] =
+    useState<CommunicationStyle | null>(null);
   const [phrases, setPhrases] = useState<PhraseData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [savingTone, setSavingTone] = useState<CommunicationStyle | null>(null);
+  const [toneError, setToneError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!userId) return;
@@ -185,6 +197,34 @@ export default function DashboardPage() {
     router.push("/record");
   };
 
+  const handleToneChange = async (nextTone: CommunicationStyle) => {
+    if (!userId || nextTone === communicationStyle || savingTone) return;
+    const previousTone = communicationStyle;
+    setCommunicationStyle(nextTone);
+    setSavingTone(nextTone);
+    setToneError(null);
+
+    try {
+      const res = await fetch(`/api/user/${userId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ communicationStyle: nextTone }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error ?? "Failed to update voice tone.");
+      }
+      setCommunicationStyle(data.user.communicationStyle);
+    } catch (error) {
+      setCommunicationStyle(previousTone);
+      setToneError(
+        error instanceof Error ? error.message : "Failed to update voice tone.",
+      );
+    } finally {
+      setSavingTone(null);
+    }
+  };
+
   if (!userId) return null;
 
   if (isLoading) {
@@ -239,8 +279,50 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 gap-sm sm:grid-cols-2 lg:grid-cols-3">
           {voiceId ? <InfoTile label="Voice ID" value={voiceId} mono /> : null}
-          {communicationStyle ? (
-            <InfoTile label="Communication tone" value={communicationStyle} />
+        </div>
+
+        <div className="flex flex-col gap-sm rounded-xl bg-surface p-md">
+          <div className="flex flex-col gap-xs">
+            <h3 className="text-label-lg text-on-surface">Voice tone</h3>
+            <p className="text-body-sm text-on-surface-variant">
+              Choose the tone used when the assistant rewrites saved messages in
+              your voice.
+            </p>
+          </div>
+          <div
+            role="radiogroup"
+            aria-label="Voice tone"
+            className="grid grid-cols-2 gap-xs sm:grid-cols-4"
+          >
+            {COMMUNICATION_STYLES.map((style) => {
+              const isSelected = communicationStyle === style;
+              const isSaving = savingTone === style;
+              return (
+                <button
+                  key={style}
+                  type="button"
+                  role="radio"
+                  aria-checked={isSelected}
+                  onClick={() => void handleToneChange(style)}
+                  disabled={savingTone !== null}
+                  className={`flex min-h-11 items-center justify-center gap-xs rounded-full px-sm text-label-md transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface ${
+                    isSelected
+                      ? "bg-primary text-on-primary"
+                      : "bg-surface-container text-on-surface-variant hover:bg-surface-dim hover:text-on-surface"
+                  } disabled:cursor-not-allowed disabled:opacity-70`}
+                >
+                  {isSaving ? (
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                  ) : null}
+                  {toneLabels[style]}
+                </button>
+              );
+            })}
+          </div>
+          {toneError ? (
+            <p className="text-body-sm text-error" role="alert">
+              {toneError}
+            </p>
           ) : null}
         </div>
 

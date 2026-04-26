@@ -123,6 +123,27 @@ export async function setVoiceStatus(
   return result ?? null;
 }
 
+export async function updateUserCommunicationStyle(
+  id: ObjectId,
+  communicationStyle: CommunicationStyle,
+): Promise<UserDoc | null> {
+  const updatedAt = new Date();
+  if (shouldUseMockDb()) {
+    const existing = getMockStore().users.get(id.toHexString());
+    if (!existing) return null;
+    const next: UserDoc = { ...existing, communicationStyle, updatedAt };
+    getMockStore().users.set(id.toHexString(), next);
+    return next;
+  }
+  const col = await usersCollection();
+  const result = await col.findOneAndUpdate(
+    { _id: id },
+    { $set: { communicationStyle, updatedAt } },
+    { returnDocument: "after" },
+  );
+  return result ?? null;
+}
+
 export async function listPhrases(
   userId: ObjectId,
   category?: PhraseCategory,
