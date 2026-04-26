@@ -14,8 +14,8 @@ Legend: `[x]` done - `[~]` partially done - `[ ]` not started
 - [x] TypeScript + ESLint configured
 - [x] `mongodb` driver added to dependencies (`frontend/package.json`)
 - [x] `.env.local.example` documents every key + every mock flag (`frontend/.env.local.example`)
-- [ ] Real `.env.local` populated with live keys (Mongo, ElevenLabs, Gemini)
-- [ ] MongoDB Atlas cluster provisioned + connection verified end-to-end (currently only smoke-tested with `MOCK_DB=true`)
+- [x] Real `.env.local` populated with live keys (Mongo, ElevenLabs; Gemini deferred)
+- [x] MongoDB Atlas cluster provisioned + connection verified end-to-end (real Mongo, real ElevenLabs)
 - [ ] Vercel project connected to GitHub for auto-deploy
 
 ---
@@ -53,12 +53,12 @@ documented `{ success, ... }` shape. All were smoke-tested with the four
 
 ### Backend gaps still to close
 
-- [ ] Verify each route against real ElevenLabs / Gemini / Mongo (only the mock paths are exercised so far)
-- [ ] `DELETE /api/voice/:id` or equivalent for "Delete voice data" on the dashboard
-- [ ] `DELETE /api/user/:id` (cascade-delete phrases) for "Delete all data"
-- [ ] Phrase favorite-toggle endpoint (`PATCH /api/phrases/[id]`) - plan says "Mark favorites" on `/phrases`
+- [x] Verify routes against real Mongo + ElevenLabs (all pass; Gemini deferred - `MOCK_GEMINI_API=true`)
+- [x] `POST /api/voice/delete` - deletes voice from ElevenLabs + clears user voiceId in DB; dashboard wired
+- [x] `DELETE /api/user/:id` (cascade-delete phrases) for "Delete all data"
+- [x] Phrase favorite-toggle endpoint (`PATCH /api/phrases/[id]`) - persists to DB with optimistic UI; plan says "Mark favorites" on `/phrases`
 - [ ] Phrase bank export (`GET /api/phrases/[id]/export?format=json|pdf`) - plan calls for JSON + PDF export
-- [ ] Mongo indexes (`users._id` is automatic; add `phrases.userId` + `phrases.category`)
+- [x] Mongo indexes - `phrases.userId_1` and compound `phrases.userId_1_category_1` created via `scripts/ensure-indexes.ts`
 
 ---
 
@@ -86,16 +86,26 @@ visitors to onboarding.
 - [x] Wire `/speak` to Gemini rewrite + ElevenLabs TTS + phrase save
 - [x] Wire `/dashboard` to user fetch, phrase counts, export, and delete-all
 - [x] Loading + error states for every API call
-- [ ] Mobile pass - judges may demo on phones
+- [x] Mobile pass - Navbar has bottom nav for mobile; pages use responsive grid/flex layouts
+- [x] Voice-status polling added to `/record` after upload (polls `GET /api/voice/status/[id]` until ready)
+- [x] Dashboard "Delete all data" calls `DELETE /api/user/[id]` before clearing session
 
 ---
 
 ## 5. Demo readiness (per the plan's "Hours 18-24" block)
 
-- [ ] Pre-load a demo account with 10-15 banked phrases
+- [x] Pre-load a demo account with 14 banked phrases (`npx tsx scripts/seed-demo.ts`)
 - [ ] Practice the 5-minute demo flow end to end (consent -> record -> save -> speak -> save)
-- [ ] Prepare the one-liner pitch
-- [ ] Prepare the answer to "how is this different from just using ElevenLabs directly?"
+- [x] One-liner pitch prepared (see below)
+- [x] "How is this different?" answer prepared (see below)
+
+### Pitch
+
+> VoiceLegacy lets people preserve their natural voice, words, and phrases before speech loss - so they can always communicate in a way that sounds and feels like them.
+
+### "How is this different from just using ElevenLabs directly?"
+
+> ElevenLabs gives you a voice clone. VoiceLegacy gives you a communication toolkit: phrase bank, AI rewording in your tone, category-organized expressions, and one-tap playback - all built around the idea that what you say matters as much as how you sound. It is purpose-built for people facing speech loss, not a generic TTS playground.
 
 ---
 
@@ -113,8 +123,8 @@ visitors to onboarding.
 |---|---|
 | Backend infrastructure (lib/) | Complete |
 | Backend API routes (plan items) | Complete |
-| Backend extras (delete-all, favorite, export) | Not started |
-| Real-credential verification | Not started |
+| Backend extras (delete-all, favorite, export) | Export only |
+| Real-credential verification | Mongo + ElevenLabs complete; Gemini deferred |
 | Frontend pages - UI | Complete |
 | Frontend pages - backend wiring | Complete (all 5 pages) |
-| Demo prep | Not started |
+| Demo prep | Mostly complete |
