@@ -1,9 +1,9 @@
-# VoiceLegacy — Progress Tracker
+# VoiceLegacy - Progress Tracker
 
 Living checklist of what is built versus what still needs to be implemented.
 Source of truth for scope is [`voicelegacy-plan.md`](./voicelegacy-plan.md).
 
-Legend: `[x]` done · `[~]` partially done · `[ ]` not started
+Legend: `[x]` done - `[~]` partially done - `[ ]` not started
 
 ---
 
@@ -20,21 +20,21 @@ Legend: `[x]` done · `[~]` partially done · `[ ]` not started
 
 ---
 
-## 2. Backend — `frontend/src/lib/*`
+## 2. Backend - `frontend/src/lib/*`
 
 All shared infrastructure is in place.
 
-- [x] `mongodb.ts` — cached `MongoClient` via `globalThis`
-- [x] `db.ts` — typed repo functions, in-memory `MOCK_DB` fallback
-- [x] `env.ts` — central env reader + mock flags
-- [x] `api.ts` — `jsonOk` / `jsonError` / `readJsonBody` / `toObjectId`
-- [x] `types.ts` — `UserDoc`, `PhraseDoc`, `PhraseCategory`, `CommunicationStyle`, `RewriteMode`
-- [x] `elevenlabs.ts` — `cloneVoiceFromFiles` + `synthesizeSpeech`, mockable
-- [x] `gemini.ts` — `suggestPhrases` + `rewriteMessage`, mockable
+- [x] `mongodb.ts` - cached `MongoClient` via `globalThis`
+- [x] `db.ts` - typed repo functions, in-memory `MOCK_DB` fallback
+- [x] `env.ts` - central env reader + mock flags
+- [x] `api.ts` - `jsonOk` / `jsonError` / `readJsonBody` / `toObjectId`
+- [x] `types.ts` - `UserDoc`, `PhraseDoc`, `PhraseCategory`, `CommunicationStyle`, `RewriteMode`
+- [x] `elevenlabs.ts` - `cloneVoiceFromFiles` + `synthesizeSpeech`, mockable
+- [x] `gemini.ts` - `suggestPhrases` + `rewriteMessage`, mockable
 
 ---
 
-## 3. Backend — API routes (`frontend/app/api/*`)
+## 3. Backend - API routes (`frontend/app/api/*`)
 
 Every route from the plan exists, validates input, and returns the
 documented `{ success, ... }` shape. All were smoke-tested with the four
@@ -53,16 +53,16 @@ documented `{ success, ... }` shape. All were smoke-tested with the four
 
 ### Backend gaps still to close
 
-- [x] Verify routes against **real** Mongo + ElevenLabs (all pass; Gemini deferred — `MOCK_GEMINI_API=true`)
-- [x] `POST /api/voice/delete` — deletes voice from ElevenLabs + clears user voiceId in DB; dashboard wired
+- [x] Verify routes against real Mongo + ElevenLabs (all pass; Gemini deferred - `MOCK_GEMINI_API=true`)
+- [x] `POST /api/voice/delete` - deletes voice from ElevenLabs + clears user voiceId in DB; dashboard wired
 - [x] `DELETE /api/user/:id` (cascade-delete phrases) for "Delete all data"
-- [x] Phrase favorite-toggle endpoint (`PATCH /api/phrases/[id]`) — persists to DB with optimistic UI — plan says "Mark favorites" on `/phrases`
-- [ ] Phrase bank export (`GET /api/phrases/[id]/export?format=json|pdf`) — plan calls for JSON + PDF export
-- [x] Mongo indexes — `phrases.userId_1` and compound `phrases.userId_1_category_1` created via `scripts/ensure-indexes.ts`
+- [x] Phrase favorite-toggle endpoint (`PATCH /api/phrases/[id]`) - persists to DB with optimistic UI; plan says "Mark favorites" on `/phrases`
+- [ ] Phrase bank export (`GET /api/phrases/[id]/export?format=json|pdf`) - plan calls for JSON + PDF export
+- [x] Mongo indexes - `phrases.userId_1` and compound `phrases.userId_1_category_1` created via `scripts/ensure-indexes.ts`
 
 ---
 
-## 4. Frontend — pages
+## 4. Frontend - pages
 
 All pages are wired to the backend via API routes. Client identity is
 managed through `localStorage` helpers in `frontend/src/lib/userSession.ts`,
@@ -86,34 +86,34 @@ visitors to onboarding.
 - [x] Wire `/speak` to Gemini rewrite + ElevenLabs TTS + phrase save
 - [x] Wire `/dashboard` to user fetch, phrase counts, export, and delete-all
 - [x] Loading + error states for every API call
-- [x] Mobile pass — Navbar has bottom nav for mobile; pages use responsive grid/flex layouts
+- [x] Mobile pass - Navbar has bottom nav for mobile; pages use responsive grid/flex layouts
 - [x] Voice-status polling added to `/record` after upload (polls `GET /api/voice/status/[id]` until ready)
 - [x] Dashboard "Delete all data" calls `DELETE /api/user/[id]` before clearing session
 
 ---
 
-## 5. Demo readiness (per the plan's "Hours 18–24" block)
+## 5. Demo readiness (per the plan's "Hours 18-24" block)
 
 - [x] Pre-load a demo account with 14 banked phrases (`npx tsx scripts/seed-demo.ts`)
-- [ ] Practice the 5-minute demo flow end to end (consent → record → save → speak → save)
+- [ ] Practice the 5-minute demo flow end to end (consent -> record -> save -> speak -> save)
 - [x] One-liner pitch prepared (see below)
 - [x] "How is this different?" answer prepared (see below)
 
 ### Pitch
 
-> VoiceLegacy lets people preserve their natural voice, words, and phrases before speech loss — so they can always communicate in a way that sounds and feels like them.
+> VoiceLegacy lets people preserve their natural voice, words, and phrases before speech loss - so they can always communicate in a way that sounds and feels like them.
 
 ### "How is this different from just using ElevenLabs directly?"
 
-> ElevenLabs gives you a voice clone. VoiceLegacy gives you a **communication toolkit**: phrase bank, AI rewording in your tone, category-organized expressions, and one-tap playback — all built around the idea that *what* you say matters as much as *how* you sound. It is purpose-built for people facing speech loss, not a generic TTS playground.
+> ElevenLabs gives you a voice clone. VoiceLegacy gives you a communication toolkit: phrase bank, AI rewording in your tone, category-organized expressions, and one-tap playback - all built around the idea that what you say matters as much as how you sound. It is purpose-built for people facing speech loss, not a generic TTS playground.
 
 ---
 
 ## 6. Out of scope (intentionally not building)
 
-- Auth / sessions — using a raw `userId` from the client is fine for MVP
-- A standalone service in `backend/` — the plan is full-stack Next.js; that folder stays empty
-- Snowflake — explicitly dropped in `voicelegacy-plan.md`
+- Auth / sessions - using a raw `userId` from the client is fine for MVP
+- A standalone service in `backend/` - the plan is full-stack Next.js; that folder stays empty
+- Snowflake - explicitly dropped in `voicelegacy-plan.md`
 
 ---
 
@@ -123,8 +123,8 @@ visitors to onboarding.
 |---|---|
 | Backend infrastructure (lib/) | Complete |
 | Backend API routes (plan items) | Complete |
-| Backend extras (delete-all, favorite, export) | Not started |
-| Real-credential verification | Not started |
-| Frontend pages — UI | Complete |
-| Frontend pages — backend wiring | Complete (all 5 pages) |
-| Demo prep | Not started |
+| Backend extras (delete-all, favorite, export) | Export only |
+| Real-credential verification | Mongo + ElevenLabs complete; Gemini deferred |
+| Frontend pages - UI | Complete |
+| Frontend pages - backend wiring | Complete (all 5 pages) |
+| Demo prep | Mostly complete |
