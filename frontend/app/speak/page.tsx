@@ -336,15 +336,19 @@ export default function SpeakPage() {
             "relative z-10 h-28 w-28 min-h-0 gap-0 rounded-full border-4 border-surface px-0 shadow-ambient",
             isPlaying && "bg-primary-container",
           )}
+        />
+        <span
+          className="pointer-events-none absolute top-0 z-20 flex h-28 w-28 items-center justify-center text-white"
+          aria-hidden="true"
         >
           {isLoadingAudio ? (
-            <Loader2 className="h-10 w-10 animate-spin" aria-hidden="true" />
+            <Loader2 className="h-10 w-10 animate-spin" strokeWidth={2.25} />
           ) : isPlaying ? (
-            <Volume2 className="h-10 w-10 animate-pulse" aria-hidden="true" />
+            <Volume2 className="h-10 w-10 animate-pulse" strokeWidth={2.25} />
           ) : (
-            <Mic className="h-10 w-10" aria-hidden="true" />
+            <Mic className="h-10 w-10" strokeWidth={2.25} />
           )}
-        </Button>
+        </span>
 
         <p
           aria-live="polite"
