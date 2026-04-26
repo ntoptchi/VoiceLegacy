@@ -39,6 +39,7 @@ export type VoiceStatus = "none" | "recording" | "ready";
 
 export interface UserDoc {
   _id: ObjectId;
+  clerkUserId: string;
   consentedAt: Date;
   communicationStyle: CommunicationStyle;
   audience?: string;
