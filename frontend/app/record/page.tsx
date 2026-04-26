@@ -368,6 +368,8 @@ export default function RecordPage() {
         </div>
       ) : null}
 
+      <div className="flex flex-col items-center gap-md">
+        <div className="flex w-full flex-wrap items-center justify-between gap-sm sm:gap-md">
       <div
         className="animate-slidein flex flex-col items-center gap-md"
         style={{ animationDelay: "700ms" }}
@@ -379,6 +381,7 @@ export default function RecordPage() {
             leftIcon={<ArrowLeft className="h-5 w-5" aria-hidden="true" />}
             onClick={() => goToPhrase(phraseIndex - 1)}
             disabled={phraseIndex === 0 || isRecording || isProcessing}
+            className="order-2 flex-1 sm:order-none sm:flex-none"
             fullWidth
             className="order-2 sm:order-none sm:w-auto"
           >
@@ -392,12 +395,14 @@ export default function RecordPage() {
               leftIcon={<Sparkles className="h-5 w-5" aria-hidden="true" />}
               onClick={() => void submitRecordings()}
               disabled={isProcessing}
+              className="order-1 w-full px-lg sm:order-none sm:w-auto"
               fullWidth
               className="order-1 col-span-2 sm:order-none sm:w-auto sm:px-lg"
             >
               {isProcessing ? "Creating clone..." : "Create My Voice Clone"}
             </Button>
           ) : (
+            <div className="relative order-1 flex w-full items-center justify-center sm:order-none sm:w-auto">
             <div className="relative order-1 col-span-2 flex items-center justify-center sm:order-none">
               {isRecording ? (
                 <>
@@ -456,6 +461,7 @@ export default function RecordPage() {
             disabled={
               phraseIndex === totalPhrases - 1 || isRecording || isProcessing
             }
+            className="order-3 flex-1 sm:order-none sm:flex-none"
             fullWidth
             className="order-3 sm:order-none sm:w-auto"
           >

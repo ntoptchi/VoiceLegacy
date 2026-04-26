@@ -22,6 +22,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    <html
+      lang="en"
+      className={`${plusJakartaSans.variable} h-full antialiased`}
+    >
+      <body className="flex min-h-full flex-col bg-background text-on-background">
+        <Navbar />
+        <main className="mx-auto flex w-full max-w-content flex-1 flex-col px-md py-lg md:px-margin">
+          {children}
+        </main>
+      </body>
+    </html>
     <ClerkProvider>
       <html
         lang="en"

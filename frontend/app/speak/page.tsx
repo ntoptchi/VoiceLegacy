@@ -236,7 +236,7 @@ export default function SpeakPage() {
             setText(event.target.value);
             setActiveAction(null);
           }}
-          placeholder="What do you want to say?"
+          placeholder={SAMPLE_PROMPT}
           rows={4}
           className={cn(
             "min-h-[172px] w-full resize-none rounded-xl border-2 border-outline-variant/50 bg-surface-container-lowest p-md text-body-lg text-on-surface",
