@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -15,13 +14,6 @@ import {
   Sun,
   Trash2,
   TriangleAlert,
-  X,
-  type LucideIcon,
-} from "lucide-react";
-import { Button } from "@/components/ui";
-import { cn } from "@/lib/cn";
-
-type ConfirmTarget = "voice" | "all" | null;
   User,
   type LucideIcon,
 } from "lucide-react";
@@ -105,16 +97,6 @@ export default function DashboardPage() {
   const [savingTone, setSavingTone] = useState<CommunicationStyle | null>(null);
   const [toneError, setToneError] = useState<string | null>(null);
 
-  const [confirmTarget, setConfirmTarget] = useState<ConfirmTarget>(null);
-
-  const handleDeleteVoice = () => {
-    console.log("[dashboard] (mock) Delete Voice Data confirmed.");
-    setConfirmTarget(null);
-  };
-
-  const handleDeleteAll = () => {
-    console.log("[dashboard] (mock) Delete All Data confirmed.");
-    setConfirmTarget(null);
   const fetchData = useCallback(async () => {
     if (!userId) return;
     setIsLoading(true);
@@ -427,64 +409,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <DestructiveAction
-          label="Delete voice data"
-          description="Removes your cloned voice. Your saved phrases stay."
-          isOpen={confirmTarget === "voice"}
-          isAnotherOpen={confirmTarget !== null && confirmTarget !== "voice"}
-          onRequest={() => setConfirmTarget("voice")}
-          onCancel={() => setConfirmTarget(null)}
-          onConfirm={handleDeleteVoice}
-        />
-        <DestructiveAction
-          label="Delete all data"
-          description="Permanently removes your voice, phrases, and profile. This cannot be undone."
-          confirmLabel="Yes, delete everything"
-          isOpen={confirmTarget === "all"}
-          isAnotherOpen={confirmTarget !== null && confirmTarget !== "all"}
-          onRequest={() => setConfirmTarget("all")}
-          onCancel={() => setConfirmTarget(null)}
-          onConfirm={handleDeleteAll}
-        />
-      </article>
-    </section>
-  );
-}
-
-function DestructiveAction({
-  label,
-  description,
-  confirmLabel = "Yes, delete",
-  isOpen,
-  isAnotherOpen,
-  onRequest,
-  onCancel,
-  onConfirm,
-}: {
-  label: string;
-  description: string;
-  confirmLabel?: string;
-  isOpen: boolean;
-  isAnotherOpen: boolean;
-  onRequest: () => void;
-  onCancel: () => void;
-  onConfirm: () => void;
-}) {
-  if (isOpen) {
-    return (
-      <div
-        role="alertdialog"
-        aria-label={`Confirm: ${label}`}
-        className="flex flex-col gap-sm rounded-xl border-2 border-error/50 bg-error-container/60 p-md"
-      >
-        <div className="flex flex-col gap-xs">
-          <p className="text-label-lg text-on-error-container">
-            Are you sure you want to {label.toLowerCase()}?
-          </p>
-          <p className="text-body-sm text-on-error-container/80">
-            {description}
-          </p>
-        </div>
         <div className="flex flex-col gap-sm sm:flex-row">
           {voiceId ? (
             <Button
@@ -497,44 +421,17 @@ function DestructiveAction({
             </Button>
           ) : null}
           <Button
-            variant="primary"
+            variant="destructive"
             size="md"
             leftIcon={<Trash2 className="h-5 w-5" aria-hidden="true" />}
-            onClick={onConfirm}
-            className="bg-error text-on-error hover:bg-error/90 focus-visible:ring-error"
-            autoFocus
-          >
-            {confirmLabel}
-          </Button>
-          <Button
-            variant="ghost"
-            size="md"
-            leftIcon={<X className="h-5 w-5" aria-hidden="true" />}
-            onClick={onCancel}
             onClick={() => void handleDeleteAll()}
             className="w-full sm:w-auto"
           >
-            Cancel
+            Delete all data
           </Button>
         </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="flex flex-col gap-xs">
-      <Button
-        variant="destructive"
-        size="md"
-        leftIcon={<Trash2 className="h-5 w-5" aria-hidden="true" />}
-        onClick={onRequest}
-        disabled={isAnotherOpen}
-        className={cn("self-start", isAnotherOpen && "opacity-50")}
-      >
-        {label}
-      </Button>
-      <p className="text-body-sm text-on-surface-variant">{description}</p>
-    </div>
+      </article>
+    </section>
   );
 }
 

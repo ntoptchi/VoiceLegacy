@@ -1,19 +1,5 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
-import {
-  ArrowRight,
-  Check,
-  Heart,
-  Lock,
-  ShieldAlert,
-  Smile,
-  Zap,
-  type LucideIcon,
-} from "lucide-react";
-import { Button, TextInput } from "@/components/ui";
-import { cn } from "@/lib/cn";
 import Link from "next/link";
 import { ArrowRight, Mic, Shield, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui";
@@ -56,83 +42,6 @@ export default function LandingPage() {
           VoiceLegacy lets you record, clone, and protect your natural voice —
           so the people you love can always hear <em>you</em>.
         </p>
-      </header>
-
-      <section
-        aria-labelledby="consent-heading"
-        className="flex flex-col gap-sm rounded-xl border border-outline-variant/50 bg-surface-container-low p-md"
-      >
-        <div className="flex items-start gap-md">
-          <button
-            type="button"
-            role="checkbox"
-            aria-checked={consent}
-            aria-labelledby="consent-heading"
-            onClick={() => setConsent((prev) => !prev)}
-            className={cn(
-              "mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-md border-2 transition-colors",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-low",
-              consent
-                ? "border-primary bg-primary text-on-primary"
-                : "border-primary bg-surface-container-lowest text-transparent hover:bg-primary-fixed/20",
-            )}
-          >
-            <Check
-              className={cn("h-5 w-5", consent ? "opacity-100" : "opacity-0")}
-              aria-hidden="true"
-              strokeWidth={3}
-            />
-          </button>
-          <div className="flex flex-col gap-xs">
-            <span
-              id="consent-heading"
-              className="cursor-pointer select-none text-headline-sm text-on-surface"
-              onClick={() => setConsent((prev) => !prev)}
-            >
-              I confirm this is my voice, or I have explicit permission to
-              preserve this voice.
-            </span>
-            <span className="mt-xs flex items-center gap-xs text-on-surface-variant">
-              <Lock className="h-4 w-4" aria-hidden="true" />
-              <span className="text-body-sm">
-                Your data is private, never shared, and can be deleted at any
-                time.
-              </span>
-            </span>
-          </div>
-        </div>
-
-        <div
-          role="note"
-          className="mt-sm flex items-start gap-xs rounded-md border border-error/30 bg-error-container/40 p-sm text-on-error-container"
-        >
-          <ShieldAlert
-            className="mt-[2px] h-4 w-4 shrink-0 text-error"
-            aria-hidden="true"
-          />
-          <p className="text-body-sm">
-            <span className="font-semibold">This is not for impersonation.</span>{" "}
-            Voices may only be cloned with the speaker&apos;s explicit consent.
-          </p>
-        </div>
-      </section>
-
-      <section
-        aria-labelledby="tone-heading"
-        className="flex flex-col gap-md"
-      >
-        <div className="flex flex-col gap-xs border-b border-outline-variant/30 pb-sm">
-          <h2
-            id="tone-heading"
-            className="text-headline-md text-on-surface"
-          >
-            Communication Style
-          </h2>
-          <p className="text-label-lg text-on-surface-variant">
-            How would friends describe your natural tone?
-          </p>
-        </div>
-
         <div
           className="animate-slidein mt-md"
           style={{ animationDelay: "700ms" }}
