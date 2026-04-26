@@ -8,7 +8,7 @@ import {
   Library,
   Loader2,
   MessageSquareQuote,
-  Play,
+  Mic,
   Scissors,
   Volume2,
   type LucideIcon,
@@ -215,8 +215,8 @@ export default function SpeakPage() {
       <header className="flex flex-col gap-sm text-center">
         <h1 className="text-headline-lg text-on-surface">Speak For Me</h1>
         <p className="mx-auto max-w-2xl text-body-lg text-on-surface-variant">
-          Type what you'd like to say. Reshape it in your own voice, then play
-          it back in your preserved sound.
+          Type what you&apos;d like to say. Reshape it in your own voice, then
+          play it back in your preserved sound.
         </p>
       </header>
 
@@ -330,7 +330,7 @@ export default function SpeakPage() {
               ? "Loading audio"
               : isPlaying
                 ? "Audio is playing"
-                : "Play audio"
+                : "Speak this aloud"
           }
           className={cn(
             "relative z-10 h-28 w-28 min-h-0 gap-0 rounded-full border-4 border-surface px-0 shadow-ambient",
@@ -342,7 +342,7 @@ export default function SpeakPage() {
           ) : isPlaying ? (
             <Volume2 className="h-10 w-10 animate-pulse" aria-hidden="true" />
           ) : (
-            <Play className="h-10 w-10 fill-current" aria-hidden="true" />
+            <Mic className="h-10 w-10" aria-hidden="true" />
           )}
         </Button>
 

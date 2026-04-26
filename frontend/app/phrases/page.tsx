@@ -111,7 +111,10 @@ export default function PhrasesPage() {
   }, [userId]);
 
   useEffect(() => {
-    void fetchPhrases();
+    const timeoutId = window.setTimeout(() => {
+      void fetchPhrases();
+    }, 0);
+    return () => window.clearTimeout(timeoutId);
   }, [fetchPhrases]);
 
   const filtered = useMemo(() => {
@@ -331,6 +334,7 @@ export default function PhrasesPage() {
             onClick={() => void requestSuggestions()}
             disabled={isThinking}
             aria-busy={isThinking}
+            className="hover:!text-white hover:[&_svg]:!text-white"
           >
             {isThinking ? "Thinking…" : "Ask AI for Suggestions"}
           </Button>
