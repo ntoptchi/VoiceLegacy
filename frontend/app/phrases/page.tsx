@@ -72,6 +72,39 @@ const categoryById: Record<Category, CategoryMeta> = categories.reduce(
   {} as Record<Category, CategoryMeta>,
 );
 
+const STARTER_PHRASES: Record<Category, string[]> = {
+  family: [
+    "I love you more than you know.",
+    "Tell the kids I'm proud of them.",
+    "Thank you for being here with me.",
+  ],
+  daily: [
+    "Could I have some water, please?",
+    "I'd like to sit up for a while.",
+    "Thank you for helping me.",
+  ],
+  comfort: [
+    "Take a deep breath with me.",
+    "I'm right here with you.",
+    "Everything is going to be okay.",
+  ],
+  humor: [
+    "Well, that could have gone smoother.",
+    "Don't let me lose my reputation for timing.",
+    "Some things really do write themselves.",
+  ],
+  emergency: [
+    "I need help right now.",
+    "Please call my doctor.",
+    "Get my family for me.",
+  ],
+  personal: [
+    "Hi, sweetheart.",
+    "I'm so glad you came today.",
+    "Love you, kiddo.",
+  ],
+};
+
 function makeId() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
@@ -239,6 +272,9 @@ export default function PhrasesPage() {
 
   const targetCategoryLabel =
     activeFilter === "all" ? "Family" : categoryById[activeFilter]?.label ?? activeFilter;
+  const starterCategory: Category =
+    activeFilter === "all" ? "family" : activeFilter;
+  const starterPhrases = STARTER_PHRASES[starterCategory];
 
   if (!userId) return null;
 
@@ -266,7 +302,7 @@ export default function PhrasesPage() {
       <div
         role="tablist"
         aria-label="Filter phrases by category"
-        className="animate-slidein flex flex-wrap items-center gap-xs"
+        className="animate-slidein flex flex-wrap items-center gap-sm rounded-xl border border-outline-variant/20 bg-surface-container-low p-sm"
         style={{ animationDelay: "500ms" }}
       >
         <FilterTab
@@ -284,27 +320,29 @@ export default function PhrasesPage() {
             onClick={() => setActiveFilter(category.id)}
           />
         ))}
-        <button
-          type="button"
-          onClick={() => setFavoritesOnly((prev) => !prev)}
-          aria-pressed={favoritesOnly}
-          className={cn(
-            "ml-auto flex items-center gap-xs rounded-full px-md py-xs text-label-md transition-colors",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-            favoritesOnly
-              ? "bg-tertiary text-on-tertiary"
-              : "bg-surface-container text-on-surface-variant hover:bg-surface-dim",
-          )}
-        >
-          <Star
+        <div className="ml-auto">
+          <button
+            type="button"
+            onClick={() => setFavoritesOnly((prev) => !prev)}
+            aria-pressed={favoritesOnly}
             className={cn(
-              "h-4 w-4",
-              favoritesOnly && "fill-current text-on-tertiary",
+              "flex items-center gap-xs rounded-full px-md py-xs text-label-md transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              favoritesOnly
+                ? "bg-tertiary text-on-tertiary"
+                : "bg-surface text-on-surface-variant hover:bg-surface-dim",
             )}
-            aria-hidden="true"
-          />
-          Favorites only
-        </button>
+          >
+            <Star
+              className={cn(
+                "h-4 w-4",
+                favoritesOnly && "fill-current text-on-tertiary",
+              )}
+              aria-hidden="true"
+            />
+            Favorites only
+          </button>
+        </div>
       </div>
 
       <div
@@ -344,6 +382,39 @@ export default function PhrasesPage() {
         ) : null}
       </div>
 
+      {phrases.length === 0 ? (
+        <section className="rounded-xl border border-outline-variant/20 bg-surface-container-lowest p-md shadow-ambient">
+          <div className="flex flex-col gap-xs">
+            <h2 className="text-headline-sm text-on-surface">
+              Starter phrases for {categoryById[starterCategory].label}
+            </h2>
+            <p className="max-w-2xl text-body-sm text-on-surface-variant">
+              Local demo mode uses a curated starter set so the page stays useful
+              even before API keys are configured.
+            </p>
+          </div>
+
+          <ul className="mt-md grid grid-cols-1 gap-sm md:grid-cols-3">
+            {starterPhrases.map((text) => (
+              <li
+                key={text}
+                className="flex min-h-[140px] flex-col justify-between rounded-xl border border-outline-variant/20 bg-surface p-md"
+              >
+                <p className="text-body-md text-on-surface">{text}</p>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => void addPhrase(text, starterCategory)}
+                  className="mt-md self-start"
+                >
+                  Save phrase
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       {filtered.length === 0 ? (
         <EmptyState favoritesOnly={favoritesOnly} />
       ) : (
@@ -381,17 +452,17 @@ function FilterTab({
       aria-selected={isActive}
       onClick={onClick}
       className={cn(
-        "flex items-center gap-xs rounded-full px-md py-xs text-label-md transition-colors",
+        "flex min-h-11 items-center gap-xs rounded-full px-md py-xs text-label-md transition-colors",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         isActive
           ? "bg-primary text-on-primary"
-          : "bg-surface-container text-on-surface-variant hover:bg-surface-dim hover:text-on-surface",
+          : "bg-surface text-on-surface-variant hover:bg-surface-dim hover:text-on-surface",
       )}
     >
       {label}
       <span
         className={cn(
-          "rounded-full px-xs text-[11px] font-semibold",
+          "rounded-full px-xs py-[2px] text-[11px] font-semibold leading-none",
           isActive
             ? "bg-on-primary/20 text-on-primary"
             : "bg-surface-variant text-on-surface-variant",
@@ -498,7 +569,7 @@ function EmptyState({ favoritesOnly }: { favoritesOnly: boolean }) {
           ? "No favorites in this view yet."
           : "Nothing here yet."}
       </p>
-      <p className="w-full max-w-md text-body-sm text-on-surface-variant">
+      <p className="max-w-md text-balance text-body-sm text-on-surface-variant">
         {favoritesOnly
           ? "Tap the star on any phrase to keep it close at hand."
           : "Switch categories or ask the assistant to suggest a few starter phrases."}
