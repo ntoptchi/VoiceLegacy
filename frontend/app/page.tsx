@@ -52,7 +52,7 @@ export default function LandingPage() {
               variant="primary"
               size="lg"
               rightIcon={<ArrowRight className="h-5 w-5" aria-hidden="true" />}
-              className="text-lg hover:!text-white hover:[&_svg]:!text-white"
+              className="relative overflow-hidden text-lg shadow-[0_0_0_rgba(71,100,79,0)] before:pointer-events-none before:absolute before:inset-0 before:rounded-full before:bg-white/0 before:transition-colors before:duration-300 after:pointer-events-none after:absolute after:inset-y-0 after:-left-1/2 after:w-1/3 after:skew-x-[-20deg] after:bg-white/30 after:opacity-0 after:transition-all after:duration-500 hover:shadow-[0_0_28px_rgba(71,100,79,0.35)] hover:before:bg-white/10 hover:after:left-[120%] hover:after:opacity-100 hover:!text-white hover:[&_svg]:!text-white"
             >
               Record your voice - free
             </Button>
