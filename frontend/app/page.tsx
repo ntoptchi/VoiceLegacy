@@ -25,6 +25,24 @@ const features = [
   },
 ];
 
+const testimonials = [
+  {
+    quote:
+      "I didn’t realize how much my everyday phrases mattered until I heard them back in my own voice.",
+    author: "Early tester",
+  },
+  {
+    quote:
+      "The phrase bank makes this feel personal. It is not just text-to-speech — it sounds like the things I would actually say.",
+    author: "Caregiver feedback",
+  },
+  {
+    quote:
+      "Being able to try the voice preview before signing up made the whole experience feel safer and less intimidating.",
+    author: "VoiceLegacy user",
+  },
+];
+
 export default function LandingPage() {
   return (
     <div className="flex flex-col items-center gap-12 py-8 md:py-16">
@@ -87,6 +105,43 @@ export default function LandingPage() {
             </article>
           );
         })}
+      </section>
+
+      <section
+        aria-labelledby="testimonials-heading"
+        className="flex w-full max-w-4xl flex-col items-center gap-md"
+      >
+        <div
+          className="animate-slidein flex max-w-2xl flex-col items-center gap-sm text-center"
+          style={{ animationDelay: "1350ms" }}
+        >
+          <p className="text-label-md uppercase text-primary">
+            Loved by families, caregivers, and people planning ahead
+          </p>
+          <h2
+            id="testimonials-heading"
+            className="font-[family-name:var(--font-lora)] text-headline-md text-on-surface"
+          >
+            Why people start early
+          </h2>
+        </div>
+
+        <div className="grid w-full grid-cols-1 gap-md md:grid-cols-3">
+          {testimonials.map((testimonial, index) => (
+            <figure
+              key={testimonial.author}
+              className="animate-slidein flex h-full flex-col justify-between gap-md rounded-lg border border-outline-variant/30 bg-surface-container-lowest p-md text-left shadow-[0_8px_28px_-20px_rgba(0,0,0,0.35)]"
+              style={{ animationDelay: `${1500 + index * 120}ms` }}
+            >
+              <blockquote className="text-body-sm text-on-surface-variant">
+                &ldquo;{testimonial.quote}&rdquo;
+              </blockquote>
+              <figcaption className="text-label-md text-on-surface">
+                {testimonial.author}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
       </section>
     </div>
   );
