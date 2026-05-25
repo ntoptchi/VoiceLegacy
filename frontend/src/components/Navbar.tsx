@@ -1,17 +1,20 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BookHeart,
   MessageCircleHeart,
   Mic,
+  Moon,
   Settings,
-  Waves,
+  Sun,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs";
 import { cn } from "@/lib/cn";
+import { useTheme } from "@/lib/theme";
 import { Button } from "@/components/ui";
 
 type NavItem = {
@@ -36,6 +39,24 @@ function isActive(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
+function ThemeToggle() {
+  const { theme, toggle } = useTheme();
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+      className="flex h-10 w-10 items-center justify-center rounded-full text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface"
+    >
+      {theme === "dark" ? (
+        <Sun className="h-5 w-5" />
+      ) : (
+        <Moon className="h-5 w-5" />
+      )}
+    </button>
+  );
+}
+
 export function Navbar() {
   const pathname = usePathname() ?? "/";
   const { isLoaded, isSignedIn } = useAuth();
@@ -50,8 +71,14 @@ export function Navbar() {
           className="group flex items-center gap-sm text-primary transition-colors hover:text-primary-container"
           aria-label="VoiceLegacy home"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed transition-transform group-hover:scale-105">
-            <Waves className="h-5 w-5" aria-hidden="true" />
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed transition-transform group-hover:scale-105">
+            <Image
+              src="/logo.png"
+              alt=""
+              width={24}
+              height={24}
+              className="object-contain"
+            />
           </span>
           <span className="text-lg font-semibold text-on-surface md:text-headline-sm">
             VoiceLegacy
@@ -86,9 +113,10 @@ export function Navbar() {
           </nav>
         ) : null}
 
-        <div className="hidden items-center gap-sm md:flex">
+        <div className="flex items-center gap-sm">
+          <ThemeToggle />
           {showAuthNav ? (
-            <>
+            <div className="hidden items-center gap-sm md:flex">
               <Link
                 href="/dashboard"
                 aria-label="Profile and settings"
@@ -102,20 +130,24 @@ export function Navbar() {
                 <Settings className="h-5 w-5" aria-hidden="true" />
               </Link>
               <UserButton />
-            </>
+            </div>
           ) : isLoaded ? (
-            <>
+            <div className="hidden items-center gap-sm md:flex">
               <SignInButton mode="modal">
                 <Button variant="ghost" size="sm">
                   Sign in
                 </Button>
               </SignInButton>
               <SignUpButton mode="modal">
-                <Button variant="primary" size="sm">
+                <Button
+                  variant="tertiary"
+                  size="sm"
+                  className="bg-[#dcefdc] text-[#244f32] shadow-[0_8px_18px_rgba(71,100,79,0.16)] hover:bg-[#c6e6c8] hover:text-[#183d25]"
+                >
                   Sign up
                 </Button>
               </SignUpButton>
-            </>
+            </div>
           ) : null}
         </div>
       </div>

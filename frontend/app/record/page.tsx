@@ -19,6 +19,7 @@ import {
   TriangleAlert,
 } from "lucide-react";
 import { Button } from "@/components/ui";
+import { Waveform } from "@/components/Waveform";
 import { cn } from "@/lib/cn";
 
 const PHRASES: readonly string[] = [
@@ -338,9 +339,12 @@ export default function RecordPage() {
         <p className="text-label-md uppercase tracking-wider text-on-surface-variant">
           Read this aloud, in your natural voice
         </p>
-        <h1 className="max-w-2xl text-3xl font-bold leading-tight text-on-primary-fixed-variant md:text-headline-lg">
+        <h1 className="max-w-2xl font-serif text-3xl italic leading-tight text-on-surface md:text-headline-lg">
           &ldquo;{phrase}&rdquo;
         </h1>
+        {isRecording ? (
+          <Waveform active className="h-8 text-error" />
+        ) : null}
         {currentPhraseRecorded ? (
           <p className="flex items-center gap-xs text-body-sm text-primary">
             <CheckCircle2 className="h-4 w-4" aria-hidden="true" />

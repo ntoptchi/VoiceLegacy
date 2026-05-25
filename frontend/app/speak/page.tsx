@@ -14,6 +14,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui";
+import { Waveform } from "@/components/Waveform";
 import { cn } from "@/lib/cn";
 import { useRequireUser } from "@/lib/useRequireUser";
 
@@ -24,6 +25,10 @@ type RewriteChip = {
   label: string;
   description: string;
   icon: LucideIcon;
+  accent: string;
+  accentActive: string;
+  iconBg: string;
+  iconBgActive: string;
 };
 
 const chips: RewriteChip[] = [
@@ -32,24 +37,40 @@ const chips: RewriteChip[] = [
     label: "Make warmer",
     description: "Add warmth and emotional softness.",
     icon: HeartHandshake,
+    accent: "border-rose-400/40 hover:border-rose-400/70 hover:bg-rose-400/10",
+    accentActive: "border-rose-400 bg-rose-400/20 text-rose-400",
+    iconBg: "bg-rose-400/15 text-rose-400",
+    iconBgActive: "bg-rose-500 text-white",
   },
   {
     id: "shorter",
     label: "Make shorter",
     description: "Strip to the essential meaning.",
     icon: Scissors,
+    accent: "border-sage-400/40 hover:border-sage-400/70 hover:bg-sage-400/10",
+    accentActive: "border-sage-400 bg-sage-400/20 text-sage-400",
+    iconBg: "bg-sage-400/15 text-sage-400",
+    iconBgActive: "bg-sage-500 text-white",
   },
   {
     id: "sound_like_me",
     label: "Sound like me",
     description: "Rewrite in your saved communication style.",
     icon: MessageSquareQuote,
+    accent: "border-lavender-400/40 hover:border-lavender-400/70 hover:bg-lavender-400/10",
+    accentActive: "border-lavender-400 bg-lavender-400/20 text-lavender-400",
+    iconBg: "bg-lavender-400/15 text-lavender-400",
+    iconBgActive: "bg-lavender-500 text-white",
   },
   {
     id: "translate",
     label: "Translate to saved phrase",
     description: "Find the closest match in your phrase bank.",
     icon: Library,
+    accent: "border-outline-variant/50 hover:border-primary/50 hover:bg-primary-fixed/15",
+    accentActive: "border-primary bg-primary-fixed/40 text-on-primary-fixed",
+    iconBg: "bg-primary-fixed text-on-primary-fixed",
+    iconBgActive: "bg-primary text-on-primary",
   },
 ];
 
@@ -239,13 +260,14 @@ export default function SpeakPage() {
           placeholder="What do you want to say?"
           rows={4}
           className={cn(
-            "min-h-[172px] w-full resize-none rounded-xl border-2 border-outline-variant/50 bg-surface-container-lowest p-md text-body-lg text-on-surface",
-            "placeholder:text-outline",
+            "min-h-[172px] w-full resize-none rounded-xl border-2 border-outline-variant/50 bg-surface-container-lowest p-md font-serif text-xl italic text-on-surface",
+            "placeholder:not-italic placeholder:font-sans placeholder:text-outline",
             "transition-colors duration-200",
             "focus:border-primary focus:outline-none focus:ring-0",
           )}
         />
 
+        {/* Rewrite tiles with distinct accent colors */}
         <div
           role="group"
           aria-label="Rewrite suggestions"
@@ -264,20 +286,16 @@ export default function SpeakPage() {
                 aria-busy={isLoading}
                 aria-pressed={isActive}
                 className={cn(
-                  "group flex items-start gap-sm rounded-xl border p-sm text-left transition-colors",
+                  "group flex items-start gap-sm rounded-xl border p-sm text-left transition-all",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface-container-lowest",
-                  isActive
-                    ? "border-primary bg-primary-fixed/40 text-on-primary-fixed"
-                    : "border-outline-variant/50 bg-surface-container-low text-on-surface hover:border-primary/50 hover:bg-primary-fixed/15",
+                  isActive ? chip.accentActive : chip.accent,
                   rewriting !== null && !isLoading && "opacity-60",
                 )}
               >
                 <span
                   className={cn(
                     "flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-colors",
-                    isActive
-                      ? "bg-primary text-on-primary"
-                      : "bg-primary-fixed text-on-primary-fixed",
+                    isActive ? chip.iconBgActive : chip.iconBg,
                   )}
                   aria-hidden="true"
                 >
@@ -311,6 +329,7 @@ export default function SpeakPage() {
         </div>
       ) : null}
 
+      {/* Large, amber play button — the destination */}
       <div
         className="animate-slidein relative flex flex-col items-center gap-md px-2 text-center"
         style={{ animationDelay: "900ms" }}
@@ -318,22 +337,21 @@ export default function SpeakPage() {
         {isPlaying ? (
           <>
             <span
-              className="absolute inset-0 -m-2 animate-ping rounded-full bg-primary/20"
+              className="absolute inset-0 -m-2 animate-ping rounded-full bg-amber-400/20"
               aria-hidden="true"
             />
             <span
-              className="absolute inset-0 -m-4 animate-pulse rounded-full bg-primary/15"
+              className="absolute inset-0 -m-4 animate-pulse rounded-full bg-amber-400/15"
               aria-hidden="true"
             />
           </>
         ) : null}
 
-        <div className="relative flex h-24 w-24 items-center justify-center">
-          <Button
-            variant="primary"
-            size="lg"
+        <div className="relative flex h-28 w-28 items-center justify-center">
+          <button
+            type="button"
             onClick={() => void handlePlay()}
-            disabled={!canPlay}
+            disabled={!canPlay && !isLoadingAudio}
             aria-pressed={isPlaying}
             aria-label={
               isLoadingAudio
@@ -343,29 +361,30 @@ export default function SpeakPage() {
                   : "Speak this aloud"
             }
             className={cn(
-              "relative z-10 h-24 w-24 min-h-0 gap-0 rounded-full border-4 border-surface px-0 shadow-ambient",
-              isPlaying && "bg-primary-container",
+              "relative z-10 flex h-28 w-28 items-center justify-center rounded-full border-4 border-surface shadow-ambient transition-all",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+              isPlaying
+                ? "bg-amber-500 text-white"
+                : canPlay || isLoadingAudio
+                  ? "bg-amber-500 text-white hover:bg-amber-400 hover:scale-105"
+                  : "bg-amber-500/40 text-white/70",
             )}
-          />
-          <span
-            className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center text-white"
-            aria-hidden="true"
           >
             {isLoadingAudio ? (
               <Loader2 className="h-10 w-10 animate-spin" strokeWidth={2.25} />
             ) : isPlaying ? (
-              <Volume2 className="h-10 w-10 animate-pulse" strokeWidth={2.25} />
+              <Waveform active className="h-10 text-white" />
             ) : (
-              <Mic className="h-9 w-9" strokeWidth={2.25} />
+              <Volume2 className="h-10 w-10" strokeWidth={2.25} />
             )}
-          </span>
+          </button>
         </div>
 
         <p
           aria-live="polite"
           className={cn(
             "text-body-md transition-colors",
-            isPlaying ? "text-primary" : "text-on-surface-variant",
+            isPlaying ? "text-amber-400" : "text-on-surface-variant",
           )}
         >
           {isLoadingAudio

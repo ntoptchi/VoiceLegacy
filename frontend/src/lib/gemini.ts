@@ -150,8 +150,6 @@ function styleDescriptor(style: CommunicationStyle): string {
       return "dry and direct";
     case "humorous":
       return "playful and funny";
-    case "calm":
-      return "calm and gentle";
   }
 }
 
