@@ -33,7 +33,7 @@ const testimonials = [
   },
   {
     quote:
-      "The phrase bank makes this feel personal. It is not just text-to-speech — it sounds like the things I would actually say.",
+      "The phrase bank makes this feel personal. It is not just text‑to‑speech — it sounds like the things I would actually say.",
     author: "Caregiver feedback",
   },
   {
@@ -45,7 +45,7 @@ const testimonials = [
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col items-center gap-12 py-8 md:py-16">
+    <div className="flex flex-col items-center gap-10 py-4 md:gap-12 md:py-10">
       <header className="flex max-w-3xl flex-col items-center gap-md text-center">
         <h1
           className="animate-slidein font-[family-name:var(--font-lora)] text-4xl font-semibold leading-tight text-on-surface md:text-5xl lg:text-6xl"
@@ -130,10 +130,10 @@ export default function LandingPage() {
           {testimonials.map((testimonial, index) => (
             <figure
               key={testimonial.author}
-              className="animate-slidein flex h-full flex-col justify-between gap-md rounded-lg border border-outline-variant/30 bg-surface-container-lowest p-md text-left shadow-[0_8px_28px_-20px_rgba(0,0,0,0.35)]"
+              className="animate-slidein flex h-full flex-col justify-between gap-md rounded-lg border border-outline-variant/25 bg-surface-container-lowest/75 p-md text-left shadow-[0_8px_28px_-22px_rgba(0,0,0,0.32)]"
               style={{ animationDelay: `${1500 + index * 120}ms` }}
             >
-              <blockquote className="text-body-sm text-on-surface-variant">
+              <blockquote className="text-[17px] leading-7 text-on-surface-variant [text-wrap:pretty]">
                 &ldquo;{testimonial.quote}&rdquo;
               </blockquote>
               <figcaption className="text-label-md text-on-surface">
