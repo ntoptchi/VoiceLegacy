@@ -77,10 +77,10 @@ export default function LandingPage() {
           </Link>
         </div>
         <p
-          className="animate-slidein text-body-sm text-on-surface-variant"
+          className="animate-slidein rounded-full border border-outline-variant/30 bg-surface-container-lowest/70 px-md py-sm text-label-md text-on-surface-variant shadow-[0_8px_26px_-22px_rgba(0,0,0,0.35)]"
           style={{ animationDelay: "800ms" }}
         >
-          No account needed to start. Hear your clone before you sign up.
+          Private by default · Delete anytime · No account needed to preview
         </p>
       </header>
 
