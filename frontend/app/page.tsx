@@ -93,7 +93,7 @@ export default function LandingPage() {
               className="animate-slidein flex flex-col items-center gap-sm rounded-xl border border-outline-variant/30 bg-surface-container-lowest p-lg text-center shadow-ambient"
               style={{ animationDelay: `${900 + index * 150}ms` }}
             >
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-fixed text-on-primary-fixed">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-on-primary">
                 <Icon className="h-6 w-6" aria-hidden="true" />
               </span>
               <h2 className="text-headline-sm text-on-surface">
